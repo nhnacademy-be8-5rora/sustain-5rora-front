@@ -1,33 +1,26 @@
 server:
-  port: 8080
+  port: 9084
   shutdown: graceful
 
 spring:
-  application:
-    name: front-server
-  #  profiles:
-  #    active: dev
   lifecycle:
     timeout-per-shutdown-phase: 30s
-  #  datasource:
-  #    url: jdbc:mysql://localhost:3306/taskapi?useSSL=false&serverTimezone=UTC
-  #    username: root
-  #    password: P@ssw0rd
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    open-in-view: false
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-        highlight_sql: true
-        auto_quote_keyword: true
-    hibernate:
-      ddl-auto: create-drop
-    defer-datasource-initialization: true # ??? ?? ???? ??????. ?? JPA ???? ?????? ??? ?? ?? ?????? ?, ?????? ??? ???? ??? ?????.
+
 logging:
   level:
-    root: debug
-    org.hibernate.orm.jdbc.bind: trace
-    org.springframework.transaction.interceptor: trace
+    root: info
+
+eureka:
+  client:
+    enabled: false      #유레카 끄기
+    service-url:
+      defaultZone: http://admin:1234@localhost:8761/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 30 # Heartbeat 전송 주기 (기본값: 30초)
+    lease-expiration-duration-in-seconds: 90 # Heartbeat 누락 시 만료 시간 (기본값: 90초)
+
+api:
+  shop:
+    base-url: localhost:9083
+  authentication:
+    base-url: localhost:8081
