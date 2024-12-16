@@ -1,4 +1,12 @@
 package store.aurora.auth.dto.response;
 
-public record PaycoAccessTokenResponse(String accessTokenSecret, String state, String tokenType, String expiresIn, String refreshToken, String accessToken) {
-}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record PaycoAccessTokenResponse(
+        @JsonProperty("access_token") String accessToken,
+        @JsonProperty("refresh_token") String refreshToken,
+        @JsonProperty("state") String state,
+        @JsonProperty("token_type") String tokenType,
+        @JsonProperty("expires_in") String expiresIn,
+        @JsonProperty("access_token_secret") String accessTokenSecret
+) {}

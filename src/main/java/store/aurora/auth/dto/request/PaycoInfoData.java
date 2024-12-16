@@ -1,4 +1,7 @@
 package store.aurora.auth.dto.request;
 
-public record PaycoInfoData(String idNo, String email, String mobile, String name) {
-}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record PaycoInfoData(
+    @JsonProperty("member") PaycoInfoMember member
+) {}

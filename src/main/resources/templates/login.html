@@ -94,7 +94,7 @@
     </form>
     <button class="oauth-button"
             th:data-client-id="${@environment.getProperty('auth.payco.client-id')}"
-            th:data-redirect-uri="'https://5rora.store/oauth2-test'"
+            th:data-redirect-uri="|${@environment.getProperty('auth.payco.redirect-url')}/oauth2-test|"
             onclick="handlePaycoLogin(this)">
         Login with Payco
     </button>

@@ -40,7 +40,7 @@ public class SecurityConfig {
         //인증, 인가 설정
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .requestMatchers("/", "/login", "/login/process","/logout").permitAll()  //todo /signup 추가
+                        .requestMatchers("/", "/login", "/login/process","/logout", "/oauth2-test").permitAll()  //todo /signup 추가
                         .anyRequest().authenticated()
         );
 
