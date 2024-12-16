@@ -20,7 +20,9 @@ eureka:
     lease-expiration-duration-in-seconds: 90 # Heartbeat 누락 시 만료 시간 (기본값: 90초)
 
 api:
-  shop:
-    base-url: localhost:9083
-  authentication:
-    base-url: localhost:8081
+  gateway:
+    base-url: localhost:8082
+#  shop:            ##테스트 용도
+#    base-url: localhost:9083
+#  authentication:
+#    base-url: localhost:8081

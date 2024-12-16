@@ -5,19 +5,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import store.aurora.feignClient.UserClient;
+import store.aurora.feignClient.AuthClient;
 import store.aurora.user.dto.response.UserPwdAndRoleResponse;
 
 @Component
 @RequiredArgsConstructor
 public class ApiUserDetailsService implements UserDetailsService {
 
-    private final UserClient userClient;
+    private final AuthClient authClient;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserPwdAndRoleResponse userInfo = userClient.getPasswordAndRole(username);
+        UserPwdAndRoleResponse userInfo = authClient.getPasswordAndRole(username);
 
         return new ApiUserDetails(username, userInfo.password(), userInfo.role());
     }
