@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.feignClient.AuthClient;
-import store.aurora.user.dto.response.UserUsernameAndRoleResponse;
+import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 
 import java.io.IOException;
 import java.util.List;

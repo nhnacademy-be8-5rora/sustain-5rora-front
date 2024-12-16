@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import store.aurora.feignClient.AuthClient;
-import store.aurora.user.dto.response.UserPwdAndRoleResponse;
+import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
 
 @Component
 @RequiredArgsConstructor

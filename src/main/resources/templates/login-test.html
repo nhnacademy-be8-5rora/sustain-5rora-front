@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Test Page</title>
+    <title>User Info</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,16 +25,23 @@
             color: #333;
             margin-bottom: 1rem;
         }
-        p {
+        .info {
             font-size: 1.2rem;
+            color: #333;
+            margin: 0.5rem 0;
+        }
+        .info strong {
             color: #0073e6;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Hello 5rora</h1>
-    <p>Received Code: <strong th:text="${code}">Default Code</strong></p>
+    <h1>User Information</h1>
+    <p class="info">ID No: <strong th:text="${idNo}">Default ID</strong></p>
+    <p class="info">Email: <strong th:text="${email}">Default Email</strong></p>
+    <p class="info">Mobile: <strong th:text="${mobile}">Default Mobile</strong></p>
+    <p class="info">Name: <strong th:text="${name}">Default Name</strong></p>
 </div>
 </body>
 </html>

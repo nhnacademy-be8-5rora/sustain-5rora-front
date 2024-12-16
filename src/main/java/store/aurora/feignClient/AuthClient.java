@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import store.aurora.auth.dto.request.JwtRequestDto;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.user.dto.response.UserPwdAndRoleResponse;
-import store.aurora.user.dto.response.UserUsernameAndRoleResponse;
+import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
+import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 
 @FeignClient(name = "authClient", url = "${api.gateway.base-url}" + "/api/auth")
 public interface AuthClient {
