@@ -12,5 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
         //todo 테스트 페이지 제거
         registry.addViewController("/").setViewName("index");
         registry.addViewController("/login").setViewName("login");
+        registry.addViewController("/signup").setViewName("signup");
     }
 }
