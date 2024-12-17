@@ -56,6 +56,16 @@
             background-color: #45a049;
         }
 
+        .login-container .oauth-button {
+            background-color: #0073e6;
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        .login-container button.oauth-button:hover {
+            background-color: #005bb5;
+        }
+
         .login-container .footer {
             margin-top: 1rem;
             font-size: 0.9rem;
@@ -71,6 +81,12 @@
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
+
+    <!-- Payco 로그인 버튼 -->
+    <form action="/oauth2/authorization/payco" method="GET">
+        <button type="submit" class="oauth-button">Login with Payco</button>
+    </form>
+
     <div class="footer">
         <p>Don't have an account? <a href="/signup" style="color: #4CAF50;">Sign up</a></p>
     </div>

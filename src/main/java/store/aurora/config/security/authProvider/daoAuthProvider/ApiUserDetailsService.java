@@ -1,12 +1,12 @@
-package store.aurora.config.security.daoAuthProvider;
+package store.aurora.config.security.authProvider.daoAuthProvider;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
 import store.aurora.feignClient.UserClient;
-import store.aurora.user.dto.response.UserPwdAndRoleResponse;
 
 @Component
 @RequiredArgsConstructor

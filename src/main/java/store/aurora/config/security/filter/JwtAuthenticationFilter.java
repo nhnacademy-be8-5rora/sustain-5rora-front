@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import store.aurora.config.security.constants.SecurityConstants;
+import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 import store.aurora.feignClient.UserClient;
-import store.aurora.user.dto.response.UserUsernameAndRoleResponse;
 
 import java.io.IOException;
 import java.util.List;

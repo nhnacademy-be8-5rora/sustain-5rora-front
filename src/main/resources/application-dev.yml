@@ -10,17 +10,10 @@ logging:
   level:
     root: info
 
-eureka:
-  client:
-    enabled: false      #유레카 끄기
-    service-url:
-      defaultZone: http://admin:1234@localhost:8761/eureka
-  instance:
-    lease-renewal-interval-in-seconds: 30 # Heartbeat 전송 주기 (기본값: 30초)
-    lease-expiration-duration-in-seconds: 90 # Heartbeat 누락 시 만료 시간 (기본값: 90초)
-
 api:
-  shop:
-    base-url: localhost:9083
-  authentication:
-    base-url: localhost:8081
+  gateway:
+    base-url: localhost:8082
+#  shop:            ##테스트 용도
+#    base-url: localhost:9083
+#  authentication:
+#    base-url: localhost:8081

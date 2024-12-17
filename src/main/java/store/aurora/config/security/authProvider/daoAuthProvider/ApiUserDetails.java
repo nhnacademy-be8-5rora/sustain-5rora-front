@@ -1,4 +1,4 @@
-package store.aurora.config.security.daoAuthProvider;
+package store.aurora.config.security.authProvider.daoAuthProvider;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
