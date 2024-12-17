@@ -72,17 +72,6 @@
             color: #666;
         }
     </style>
-
-    <script>
-        function handlePaycoLogin(button) {
-            const clientId = button.getAttribute('data-client-id');
-            const redirectUri = button.getAttribute('data-redirect-uri');
-            const url = `https://id.payco.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&serviceProviderCode=FRIENDS&redirect_uri=${redirectUri}&userLocale=ko_KR`;
-
-            location.href = url;
-        }
-    </script>
-
 </head>
 <body>
 <div class="login-container">
@@ -92,12 +81,12 @@
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
-    <button class="oauth-button"
-            th:data-client-id="${@environment.getProperty('auth.payco.client-id')}"
-            th:data-redirect-uri="|${@environment.getProperty('auth.payco.redirect-url')}/oauth2-test|"
-            onclick="handlePaycoLogin(this)">
-        Login with Payco
-    </button>
+
+    <!-- Payco 로그인 버튼 -->
+    <form action="/oauth2/authorization/payco" method="GET">
+        <button type="submit" class="oauth-button">Login with Payco</button>
+    </form>
+
     <div class="footer">
         <p>Don't have an account? <a href="/signup" style="color: #4CAF50;">Sign up</a></p>
     </div>

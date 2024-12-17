@@ -8,6 +8,7 @@ public record PaycoInfoMember(
         @JsonProperty("mobile") String mobile,              // 휴대폰 번호
         @JsonProperty("maskedEmail") String maskedEmail,         // 마스킹된 이메일 주소
         @JsonProperty("maskedMobile") String maskedMobile,        // 마스킹된 휴대폰 번호
-        @JsonProperty("name") String name                // 이름
+        @JsonProperty("name") String name,                // 이름
+        @JsonProperty("birthdayMMdd") String birthdayMMdd       //월일만
 )
 { }

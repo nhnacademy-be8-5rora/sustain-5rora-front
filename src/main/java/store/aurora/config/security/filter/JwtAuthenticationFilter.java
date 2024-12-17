@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.feignClient.AuthClient;
 import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
+import store.aurora.feignClient.UserClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final AuthClient authClient;
+    private final UserClient userClient;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         //토큰을 가지고 api 호출
-        UserUsernameAndRoleResponse usernameAndRole = authClient.getUsernameAndRole(jwtToken.get());
+        UserUsernameAndRoleResponse usernameAndRole = userClient.getUsernameAndRole(jwtToken.get());
 
         SecurityContextHolder.getContext().setAuthentication(makeAuthentication(usernameAndRole));
 
