@@ -24,3 +24,5 @@ api:
     base-url: localhost:9083
   authentication:
     base-url: localhost:8081
+  gateway:
+    base-url: localhost:8082
