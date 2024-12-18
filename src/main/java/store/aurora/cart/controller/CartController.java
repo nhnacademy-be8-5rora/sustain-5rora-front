@@ -2,6 +2,7 @@ package store.aurora.cart.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import store.aurora.feignClient.CartClient;
 
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/cart")
 @AllArgsConstructor
@@ -22,7 +24,7 @@ public class CartController {
     @GetMapping
     public String getCartPage(Model model) {
         ResponseEntity<Map<String, Object>> response = cartClient.getCart();
-
+        log.warn("getCartPage");
         Map<String, Object> cartData = response.getBody();
         model.addAttribute("cart", cartData);
 
@@ -37,14 +39,8 @@ public class CartController {
         return processClientRes(response, clientResponse);
     }
 
-    @PostMapping("/{bookId}")
-    public void tmp(@PathVariable("bookId") Long bookId) {
-
-        System.out.println("check poring");
-    }
-    //
     @DeleteMapping("/{bookId}")
-    public String deleteItemToCart(@PathVariable("bookId") Long bookId,
+    public String deleteItemToCart(@PathVariable(value = "bookId", required = false) Long bookId,
                                    HttpServletResponse response) {
 
         ResponseEntity<String> clientResponse = cartClient.deleteCartItem(bookId);
