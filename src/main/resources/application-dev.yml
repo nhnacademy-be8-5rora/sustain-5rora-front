@@ -1,10 +1,26 @@
 server:
-  port: 9084
+  port: 9080
   shutdown: graceful
 
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
+  security:
+    oauth2:
+      client:
+        registration:
+          payco:
+            client-id: na     #실행시에 넣어줄것
+            client-secret: na #실행시에 넣어줄것
+            redirect-uri: http://5rora-test.com:9080/login/oauth2/code/payco
+            authorization-grant-type: authorization_code
+            client-name: payco
+        provider:
+          payco:
+            authorization-uri: https://id.payco.com/oauth2.0/authorize
+            token-uri: https://id.payco.com/oauth2.0/token
+            user-info-uri: https://apis-payco.krp.toastoven.net/payco/friends/find_member_v2.json
+            user-name-attribute: idNo
 
 logging:
   level:
@@ -13,7 +29,3 @@ logging:
 api:
   gateway:
     base-url: localhost:8082
-#  shop:            ##테스트 용도
-#    base-url: localhost:9083
-#  authentication:
-#    base-url: localhost:8081

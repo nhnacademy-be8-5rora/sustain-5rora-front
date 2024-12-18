@@ -3,4 +3,3 @@ spring:
     name: 5rora-front
   profiles:
     active: dev
-    include: extern
