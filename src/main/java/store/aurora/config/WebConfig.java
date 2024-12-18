@@ -19,9 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addRedirectViewController("/cart/{bookId}", "/cart/{bookId}");
     }
 
-//    @Bean
-//    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-//        return new HiddenHttpMethodFilter();
-//    }
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
+    }
 
 }
