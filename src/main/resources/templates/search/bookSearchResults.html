@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Search Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .book-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .book-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-image {
+      width: 200px;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px;
+      object-fit: cover;
+    }
+
+    .book-details {
+      padding: 20px;
+      flex-grow: 1;
+    }
+
+    .book-details h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .book-details p {
+      font-size: 16px;
+      margin: 8px 0;
+      color: #555;
+    }
+
+    .book-details p strong {
+      color: #333;
+    }
+
+    .book-details .price {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .book-details .price .sale-price {
+      color: red;
+    }
+
+    .book-details .price .regular-price {
+      text-decoration: line-through;
+      color: #888;
+      margin-left: 10px;
+    }
+
+    .book-details .category-list,
+    .book-details .author-list {
+      margin-top: 10px;
+    }
+
+    .book-details .category-list li,
+    .book-details .author-list li {
+      list-style-type: none;
+      margin-left: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .book-details .category-list li::before {
+      content: "• ";
+      color: #333;
+    }
+
+    .book-details .image {
+      max-width: 200px;
+      border-radius: 8px;
+    }
+
+    /* 검색 폼 스타일 */
+    .search-form {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .search-form label {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .search-form input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      width: 250px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .search-form .checkbox-group {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .search-form .checkbox-group label {
+      margin-right: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .book-card {
+        flex-direction: column;
+        align-items: center;
+        max-width: 100%;
+      }
+
+      .book-image {
+        width: 100%;
+        height: auto;
+        margin: 0;
+      }
+
+      .book-details {
+        padding: 15px;
+      }
+
+      .search-form input[type="text"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Book Search Results</h1>
+
+<!-- 검색 폼 -->
+<form class="search-form" method="get" action="/books/search">
+  <div class="checkbox-group">
+    <label>
+      <input type="radio" name="type" value="title" checked> 제목
+    </label>
+    <label>
+      <input type="radio" name="type" value="author"> 작가 이름
+    </label>
+  </div>
+  <input type="text" name="keyword" placeholder="검색어를 입력하세요" required>
+  <input type="hidden" name="pageNum" value="1">
+  <button type="submit">검색</button>
+</form>
+
+<!-- books 리스트를 for-each로 반복 -->
+<div th:each="book : ${books}" class="book-container">
+  <div class="book-card">
+    <!-- 책 이미지 -->
+    <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+
+    <!-- 책 정보 -->
+    <div class="book-details">
+      <h2><a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title}"></a></h2>
+      <p><strong>ID:</strong> <span th:text="${book.id}"></span></p>
+      <p><strong>Publisher:</strong> <span th:text="${book.publisherName}"></span></p>
+      <p><strong>Publish Date:</strong> <span th:text="${book.publishDate}"></span></p>
+
+      <div class="price">
+        <span class="sale-price" th:text="${book.salePrice} + '원'"></span>
+        <span class="regular-price" th:text="${book.regularPrice} + '원'"></span>
+      </div>
+
+      <div class="author-list">
+        <p><strong>Authors:</strong></p>
+        <ul>
+          <!-- authors 리스트를 for-each로 반복 -->
+          <li th:each="author : ${book.authors}" th:text="${author.name}"></li>
+        </ul>
+      </div>
+
+      <div class="category-list">
+        <p><strong>Categories:</strong></p>
+        <ul>
+          <!-- categoryIdList 리스트를 for-each로 반복 -->
+          <li th:each="categoryId : ${book.categoryIdList}" th:text="${categoryId}"></li>
+        </ul>
+      </div>
+
+      <p><strong>View Count:</strong> <span th:text="${book.viewCount}"></span></p>
+      <p><strong>Review Count:</strong> <span th:text="${book.reviewCount}"></span></p>
+      <p><strong>Review Rating:</strong> <span th:text="${book.reviewRating}"></span> / 5</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
