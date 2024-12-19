@@ -5,14 +5,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import store.aurora.auth.dto.request.JwtRequestDto;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.config.security.exception.connectionFail.UserClientConnectionFailException;
 import store.aurora.feignClient.AuthClient;
 import store.aurora.feignClient.UserClient;
 import store.aurora.user.dto.request.SignUpRequest;
@@ -25,8 +27,9 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    private static final Logger log = LoggerFactory.getLogger("user-logger");
 
     private final UserClient userClient;
     private final AuthClient authClient;
@@ -43,12 +46,14 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String registrationId = oAuth2User.getAttribute("registrationId");
         String id = String.format("%s:%s", registrationId, username);
 
-        Boolean userExists;
+        boolean userExists;
 
         try{
-            userExists = userClient.checkUserExists(id);
+            ResponseEntity<Boolean> feignResponse = userClient.checkUserExists(id);
+            userExists = feignResponse != null && Boolean.TRUE.equals(feignResponse.getBody());
         }catch (Exception e){
-            log.info("user client 통신 실패");
+            log.error("user client 통신 실패. message={}", e.getMessage());
+            log.info("", e);
             response.sendRedirect("/login");
             return;
         }
@@ -60,10 +65,16 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             if(optionalDto.isEmpty()){
                 throw new UserSignUpFailException("missing attributes:" + oAuth2User.getAttributes());
             }
-            Map<String, String> result = userClient.signUp(optionalDto.get(), true);
+            log.info("회원가입 정보:{}", optionalDto.get());
+            ResponseEntity<Map<String, String>> responseEntity = userClient.signUp(optionalDto.get(), true);
 
-            if(Objects.nonNull(result) && result.containsKey("message")){  //todo 회원가입 실패 고려 http status code를 보고 판단할 예정
-                log.info("회원가입 결과:{}", result.get("message"));
+            if(responseEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201))){ //todo 201 상수로 변경
+                log.info("signup success:{}", responseEntity.getBody().get("message"));
+            }
+            else {
+                log.info("signup fail:{}", responseEntity.getBody().get("message"));
+                response.sendRedirect("/login");
+                return;
             }
         }
 
@@ -80,7 +91,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         //4. 필요없어진 액세스토큰과 리프레시 토큰을 만료시킨다?? todo 토론 필요 + 토큰 유효시간 감소 필요성
 
         //todo 로그인 되고 보낼 곳 정하기
-        response.sendRedirect("/");
+        response.sendRedirect("/login-test");
     }
 
     private Optional<SignUpRequest> makeSignUpRequest(String id, OAuth2User user, String registrationId){
@@ -115,11 +126,13 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     private Optional<Cookie> jwtOven(String id){
         try{
-            String jwtToken = authClient.getJwtToken(new JwtRequestDto(id));
-            if(isNullOrBlank(jwtToken)){
+            ResponseEntity<String> jwtToken = authClient.getJwtToken(new JwtRequestDto(id));
+
+            if(!jwtToken.getStatusCode().is2xxSuccessful() || isNullOrBlank(jwtToken.getBody())){
+                log.info("response={}", jwtToken);
                 return Optional.empty();
             }
-            Cookie cookie = new Cookie(SecurityConstants.TOKEN_COOKIE_NAME, jwtToken);
+            Cookie cookie = new Cookie(SecurityConstants.TOKEN_COOKIE_NAME, jwtToken.getBody());
             cookie.setPath("/");
             cookie.setMaxAge(60 * 60);
 

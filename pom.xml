@@ -124,6 +124,7 @@
                     <!-- test skip 하려면 true 설정 -->
                     <skipTests>false</skipTests>
                 </configuration>
+
             </plugin>
 
             <plugin>
