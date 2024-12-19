@@ -20,11 +20,11 @@ public interface UserClient {
     ResponseEntity<UserUsernameAndRoleResponse> getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @GetMapping("/auth/exists")
-    ResponseEntity<Boolean> checkUserExists(@RequestHeader("userId") String userId);
+    Boolean checkUserExists(@RequestHeader("userId") String userId);
 
     //회원가입
     @PostMapping
-    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest signUpRequest,
-                               @RequestParam boolean isOauth);
+    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest request,
+                                               @RequestParam boolean isOauth);
 
 }
