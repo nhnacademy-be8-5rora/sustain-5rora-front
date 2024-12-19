@@ -1,6 +1,7 @@
 package store.aurora.feignClient;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
 import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
@@ -19,11 +20,11 @@ public interface UserClient {
     UserUsernameAndRoleResponse getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @GetMapping("/auth/exists")
-    Boolean checkUserExists(@RequestHeader("userId") String userId);
+    ResponseEntity<Boolean> checkUserExists(@RequestHeader("userId") String userId);
 
     //회원가입
     @PostMapping
-    Map<String, String> signUp(@RequestBody SignUpRequest signUpRequest,
+    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest signUpRequest,
                                @RequestParam boolean isOauth);
 
 }

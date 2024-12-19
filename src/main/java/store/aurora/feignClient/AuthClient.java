@@ -1,6 +1,7 @@
 package store.aurora.feignClient;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import store.aurora.auth.dto.request.JwtRequestDto;
@@ -9,5 +10,5 @@ import store.aurora.auth.dto.request.JwtRequestDto;
 public interface AuthClient {
 
     @PostMapping
-    String getJwtToken(@RequestBody JwtRequestDto jwtRequestDto);
+    ResponseEntity<String> getJwtToken(@RequestBody JwtRequestDto jwtRequestDto);
 }
