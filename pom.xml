@@ -87,6 +87,7 @@
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
+
 <!--        nhn 로그 관련 종속성-->
         <dependency>
             <groupId>com.toast.java.logncrash.logback</groupId>
