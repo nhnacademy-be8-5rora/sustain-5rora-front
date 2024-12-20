@@ -14,7 +14,8 @@ public interface BookSearchClient {
     Page<BookSearchResponseDTO> searchBooksByKeyword(
             @RequestParam("type") String type,
             @RequestParam("keyword") String keyword,
-            @RequestParam("pageNum") String pageNum
+            @RequestParam("pageNum") String pageNum,
+            @RequestParam(required = false) String orderBy,
+            @RequestParam(required = false) String orderDirection
     );
 }
-
