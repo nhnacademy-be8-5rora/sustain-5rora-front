@@ -8,32 +8,27 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      background-color: #f4f4f4;
+      background-color: #f8f9fa;
     }
 
     .book-container {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .book-card {
-      background-color: #fff;
+      background-color: #ffffff;
       border: 1px solid #ddd;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 900px;
+      border-radius: 10px;
       display: flex;
-      margin: 10px;
+      overflow: hidden;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .book-image {
-      width: 200px;
+      width: 180px;
       height: auto;
-      border-radius: 8px;
-      margin: 20px;
       object-fit: cover;
     }
 
@@ -43,110 +38,113 @@
     }
 
     .book-details h2 {
-      font-size: 24px;
+      font-size: 22px;
       margin-bottom: 10px;
       color: #333;
     }
 
     .book-details p {
-      font-size: 16px;
-      margin: 8px 0;
+      font-size: 14px;
+      margin: 5px 0;
       color: #555;
     }
 
-    .book-details p strong {
-      color: #333;
-    }
-
-    .book-details .price {
-      font-size: 18px;
-      font-weight: bold;
+    .price {
       margin-top: 10px;
     }
 
-    .book-details .price .sale-price {
-      color: red;
+    .price .sale-price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #e60000;
     }
 
-    .book-details .price .regular-price {
+    .price .regular-price {
+      font-size: 14px;
       text-decoration: line-through;
       color: #888;
       margin-left: 10px;
     }
 
-    .book-details .category-list,
-    .book-details .author-list {
+    .star-rating {
       margin-top: 10px;
+      font-size: 16px;
+      color: gold;
     }
 
-    .book-details .category-list li,
-    .book-details .author-list li {
-      list-style-type: none;
-      margin-left: 20px;
-      font-size: 14px;
-      color: #555;
+    .star-rating span:last-child {
+      color: #888; /* 리뷰 수를 회색으로 설정 */
     }
 
-    .book-details .category-list li::before {
-      content: "• ";
-      color: #333;
-    }
-
-    .book-details .image {
-      max-width: 200px;
-      border-radius: 8px;
-    }
-
-    /* 검색 폼 스타일 */
     .search-form {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .search-form label {
-      font-size: 18px;
-      margin-bottom: 10px;
+      align-items: center;
+      gap: 10px;
     }
 
     .search-form input[type="text"] {
       padding: 10px;
       font-size: 16px;
-      margin-bottom: 10px;
-      width: 250px;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 5px;
+      flex-grow: 1;
     }
 
-    .search-form .checkbox-group {
-      display: flex;
-      margin-bottom: 10px;
+    .search-form button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    .search-form .checkbox-group label {
+    .search-form button:hover {
+      background-color: #0056b3;
+    }
+
+    .no-results {
+      text-align: center;
+      font-size: 18px;
+      color: #888;
+      margin-top: 20px;
+    }
+
+    .sort-button {
+      cursor: pointer;
+      color: #007bff;
+      font-size: 16px;
       margin-right: 20px;
+      background: none;
+      border: none;
+      text-decoration: underline;
     }
 
-    /* Responsive Design */
+    .sort-button:hover {
+      color: #0056b3;
+    }
+
     @media (max-width: 768px) {
       .book-card {
         flex-direction: column;
-        align-items: center;
-        max-width: 100%;
       }
 
       .book-image {
         width: 100%;
         height: auto;
-        margin: 0;
       }
 
-      .book-details {
-        padding: 15px;
+      .search-form {
+        flex-direction: column;
       }
 
       .search-form input[type="text"] {
+        width: 100%;
+      }
+
+      .search-form button {
         width: 100%;
       }
     }
@@ -156,61 +154,189 @@
 
 <h1>Book Search Results</h1>
 
-<!-- 검색 폼 -->
-<form class="search-form" method="get" action="/books/search">
-  <div class="checkbox-group">
-    <label>
-      <input type="radio" name="type" value="title" checked> 제목
-    </label>
-    <label>
-      <input type="radio" name="type" value="author"> 작가 이름
-    </label>
-  </div>
-  <input type="text" name="keyword" placeholder="검색어를 입력하세요" required>
-  <input type="hidden" name="pageNum" value="1">
+<form class="search-form" method="get" action="http://5rora-test.com:9080/books/search">
+  <input type="text" name="keyword" id="keyword" placeholder="검색어를 입력하세요" required>
+
+  <!-- type, orderBy, orderDirection, pageNum 쿼리 파라미터 추가 -->
+  <input type="hidden" name="type" value="title" id="type"> <!-- 초기값은 title로 설정 -->
+  <input type="hidden" name="orderBy" value="salePrice" id="orderBy"> <!-- 가격 기준 정렬 -->
+  <input type="hidden" name="orderDirection" value="desc" id="orderDirection"> <!-- 내림차순 정렬 -->
+  <input type="hidden" name="pageNum" value="1"> <!-- 첫 페이지 -->
+
   <button type="submit">검색</button>
 </form>
 
-<!-- books 리스트를 for-each로 반복 -->
-<div th:each="book : ${books}" class="book-container">
-  <div class="book-card">
-    <!-- 책 이미지 -->
-    <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+<!-- 정렬 기준 버튼들 -->
+<div>
+  <button class="sort-button" id="sortByDate" onclick="toggleSort('publishDate')">신상품</button>
+  <button class="sort-button" id="sortByLowestPrice" onclick="toggleSort('salePrice', 'asc')">최저가</button>
+  <button class="sort-button" id="sortByHighestPrice" onclick="toggleSort('salePrice', 'desc')">최고가</button>
+  <!-- 리뷰 수 내림차순 정렬 버튼 추가 -->
+  <button class="sort-button" id="sortByReviews" onclick="toggleSort('reviewCount', 'asc')">리뷰 수</button>
+  <button class="sort-button" id="sortByRating" onclick="toggleSort('reviewRating', 'asc')">평점 내림차순</button>
+</div>
 
-    <!-- 책 정보 -->
+<div>
+  <label><input type="radio" name="searchType" id="searchByTitle" checked> 제목으로 검색</label>
+  <label><input type="radio" name="searchType" id="searchByAuthor"> 저자 이름으로 검색</label>
+</div>
+
+<!-- 검색 결과가 없을 때 표시될 메시지 (라디오 박스 아래로 이동) -->
+<div class="no-results" th:if="${#lists.isEmpty(books)}">
+  <p>검색어 "<span th:text="${keyword}"></span>"에 대한 결과가 없습니다.</p>
+</div>
+
+<div class="book-container" th:each="book : ${books}">
+  <div class="book-card">
+    <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
     <div class="book-details">
       <h2><a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title}"></a></h2>
-      <p><strong>ID:</strong> <span th:text="${book.id}"></span></p>
-      <p><strong>Publisher:</strong> <span th:text="${book.publisherName}"></span></p>
-      <p><strong>Publish Date:</strong> <span th:text="${book.publishDate}"></span></p>
+      <p><strong>출판사:</strong> <span th:text="${book.publisherName}"></span></p>
+      <p><strong>출판일:</strong> <span th:text="${book.publishDate}"></span></p>
 
       <div class="price">
         <span class="sale-price" th:text="${book.salePrice} + '원'"></span>
         <span class="regular-price" th:text="${book.regularPrice} + '원'"></span>
       </div>
 
-      <div class="author-list">
-        <p><strong>Authors:</strong></p>
-        <ul>
-          <!-- authors 리스트를 for-each로 반복 -->
-          <li th:each="author : ${book.authors}" th:text="${author.name}"></li>
-        </ul>
+      <p><strong>저자:</strong>
+        <span th:each="author : ${book.authors}" th:text="${author.name}"></span>
+      </p>
+
+      <p><strong>카테고리:</strong>
+        <span th:each="category : ${book.categoryIdList}" th:text="${category}"></span>
+      </p>
+
+      <div class="star-rating">
+        <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
+        <span th:text="${book.reviewRating}"></span>
+        <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span> <!-- 리뷰 수 추가 -->
       </div>
 
-      <div class="category-list">
-        <p><strong>Categories:</strong></p>
-        <ul>
-          <!-- categoryIdList 리스트를 for-each로 반복 -->
-          <li th:each="categoryId : ${book.categoryIdList}" th:text="${categoryId}"></li>
-        </ul>
+      <!-- 수량 조절 버튼 -->
+      <div class="quantity-container">
+        <button type="button" class="quantity-button" onclick="updateQuantity('${book.id}', -1)">-</button>
+        <label for="quantity-${book.id}"></label><input type="number" id="quantity-${book.id}" class="quantity-input" value="1" min="1" readonly>
+        <button type="button" class="quantity-button" onclick="updateQuantity('${book.id}', 1)">+</button>
       </div>
 
-      <p><strong>View Count:</strong> <span th:text="${book.viewCount}"></span></p>
-      <p><strong>Review Count:</strong> <span th:text="${book.reviewCount}"></span></p>
-      <p><strong>Review Rating:</strong> <span th:text="${book.reviewRating}"></span> / 5</p>
+      <!-- 장바구니에 추가 버튼 -->
+      <button class="add-to-cart-button" onclick="addToCart(bookId)">장바구니에 추가</button>
     </div>
   </div>
 </div>
+
+
+<script>
+  let currentSort = {
+    'publishDate': 'desc',
+    'salePrice': 'desc',
+    'reviewCount' : 'desc',
+    'reviewRating': 'desc'  // 추가된 부분
+  };
+
+  function toggleSort(criteria, direction = null) {
+    const orderBy = document.getElementById('orderBy');
+    const orderDirection = document.getElementById('orderDirection');
+    const keyword = document.querySelector('input[name="keyword"]').value; // 현재 입력된 검색어 가져오기
+
+    // 검색어를 유지한 채로 정렬 기준을 변경
+    orderBy.value = criteria;
+
+    // 정렬 방향 설정
+    if (direction) {
+      orderDirection.value = direction;
+      currentSort[criteria] = direction;
+    } else {
+      if (currentSort[criteria] === 'desc') {
+        orderDirection.value = 'asc';
+        currentSort[criteria] = 'asc';
+      } else {
+        orderDirection.value = 'desc';
+        currentSort[criteria] = 'desc';
+      }
+    }
+
+    // 폼을 다시 제출하여 새 정렬 기준으로 검색
+    const searchForm = document.querySelector('form');
+
+    // 기존의 hidden keyword input 필드를 제거
+    let existingKeywordInput = document.querySelector('input[name="keyword"]');
+    if (existingKeywordInput) {
+      existingKeywordInput.remove();
+    }
+
+    // 새로운 hidden keyword input 필드 추가
+    const keywordInput = document.createElement('input');
+    keywordInput.type = 'hidden';
+    keywordInput.name = 'keyword';
+    keywordInput.value = keyword;
+    searchForm.appendChild(keywordInput);
+
+    // 폼을 다시 제출하여 새 정렬 기준으로 검색
+    searchForm.submit();
+  }
+
+  // 'searchType' 라디오 버튼을 체크했을 때, type 값을 변경
+  document.getElementById('searchByTitle').addEventListener('change', function() {
+    const typeInput = document.getElementById('type');
+    if (this.checked) {
+      typeInput.value = 'title';
+    }
+  });
+
+  document.getElementById('searchByAuthor').addEventListener('change', function() {
+    const typeInput = document.getElementById('type');
+    if (this.checked) {
+      typeInput.value = 'author';
+    }
+  });
+
+  // 수량 업데이트 함수
+  function updateQuantity(bookId, change) {
+    var quantityInput = document.getElementById('quantity-' + bookId);
+
+    if (quantityInput) { // quantityInput이 null이 아닌지 확인
+      var currentQuantity = parseInt(quantityInput.value);
+      currentQuantity += change;
+
+      if (currentQuantity < 1) currentQuantity = 1; // 최소 수량 1로 설정
+
+      quantityInput.value = currentQuantity;
+    } else {
+      console.error('Quantity input element not found');
+    }
+  }
+
+
+  // 장바구니에 추가하는 함수
+  function addToCart(bookId) {
+    const quantity = document.getElementById(`quantity-${bookId}`).value;
+    const url = `/cart?bookId=${encodeURIComponent(bookId)}&quantity=${encodeURIComponent(quantity)}`;
+
+    fetch(url, {
+      method: 'POST',
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert('장바구니에 추가되었습니다.');
+              } else {
+                alert('장바구니 추가 실패');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('장바구니 추가 중 오류가 발생했습니다.');
+            });
+  }
+
+
+
+
+
+
+</script>
 
 </body>
 </html>
