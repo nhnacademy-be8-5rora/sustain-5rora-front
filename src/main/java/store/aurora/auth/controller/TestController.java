@@ -16,7 +16,6 @@ public class TestController {
     @GetMapping("/login-test")
     public String userIdTest(@Auth String username, Model model){
         model.addAttribute("username", username);
-        USER_LOG.error("test error");
         return "login-test";
     }
 
