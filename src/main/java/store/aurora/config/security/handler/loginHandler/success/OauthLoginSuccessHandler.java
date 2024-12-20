@@ -85,13 +85,14 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             log.info("token make fail");
         }
         else {
+            log.info("cookie = {}", optionalCookie.get().getValue());
             response.addCookie(optionalCookie.get());
         }
 
         //4. 필요없어진 액세스토큰과 리프레시 토큰을 만료시킨다?? todo 토론 필요 + 토큰 유효시간 감소 필요성
 
         //todo 로그인 되고 보낼 곳 정하기
-        response.sendRedirect("/login-test");
+        response.sendRedirect("/");
     }
 
     private Optional<SignUpRequest> makeSignUpRequest(String id, OAuth2User user, String registrationId){

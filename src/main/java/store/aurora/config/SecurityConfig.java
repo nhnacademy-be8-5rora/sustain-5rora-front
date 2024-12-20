@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAuthorizationRequestResolver;
@@ -23,7 +24,7 @@ import store.aurora.config.security.handler.logoutHandler.success.CommonLogoutSu
 public class SecurityConfig {
 
     //필터
-    private final CookieToHeaderFilter cookieToHeaderFilter;
+    //private final CookieToHeaderFilter cookieToHeaderFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     //로그인 핸들러
@@ -59,8 +60,8 @@ public class SecurityConfig {
         http.userDetailsService(apiUserDetailsService);
 
         //필터 추가
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(cookieToHeaderFilter, JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
+        //http.addFilterBefore(cookieToHeaderFilter, JwtAuthenticationFilter.class);
 
         //로그인 설정
         http.formLogin(formLogin -> formLogin
