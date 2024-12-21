@@ -1,18 +1,30 @@
 package store.aurora.feignClient;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
+import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.user.dto.response.UserPwdAndRoleResponse;
-import store.aurora.user.dto.response.UserUsernameAndRoleResponse;
+import store.aurora.user.dto.request.SignUpRequest;
 
-@FeignClient(name = "userClient", url = "${api.shop.base-url}" + "/api/users")
+import java.util.Map;
+
+@FeignClient(name = "userClient", url = "${api.gateway.base-url}" + "/api/users")
 public interface UserClient {
 
-    @GetMapping
+    @GetMapping("/auth/details")
     UserPwdAndRoleResponse getPasswordAndRole(@RequestHeader("UserId") String userId);
 
-    @GetMapping         //todo url 정해지지 않음
+    @GetMapping("/auth/me")
     UserUsernameAndRoleResponse getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
+
+    @GetMapping("/auth/exists")
+    ResponseEntity<Boolean> checkUserExists(@RequestHeader("userId") String userId);
+
+    //회원가입
+    @PostMapping
+    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest signUpRequest,
+                               @RequestParam boolean isOauth);
+
 }

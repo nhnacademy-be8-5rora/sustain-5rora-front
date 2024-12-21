@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .info {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 0.5rem 0;
+        }
+        .info strong {
+            color: #0073e6;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>User Information</h1>
+    <p class="info">ID No: <strong th:text="${username}">Default ID</strong></p>
+</div>
+</body>
+</html>
