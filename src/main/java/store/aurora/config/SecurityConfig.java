@@ -49,40 +49,41 @@ public class SecurityConfig {
         );
 
         //인증, 인가 설정
-        http.authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests
-                        .requestMatchers("/", "/login", "/login/process","/logout", "/oauth2-test", "/login/oauth2/code/**", "/signup", "/cart/**").permitAll()  //todo /signup 추가
-                        .anyRequest().authenticated()
-        );
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
+//        http.authorizeHttpRequests(authorizeRequests ->
+//                authorizeRequests
+//                        .requestMatchers("/","/admin/**", "/login", "/login/process","/logout", "/oauth2-test", "/login/oauth2/code/**", "/signup", "/cart/**","/categories/**").permitAll()  //todo /signup 추가
+//                        .anyRequest().authenticated()
+//        );
 
-        //daoAuthenticationProvider설정
-        http.userDetailsService(apiUserDetailsService);
+////        daoAuthenticationProvider설정
+//          http.userDetailsService(apiUserDetailsService);
+//
+//        //필터 추가
+//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(cookieToHeaderFilter, JwtAuthenticationFilter.class);
 
-        //필터 추가
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(cookieToHeaderFilter, JwtAuthenticationFilter.class);
-
-        //로그인 설정
-        http.formLogin(formLogin -> formLogin
-                .loginPage("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .loginProcessingUrl("/login/process")
-                .successHandler(formLoginSuccessHandler)
-                .failureUrl("/login")
-        ).oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
-                .authorizationEndpoint(authorization -> authorization.authorizationRequestResolver(customAuthorizationRequestResolver))
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
-                .tokenEndpoint(token -> token.accessTokenResponseClient(customAccessTokenResponseClient))
-                .successHandler(oauthLoginSuccessHandler)
-        );
-
-        //로그아웃 설정
-        http.logout(formLogout -> formLogout
-                .logoutUrl("/logout")
-                .logoutSuccessHandler(commonLogoutSuccessHandler)
-        );
+//        //로그인 설정
+//        http.formLogin(formLogin -> formLogin
+//                .loginPage("/login")
+//                .usernameParameter("username")
+//                .passwordParameter("password")
+//                .loginProcessingUrl("/login/process")
+//                .successHandler(formLoginSuccessHandler)
+//                .failureUrl("/login")
+//        ).oauth2Login(oauth2 -> oauth2
+//                .loginPage("/login")
+//                .authorizationEndpoint(authorization -> authorization.authorizationRequestResolver(customAuthorizationRequestResolver))
+//                .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
+//                .tokenEndpoint(token -> token.accessTokenResponseClient(customAccessTokenResponseClient))
+//                .successHandler(oauthLoginSuccessHandler)
+//        );
+//
+//        //로그아웃 설정
+//        http.logout(formLogout -> formLogout
+//                .logoutUrl("/logout")
+//                .logoutSuccessHandler(commonLogoutSuccessHandler)
+//        );
 
         //예외처리 todo
 //        http.exceptionHandling(exception -> exception

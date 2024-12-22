@@ -26,11 +26,13 @@ logging:
   level:
     root: info
 
+#api:
+#  gateway:
+#    base-url: localhost:8082
+
 api:
   gateway:
-    base-url: localhost:8082
-
-
+    base-url: http://localhost:8083
 
 
 #  shop:            ##테스트 용도

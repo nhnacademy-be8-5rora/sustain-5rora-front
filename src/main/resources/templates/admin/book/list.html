@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Management</title>
+</head>
+<body>
+<h1>Book Management</h1>
+<a href="/books/new">Add New Book</a>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Regular Price</th>
+        <th>Sale Price</th>
+        <th>Stock</th>
+        <th>Is Sale</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}"></td>
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.regularPrice}"></td>
+        <td th:text="${book.salePrice}"></td>
+        <td th:text="${book.stock}"></td>
+        <td th:text="${book.isSale ? 'Yes' : 'No'}"></td>
+        <td>
+            <a th:href="'/books/' + ${book.id} + '/edit-details'">Edit Details</a> |
+            <a th:href="'/books/' + ${book.id} + '/edit-sales-info'">Edit Sales Info</a> |
+            <a th:href="'/books/' + ${book.id} + '/update-packaging?packaging=true'">Mark Packaged</a> |
+            <a th:href="'/books/' + ${book.id} + '/update-packaging?packaging=false'">Mark Not Packaged</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

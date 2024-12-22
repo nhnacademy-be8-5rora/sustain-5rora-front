@@ -1,5 +1,6 @@
 package store.aurora.book.dto.category;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryResponseDTO {
-    private Long id;
-    private String name;
-    private Long parentId;
-    private String parentName;
-    private Integer depth;
-    private Integer displayOrder;
+public class CategoryUpdateRequestDTO {
+        @NotBlank
+        private String name;
 }

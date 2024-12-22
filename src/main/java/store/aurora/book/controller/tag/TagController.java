@@ -20,25 +20,25 @@ public class TagController {
     @PostMapping
     public String createTag(@Valid @RequestBody TagRequestDto tagRequestDto) {
         tagClient.createTag(tagRequestDto);
-        return "";
+        return "index";
     }
 
     @DeleteMapping("/{tagId}")
     public String removeTage(@PathVariable Long tagId) {
         tagClient.removeTag(tagId);
-        return "";
+        return "index";
     }
 
     @PostMapping("/book-tag/")
     public String addBookTag(@RequestBody BookTagRequestDto requestDto) {
         tagClient.addBookTag(requestDto);
-        return "";
+        return "index";
     }
 
     @DeleteMapping("/book-tag/{bookTagId}")
     public String removeBookTag(@PathVariable Long bookTagId) {
         tagClient.removeBookTag(bookTagId);
-        return "";
+        return "index";
     }
 
 }

@@ -18,6 +18,7 @@ public class CookieToHeaderFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         Optional<String> cookieValue = getCookieValue(request);
 
         cookieValue.ifPresent(s -> response.setHeader(SecurityConstants.AUTHORIZATION_HEADER, SecurityConstants.BEARER_TOKEN_PREFIX + s));

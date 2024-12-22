@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>책 등록</title>
+</head>
+<body>
+<h1>책 등록</h1>
+<form action="/books/create" method="post">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" th:value="${book.title}" required><br>
+
+    <label for="regularPrice">Regular Price:</label>
+    <input type="number" id="regularPrice" name="regularPrice" th:value="${book.regularPrice}" required><br>
+
+    <label for="salePrice">Sale Price:</label>
+    <input type="number" id="salePrice" name="salePrice" th:value="${book.salePrice}" required><br>
+
+    <label for="stock">Stock:</label>
+    <input type="number" id="stock" name="stock" th:value="${book.stock}"><br>
+
+    <label for="isSale">Is Sale:</label>
+    <input type="checkbox" id="isSale" name="isSale" th:checked="${book.isSale}"><br>
+
+    <label for="publisherName">Publisher Name:</label>
+    <input type="text" id="publisherName" name="publisherName" th:value="${book.publisherName}" required><br>
+
+    <label for="seriesName">Series Name:</label>
+    <input type="text" id="seriesName" name="seriesName" th:value="${book.seriesName}"><br>
+
+    <label for="contents">Contents:</label>
+    <textarea id="contents" name="contents" th:text="${book.contents}"></textarea><br>
+
+    <label for="explanation">Explanation:</label>
+    <textarea id="explanation" name="explanation" th:text="${book.explanation}" required></textarea><br>
+
+    <label for="isbn">ISBN:</label>
+    <input type="text" id="isbn" name="isbn" th:value="${book.isbn}" required><br>
+
+    <label for="publishDate">Publish Date:</label>
+    <input type="date" id="publishDate" name="publishDate" th:value="${book.publishDate}" required><br>
+
+    <!-- 카테고리 선택 -->
+    <label for="categoryIds">Category:</label>
+    <select id="categoryIds" name="categoryIds" multiple required>
+        <option th:each="category : ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}"></option>
+    </select>
+    <small>Choose 1 to 10 categories</small><br>
+
+    <!-- 태그 선택 -->
+<!--    <label for="tagIds">Tags:</label>-->
+<!--    <input type="text" id="tagIds" name="tagIds" th:value="${book.tagIds}" placeholder="Comma-separated tag IDs"><br>-->
+
+    <button type="submit">Save</button>
+</form>
+<a href="/books">Back to List</a>
+</body>
+</html>
