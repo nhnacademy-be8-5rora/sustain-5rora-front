@@ -16,13 +16,12 @@ public class TestController {
     @GetMapping("/login-test")
     public String userIdTest(@Auth String username, Model model){
         model.addAttribute("username", username);
-        USER_LOG.error("test error");
         return "login-test";
     }
 
     @GetMapping("/")
     public String indexTest(){
-        USER_LOG.error("5rora send error test");
+        USER_LOG.error("5rora log send success!!!");
         return "index";
     }
 }

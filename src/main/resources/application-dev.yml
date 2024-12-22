@@ -1,5 +1,5 @@
 server:
-  port: 9080
+  port: 8080
   shutdown: graceful
 
 spring:
@@ -10,9 +10,9 @@ spring:
       client:
         registration:
           payco:
-            client-id: ${PAYCO_CLIENT_ID}     #실행시에 넣어줄것
+            client-id: ${PAYCO_CLIENT_ID} #실행시에 넣어줄것
             client-secret: ${PAYCO_CLIENT_SECRET} #실행시에 넣어줄것
-            redirect-uri: http://5rora-test.com:9080/login/oauth2/code/payco
+            redirect-uri: http://5rora-test.com:8080/login/oauth2/code/payco
             authorization-grant-type: authorization_code
             client-name: payco
         provider:
@@ -26,16 +26,6 @@ logging:
   level:
     root: info
 
-#api:
-#  gateway:
-#    base-url: localhost:8082
-
 api:
   gateway:
-    base-url: http://localhost:8083
-
-
-#  shop:            ##테스트 용도
-#    base-url: localhost:9083
-#  authentication:
-#    base-url: localhost:8081
+    base-url: localhost:8180

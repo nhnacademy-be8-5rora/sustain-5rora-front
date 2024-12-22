@@ -13,14 +13,13 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
-@Component
+//@Component
 public class CookieToHeaderFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         Optional<String> cookieValue = getCookieValue(request);
-
         cookieValue.ifPresent(s -> response.setHeader(SecurityConstants.AUTHORIZATION_HEADER, SecurityConstants.BEARER_TOKEN_PREFIX + s));
 
         filterChain.doFilter(request, response);

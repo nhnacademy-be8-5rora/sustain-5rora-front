@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -43,11 +44,11 @@ public class FormLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
 
     private Optional<Cookie> jwtOven(String id){
         try{
-            String jwtToken = authClient.getJwtToken(new JwtRequestDto(id));
-            if(isNullOrBlank(jwtToken)){
+            ResponseEntity<String> jwtToken = authClient.getJwtToken(new JwtRequestDto(id));
+            if(!jwtToken.getStatusCode().is2xxSuccessful() || isNullOrBlank(jwtToken.getBody())){
                 return Optional.empty();
             }
-            Cookie cookie = new Cookie(SecurityConstants.TOKEN_COOKIE_NAME, jwtToken);
+            Cookie cookie = new Cookie(SecurityConstants.TOKEN_COOKIE_NAME, jwtToken.getBody());
             cookie.setPath("/");
             cookie.setMaxAge(60 * 60);
 
