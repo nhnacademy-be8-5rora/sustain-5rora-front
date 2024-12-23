@@ -14,7 +14,6 @@ import store.aurora.feignClient.CartClient;
 
 import java.util.Map;
 
-@Slf4j
 @Controller
 @RequestMapping("/cart")
 @AllArgsConstructor
@@ -24,10 +23,8 @@ public class CartController {
     @GetMapping
     public String getCartPage(Model model) {
         ResponseEntity<Map<String, Object>> response = cartClient.getCart();
-        log.warn("getCartPage");
         Map<String, Object> cartData = response.getBody();
         model.addAttribute("cart", cartData);
-
         return "cart";
     }
 

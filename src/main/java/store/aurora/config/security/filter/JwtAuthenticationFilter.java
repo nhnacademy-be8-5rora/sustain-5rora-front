@@ -1,11 +1,16 @@
 package store.aurora.config.security.filter;
 
+import feign.FeignException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +31,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final Logger log = LoggerFactory.getLogger("user-logger");
+
     private final UserClient userClient;
 
     @Override
@@ -38,21 +45,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         //토큰을 가지고 api 호출
-        UserUsernameAndRoleResponse usernameAndRole = userClient.getUsernameAndRole(SecurityConstants.BEARER_TOKEN_PREFIX + jwtToken.get()); //todo http status code로 판단하기
-
-        SecurityContextHolder.getContext().setAuthentication(makeAuthentication(usernameAndRole));
-
-        filterChain.doFilter(request, response);
-    }
-
-    private Optional<String> getJwtToken(HttpServletRequest request){
-        String authHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
-
-        if(StringUtils.hasText(authHeader) && authHeader.startsWith(SecurityConstants.BEARER_TOKEN_PREFIX)){
-            return Optional.of(authHeader);
+        ResponseEntity<UserUsernameAndRoleResponse> usernameAndRole = null;
+        try{
+            usernameAndRole = userClient.getUsernameAndRole(SecurityConstants.BEARER_TOKEN_PREFIX + jwtToken.get());
+        }catch (FeignException e){
+            log.error("통신 실패 message={}", e.getMessage());
+            response.sendRedirect("/login");  //todo 에러 페이지 보내기?
+            return;
         }
 
-        return Optional.empty();
+        if(Objects.isNull(usernameAndRole)){
+            log.error("usernameAndRole is null");
+            response.sendRedirect("/login"); //todo 에러 페이지 보내기?
+            return;
+        }
+
+        //todo 상태코드에 따른 처리
+        HttpStatusCode statusCode = usernameAndRole.getStatusCode();
+        if(statusCode.isSameCodeAs(HttpStatusCode.valueOf(404))){
+            log.info("not found user:{}", SecurityConstants.BEARER_TOKEN_PREFIX + jwtToken.get());
+            filterChain.doFilter(request, response);
+            return;
+        }
+        else if (statusCode.is4xxClientError() || statusCode.is5xxServerError()) {
+            log.info("status code={}", statusCode.value());
+            response.sendRedirect("/login");   //todo 에러 페이지 보내기?
+            return;
+        }
+
+        SecurityContextHolder.getContext().setAuthentication(makeAuthentication(usernameAndRole.getBody()));
+
+        filterChain.doFilter(request, response);
     }
 
     private UsernamePasswordAuthenticationToken makeAuthentication(UserUsernameAndRoleResponse usernameAndRole){
