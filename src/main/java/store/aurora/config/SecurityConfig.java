@@ -4,16 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAuthorizationRequestResolver;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAccessTokenResponseClient;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomOauth2UserService;
-import store.aurora.config.security.filter.CookieToHeaderFilter;
 import store.aurora.config.security.filter.JwtAuthenticationFilter;
 import store.aurora.config.security.handler.loginHandler.success.FormLoginSuccessHandler;
 import store.aurora.config.security.handler.loginHandler.success.OauthLoginSuccessHandler;
@@ -21,10 +20,10 @@ import store.aurora.config.security.handler.logoutHandler.success.CommonLogoutSu
 
 @Configuration
 @RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig {
 
     //필터
-    //private final CookieToHeaderFilter cookieToHeaderFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     //로그인 핸들러
@@ -61,7 +60,6 @@ public class SecurityConfig {
 
         //필터 추가
         http.addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
-        //http.addFilterBefore(cookieToHeaderFilter, JwtAuthenticationFilter.class);
 
         //로그인 설정
         http.formLogin(formLogin -> formLogin

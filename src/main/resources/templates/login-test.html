@@ -33,12 +33,28 @@
         .info strong {
             color: #0073e6;
         }
+        .logout-btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: white;
+            background-color: #0073e6;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background-color: #005bb5;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>User Information</h1>
     <p class="info">ID No: <strong th:text="${username}">Default ID</strong></p>
+    <a href="/logout" class="logout-btn">Logout</a>
 </div>
 </body>
 </html>
