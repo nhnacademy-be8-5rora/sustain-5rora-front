@@ -19,7 +19,7 @@ public class SearchController {
 
     private final BookSearchClient bookSearchClient;
 
-    // 디버그용 요청 예시: http://localhost:8083/api/books/search?type=title&keyword=한강&pageNum=1&orderBy=salePrice&orderDirection=desc
+    // 디버그용 요청 예시: http://5rora-test:8080/books/search?type=title&keyword=한강&pageNum=1&orderBy=salePrice&orderDirection=desc
     @GetMapping("/books/search")
     public String search(
             @RequestParam(required = false) String keyword,
@@ -30,6 +30,16 @@ public class SearchController {
             Model model) {
 
         try {
+            // orderBy가 null이면 "title"로 설정
+            if (orderBy == null) {
+                orderBy = "title";
+            }
+
+            // orderDirection이 null이면 "asc"로 설정
+            if (orderDirection == null) {
+                orderDirection = "asc";
+            }
+
             // keyword 인코딩
             String encodedKeyword = URLEncoder.encode(keyword, "UTF-8");
 
