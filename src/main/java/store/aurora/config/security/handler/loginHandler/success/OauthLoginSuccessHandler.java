@@ -83,6 +83,8 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         Optional<Cookie> optionalCookie = jwtOven(id);
         if(optionalCookie.isEmpty()){
             log.info("token make fail");
+            response.sendRedirect("/login");
+            return;
         }
         else {
             log.info("cookie = {}", optionalCookie.get().getValue());

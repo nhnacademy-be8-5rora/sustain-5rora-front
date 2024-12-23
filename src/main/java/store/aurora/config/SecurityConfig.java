@@ -52,7 +52,7 @@ public class SecurityConfig {
         //인증, 인가 설정
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .requestMatchers("/", "/login", "/login/process","/logout", "/oauth2-test", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**").permitAll()  //todo /signup 추가
+                        .requestMatchers("/", "/login", "/login/process","/logout", "/login-test", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**").permitAll()
                         .anyRequest().authenticated()
         );
 
