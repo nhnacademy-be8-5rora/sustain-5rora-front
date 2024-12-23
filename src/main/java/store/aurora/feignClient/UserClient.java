@@ -14,10 +14,10 @@ import java.util.Map;
 public interface UserClient {
 
     @GetMapping("/auth/details")
-    UserPwdAndRoleResponse getPasswordAndRole(@RequestHeader("UserId") String userId);
+    ResponseEntity<UserPwdAndRoleResponse> getPasswordAndRole(@RequestHeader("UserId") String userId);
 
     @GetMapping("/auth/me")
-    UserUsernameAndRoleResponse getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
+    ResponseEntity<UserUsernameAndRoleResponse> getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @GetMapping("/auth/exists")
     ResponseEntity<Boolean> checkUserExists(@RequestHeader("userId") String userId);
