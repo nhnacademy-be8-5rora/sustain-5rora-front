@@ -1,5 +1,6 @@
 package store.aurora.config.security.handler.loginHandler.success;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,6 +68,11 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             }
             log.info("회원가입 정보:{}", optionalDto.get());
             ResponseEntity<Map<String, String>> responseEntity = userClient.signUp(optionalDto.get(), true);
+
+//            Map<String, String> result = userClient.signUp(optionalDto.get(), true);
+            SignUpRequest signUpRequest = optionalDto.get();
+            ResponseEntity<Map<String, String>> mapResponseEntity = userClient.signUp(signUpRequest, true);
+            Map<String, String> result = mapResponseEntity.getBody();
 
             if(responseEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201))){ //todo 201 상수로 변경
                 log.info("signup success:{}", responseEntity.getBody().get("message"));
