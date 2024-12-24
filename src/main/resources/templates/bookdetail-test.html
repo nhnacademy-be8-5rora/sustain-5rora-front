@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Book Details</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h1>Book Details</h1>
+
+    <!-- 기본 정보 -->
+    <section>
+        <h2 th:text="'Title: ' + ${bookInfo.title}"></h2>
+        <p><strong>ISBN:</strong> <span th:text="${bookInfo.isbn}"></span></p>
+        <p><strong>Regular Price:</strong> <span th:text="${bookInfo.regularPrice}"></span> KRW</p>
+        <p><strong>Sale Price:</strong> <span th:text="${bookInfo.salePrice}"></span> KRW</p>
+        <p><strong>Explanation:</strong> <span th:text="${bookInfo.explanation}"></span></p>
+        <p><strong>Contents:</strong> <span th:text="${bookInfo.contents}"></span></p>
+        <p><strong>Publish Date:</strong> <span th:text="${bookInfo.publishDate}"></span></p>
+    </section>
+
+    <!-- 출판사 정보 -->
+    <section>
+        <h3>Publisher</h3>
+        <p th:text="${bookInfo.publisher.name}"></p>
+    </section>
+
+    <!-- 카테고리 경로 -->
+    <section>
+        <h3>Category Path</h3>
+        <ul>
+            <li th:each="category : ${bookInfo.categoryPath}">
+                <span th:text="${category.name}"></span>
+                <ul>
+                    <li th:each="child : ${category.children}">
+                        <span th:text="${category.name + ' > ' + child.name}"></span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 태그 목록 -->
+    <section>
+        <h3>Tags</h3>
+        <ul>
+            <li th:each="tag : ${bookInfo.tagNames}" th:text="${tag}"></li>
+        </ul>
+    </section>
+
+    <!-- 이미지 갤러리 -->
+    <section>
+        <h3>Book Images</h3>
+        <div th:each="image : ${bookInfo.bookImages}">
+            <img th:src="@{${image.bookImagePath}}" alt="Book Image" style="max-width: 200px;"/>
+        </div>
+    </section>
+
+    <!-- 리뷰 섹션 -->
+    <section>
+        <h3>Reviews</h3>
+        <div th:each="review : ${bookInfo.reviews}">
+            <p><strong>Reviewer:</strong> <span th:text="${review.userName}"></span></p>
+            <p><strong>Rating:</strong> <span th:text="${review.reviewRating}"></span>/5</p>
+            <p><strong>Content:</strong> <span th:text="${review.reviewContent}"></span></p>
+            <p><strong>Created At:</strong> <span th:text="${review.reviewCreatedAt}"></span></p>
+            <div th:each="image : ${review.reviewImages}">
+                <img th:src="@{${image}}" alt="Review Image" style="max-width: 100px;"/>
+            </div>
+        </div>
+    </section>
+
+    <!-- 좋아요 개수 -->
+    <section>
+        <h3>Likes</h3>
+        <p th:text="'Like Count: ' + ${bookInfo.likeCount}"></p>
+    </section>
+
+    <!-- 평점 -->
+    <section>
+        <h3>Average Rating</h3>
+        <p th:text="${bookInfo.rating} + '/5'"></p>
+    </section>
+</div>
+</body>
+</html>

@@ -1,11 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Page</title>
+<!--    <title th:insert="${pageTitle} ?: 'Aurora Online Bookstore'">Aurora Online Bookstore</title>-->
+    <style>
+        /* 기본 레이아웃 스타일 */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+            padding: 15px 20px;
+        }
+        nav {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        main {
+            padding: 20px;
+            min-height: 70vh;
+        }
+        footer {
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
-<h1>Hello 5rora</h1>
+<header>
+    <h1>Aurora Online Bookstore</h1>
+</header>
+<nav>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/books}">Books</a>
+    <a th:href="@{/about}">About</a>
+    <a th:href="@{/contact}">Contact</a>
+</nav>
+<main>
+    <!-- 이 부분에 개별 페이지 내용이 삽입됨 -->
+    <div th:replace="${content}"></div>
+</main>
+<footer>
+    <p>&copy; 2024 Aurora Online Bookstore. All rights reserved.</p>
+</footer>
 </body>
 </html>

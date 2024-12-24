@@ -24,7 +24,7 @@ public interface UserClient {
 
     //회원가입
     @PostMapping
-    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest signUpRequest,
-                               @RequestParam boolean isOauth);
+    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest request,
+                                               @RequestParam boolean isOauth);
 
 }
