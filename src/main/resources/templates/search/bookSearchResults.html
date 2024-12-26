@@ -151,6 +151,8 @@
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <section class="py-5">
 
 <h1>Book Search Results</h1>
 <form class="search-form" method="get" action="http://5rora-test.com:8080/books/search">
@@ -204,12 +206,6 @@
         </span>
       </p>
 
-      <p><strong>카테고리:</strong>
-        <span th:each="category, iterStat : ${book.categoryIdList}" th:text="${category}">
-          <span th:if="${iterStat.index < book.categoryIdList.size() - 1}">, </span>
-        </span>
-      </p>
-
       <div class="star-rating">
         <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
         <span th:text="${book.reviewRating}"></span>
@@ -226,7 +222,8 @@
   </div>
 </div>
 
-
+  </section>
+</div>
 
 </body>
 </html>
