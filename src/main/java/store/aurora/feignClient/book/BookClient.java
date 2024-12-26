@@ -33,10 +33,6 @@ public interface BookClient {
     @GetMapping("/{bookId}")
     ResponseEntity<BookDetailsDto> getBookDetails(@PathVariable("bookId") Long bookId);
 
-    // 모든 책 조회 (페이지네이션)
-    @GetMapping
-    ResponseEntity<List<BookResponseDTO>> getBooks(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                   @RequestParam(value = "size", defaultValue = "10") int size);
 
     // 책 삭제
     @DeleteMapping("/{bookId}")

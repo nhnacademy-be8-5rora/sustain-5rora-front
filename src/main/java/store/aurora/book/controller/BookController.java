@@ -21,16 +21,6 @@ public class BookController {
     private final BookClient bookClient;
     private final CategoryClient categoryClient;
 
-    // 책 목록 조회
-    @GetMapping
-    public String getBooks(@RequestParam(value = "page", defaultValue = "0") int page,
-                           @RequestParam(value = "size", defaultValue = "10") int size,
-                           Model model) {
-        ResponseEntity<List<BookResponseDTO>> response = bookClient.getBooks(page, size);
-        model.addAttribute("books", response.getBody());
-        return "admin/book/list"; // 뷰 이름 (예: book/list.html)
-    }
-
     // 책 상세 조회
 //    @GetMapping("/{bookId}")
 //    public String getBookDetails(@PathVariable Long bookId, Model model) {
@@ -38,13 +28,19 @@ public class BookController {
 //        model.addAttribute("book", response.getBody());
 //        return "book/details"; // 뷰 이름 (예: book/details.html)
 //    }
-
+    @GetMapping
+    public String listBooks(Model model) {
+        // Book 리스트를 조회 (FeignClient를 활용해 데이터 가져오기)
+//        List<BookResponseDTO> books = bookClient.getBooks(); // 이 메서드가 정의되어야 합니다.
+//        model.addAttribute("books", books);
+        return "admin/book/list"; // books 리스트를 보여줄 HTML 뷰 이름
+    }
     // 책 생성 폼 페이지
     @GetMapping("/create")
     public String createBookForm(Model model) {
         model.addAttribute("book", new BookRequestDTO());
-        List<CategoryResponseDTO> categories = categoryClient.getAllCategories().getBody();
-        model.addAttribute("categories", categories);
+//        List<CategoryResponseDTO> categories = categoryClient.getAllCategories().getBody();
+//        model.addAttribute("categories", categories);
         return "admin/book/form"; // 뷰 이름 (예: book/form.html)
     }
 
@@ -64,16 +60,16 @@ public class BookController {
     }
 
     // 책 판매 정보 수정 폼 페이지
-    @GetMapping("/{bookId}/edit-sales-info")
-    public String editBookSalesInfoForm(@PathVariable Long bookId, Model model) {
-        BookResponseDTO book = bookClient.getBooks(0, 1).getBody().stream()
-                .filter(b -> b.getId().equals(bookId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        model.addAttribute("bookSalesInfoUpdateDTO", new BookSalesInfoUpdateDTO());
-        model.addAttribute("book", book);
-        return "admin/book/edit-sales-info"; // 판매 정보 수정 페이지 뷰
-    }
+//    @GetMapping("/{bookId}/edit-sales-info")
+//    public String editBookSalesInfoForm(@PathVariable Long bookId, Model model) {
+//        BookResponseDTO book = bookClient.getBooks(0, 1).getBody().stream()
+//                .filter(b -> b.getId().equals(bookId))
+//                .findFirst()
+//                .orElseThrow(() -> new RuntimeException("Book not found"));
+//        model.addAttribute("bookSalesInfoUpdateDTO", new BookSalesInfoUpdateDTO());
+//        model.addAttribute("book", book);
+//        return "admin/book/edit-sales-info"; // 판매 정보 수정 페이지 뷰
+//    }
 
     // 책 판매 정보 수정 처리
     @PostMapping("/{bookId}/edit-sales-info")

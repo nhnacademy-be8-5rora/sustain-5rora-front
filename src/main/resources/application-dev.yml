@@ -26,6 +26,7 @@ logging:
   level:
     root: info
 
+
 api:
   gateway:
     base-url: localhost:8180
