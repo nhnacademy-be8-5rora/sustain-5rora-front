@@ -60,14 +60,18 @@
                         <div class="action-menu">
 
                             <div class="search-bar">
+                                <!-- 검색 아이콘 -->
                                 <a href="#" class="search-button search-toggle" data-selector="#header-wrap">
                                     <i class="icon icon-search"></i>
                                 </a>
-                                <form role="search" method="get" class="search-box">
-                                    <input class="search-field text search-input" placeholder="Search"
-                                           type="search">
+                                <!-- 검색 폼 -->
+                                <form role="search" method="get" class="search-box" action="/books/search">
+                                    <input class="search-field text search-input" placeholder="Search" type="search" name="keyword">
+                                    <input type="hidden" name="type" value="title">
+                                    <input type="hidden" name="pageNum" value="1">
                                 </form>
                             </div>
+
                         </div>
 
                     </div><!--top-right-->
@@ -94,9 +98,22 @@
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
                                 <li class="menu-item active"><a href="#home">Home</a></li>
+                                <!-- 카테고리 메뉴 추가 -->
+                                <li class="menu-item has-sub" id="categoryMenu">
+                                    <a href="#" class="nav-link">Categories</a>
+                                    <ul id="categoryList" style="display: none;"> <!-- 초기에는 숨김 상태로 설정 -->
+                                        <li th:each="category : ${categories}" data-id="${category.id}" onmouseover="loadCategoryData(category.id)">
+                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}" th:text="${category.name}"></a>
+                                        </li>
+
+
+                                    </ul>
+                                </li>
+
+
+
                                 <li class="menu-item has-sub">
                                     <a href="#pages" class="nav-link">Pages</a>
-
                                     <ul>
                                         <li class="active"><a href="index.html">Home</a></li>
                                         <li><a href="index.html">About</a></li>
@@ -108,7 +125,6 @@
                                         <li><a href="index.html">Contact</a></li>
                                         <li><a href="index.html">Thank You</a></li>
                                     </ul>
-
                                 </li>
                                 <li class="menu-item"><a href="#featured-books" class="nav-link">Featured</a></li>
                                 <li class="menu-item"><a href="#popular-books" class="nav-link">Popular</a></li>
@@ -122,7 +138,6 @@
                                 <span class="bar"></span>
                                 <span class="bar"></span>
                             </div>
-
                         </div>
                     </nav>
 
@@ -297,6 +312,72 @@
         crossorigin="anonymous"></script>
 <script src="js/plugins.js"></script>
 <script src="js/script.js"></script>
+
+<script>
+    document.getElementById("categoryMenu").addEventListener("click", function(event) {
+        // 클릭한 대상이 <a> 요소인지 확인
+        if (event.target.tagName.toLowerCase() === 'a') {
+            var categoryId = event.target.closest('li').dataset.id;
+            loadCategoryData(categoryId); // 해당 카테고리 데이터를 불러옵니다.
+
+            // 서브 메뉴 토글 (열기/닫기)
+            var subMenu = event.target.closest('li').querySelector('ul');
+            if (subMenu) {
+                subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+    });
+
+    let cachedCategories = {};
+
+    function loadCategoryData(categoryId) {
+        if (cachedCategories[categoryId]) {
+            updateCategoryList(categoryId, cachedCategories[categoryId]);
+            return;
+        }
+
+        fetch('/api/categories/' + categoryId)
+            .then(response => response.json())
+            .then(data => {
+                cachedCategories[categoryId] = data;
+                updateCategoryList(categoryId, data);
+            })
+            .catch(error => console.error('Error fetching category data:', error));
+    }
+
+    function updateCategoryList(categoryId, categories) {
+        const parentCategory = document.querySelector(`[data-id='${categoryId}']`);
+        let subCategoryList = parentCategory.querySelector('ul');
+
+        if (!subCategoryList) {
+            subCategoryList = document.createElement('ul');
+            parentCategory.appendChild(subCategoryList);
+        }
+
+        subCategoryList.innerHTML = ''; // 기존 하위 카테고리 비우기
+
+        categories.forEach(category => {
+            const li = document.createElement('li');
+            li.classList.add('menu-item');
+            li.setAttribute('data-id', category.id);
+
+            const a = document.createElement('a');
+            // category.id를 keyword 파라미터로 추가하여 search 페이지로 이동
+            a.href = `/books/search?type=category&keyword=${category.id}&pageNum=1&orderBy=salePrice&orderDirection=desc`;
+            a.textContent = category.name;
+
+            li.appendChild(a);
+            subCategoryList.appendChild(li);
+
+            // 자식 카테고리 클릭 시 하위 카테고리 로드
+            li.addEventListener("click", function(event) {
+                event.stopPropagation(); // 부모 메뉴 클릭 이벤트 전파 방지
+                loadCategoryData(category.id); // 해당 카테고리의 하위 카테고리 로드
+            });
+        });
+    }
+
+</script>
 
 </body>
 
