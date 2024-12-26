@@ -154,7 +154,7 @@
 
 <h1>Book Search Results</h1>
 
-<form class="search-form" method="get" action="http://5rora-test.com:9080/books/search">
+<form class="search-form" method="get" action="http://5rora-test.com:8080/books/search">
   <input type="text" name="keyword" id="keyword" placeholder="검색어를 입력하세요" required>
 
   <!-- type, orderBy, orderDirection, pageNum 쿼리 파라미터 추가 -->
@@ -210,21 +210,25 @@
       <div class="star-rating">
         <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
         <span th:text="${book.reviewRating}"></span>
-        <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span> <!-- 리뷰 수 추가 -->
+        <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span>
       </div>
 
       <!-- 수량 조절 버튼 -->
       <div class="quantity-container">
-        <button type="button" class="quantity-button" onclick="updateQuantity('${book.id}', -1)">-</button>
-        <label for="quantity-${book.id}"></label><input type="number" id="quantity-${book.id}" class="quantity-input" value="1" min="1" readonly>
-        <button type="button" class="quantity-button" onclick="updateQuantity('${book.id}', 1)">+</button>
+        <button type="button" class="quantity-button" th:onclick="'updateQuantity(' + ${book.id} + ', -1)'">-</button>
+        <label th:for="'quantity-' + ${book.id}"></label>
+        <input type="number" th:id="'quantity-' + ${book.id}" name="quantity" value="1" min="1">
+        <button type="button" class="quantity-button" th:onclick="'updateQuantity(' + ${book.id} + ', 1)'">+</button>
       </div>
 
+
+
       <!-- 장바구니에 추가 버튼 -->
-      <button class="add-to-cart-button" onclick="addToCart(bookId)">장바구니에 추가</button>
+      <button class="add-to-cart-button" th:attr="data-book-id=${book.id}" onclick="addToCart(this)">장바구니에 추가</button>
     </div>
   </div>
 </div>
+
 
 
 <script>
@@ -294,34 +298,98 @@
 
   // 수량 업데이트 함수
   function updateQuantity(bookId, change) {
+    // bookId를 이용해 quantity input 요소를 찾기
     var quantityInput = document.getElementById('quantity-' + bookId);
-
-    if (quantityInput) { // quantityInput이 null이 아닌지 확인
-      var currentQuantity = parseInt(quantityInput.value);
-      currentQuantity += change;
-
-      if (currentQuantity < 1) currentQuantity = 1; // 최소 수량 1로 설정
-
-      quantityInput.value = currentQuantity;
-    } else {
-      console.error('Quantity input element not found');
+    console.log('updateQuantity : quantityInput =',quantityInput)
+    // quantityInput이 null인지 확인
+    if (!quantityInput) {
+      console.error('Quantity input element not found for bookId:', bookId);
+      return;
     }
+
+    var currentQuantity = parseInt(quantityInput.value);
+
+    // 수량이 정상적으로 파싱되었는지 확인
+    if (isNaN(currentQuantity)) {
+      console.error('Invalid quantity value for bookId:', bookId);
+      return;
+    }
+
+    // 수량 변경
+    currentQuantity += change;
+
+    // 최소 수량 1로 설정
+    if (currentQuantity < 1) currentQuantity = 1;
+
+    // 변경된 수량을 input에 반영
+    quantityInput.value = currentQuantity;
   }
 
 
-  // 장바구니에 추가하는 함수
-  function addToCart(bookId) {
-    const quantity = document.getElementById(`quantity-${bookId}`).value;
-    const url = `/cart?bookId=${encodeURIComponent(bookId)}&quantity=${encodeURIComponent(quantity)}`;
+  function addToCart(button) {
+    const bookId = button.getAttribute('data-book-id');  // data-book-id 속성에서 book.id를 가져옴
+    console.log("bookId 확인 ", bookId);
+    const quantityInput = document.getElementById(`quantity-${bookId}`);
+    console.log("quantityInput:", quantityInput);
 
+    // quantityInput이 존재하는지 확인
+    if (!quantityInput) {
+      console.error('Quantity input element not found for bookId:', bookId);
+      alert('수량 입력 필드가 없습니다. 다시 시도해 주세요.');
+      return;
+    }
+
+    const quantity = quantityInput.value;  // 수량을 가져옴
+    const longBookId = Number(bookId);  // bookId를 숫자로 변환하여 long 타입으로 전송
+    const integerQuantity = parseInt(quantity);  // 수량을 Integer로 변환
+
+    console.log('Book ID:', bookId, 'Quantity:', quantity);
+
+    // bookId와 quantity 값이 유효한지 확인
+    if (!longBookId || isNaN(longBookId)) {
+      console.error('Invalid bookId:', bookId);
+      alert('잘못된 책 ID입니다. 다시 시도해 주세요.');
+      return;
+    }
+
+    if (!integerQuantity || isNaN(integerQuantity) || integerQuantity <= 0) {
+      console.error('Invalid quantity:', quantity);
+      alert('잘못된 수량이 입력되었습니다. 다시 시도해 주세요.');
+      return;
+    }
+
+    // URL에 인코딩을 추가하여 전달
+    const url = `/cart?bookId=${encodeURIComponent(longBookId)}&quantity=${encodeURIComponent(integerQuantity)}`;
+
+    // 인코딩된 URL을 로그로 출력하여 확인
+    console.log('Request URL:', url);
+
+    // fetch를 사용하여 서버로 요청을 보냄
     fetch(url, {
-      method: 'POST',
+      method: 'POST',  // POST 요청
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',  // 요청 헤더 설정
+      },
+      body: new URLSearchParams({  // URLSearchParams로 데이터를 전송
+        bookId: longBookId,
+        quantity: integerQuantity,
+      })
     })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
+            .then(response => {
+              if (!response.ok) {
+                console.error('HTTP Error:', response.status, response.statusText);
+                throw new Error('Network response was not ok');
+              }
+              return response.text();  // 응답을 텍스트(HTML) 형식으로 파싱
+            })
+            .then(html => {
+              console.log('Server response:', html);  // 서버 응답(HTML) 확인
+              // HTML 응답에 따라 추가 처리 수행
+              // 예: 성공적인 HTML 응답 처리
+              if (html.includes('장바구니에 추가되었습니다.')) {
                 alert('장바구니에 추가되었습니다.');
-              } else {
+              } else if (html.includes('장바구니 추가 실패')) {
+                console.error('Failed to add to cart');
                 alert('장바구니 추가 실패');
               }
             })
@@ -330,6 +398,7 @@
               alert('장바구니 추가 중 오류가 발생했습니다.');
             });
   }
+
 
 
 

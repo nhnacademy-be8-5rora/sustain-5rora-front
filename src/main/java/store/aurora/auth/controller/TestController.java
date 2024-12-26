@@ -21,7 +21,6 @@ public class TestController {
 
     @GetMapping("/")
     public String indexTest(){
-        USER_LOG.error("5rora log send success!!!");
-        return "index";
+        return "home/home";
     }
 }

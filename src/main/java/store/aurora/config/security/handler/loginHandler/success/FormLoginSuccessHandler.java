@@ -27,19 +27,21 @@ public class FormLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
     private final AuthClient authClient;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         //로그인 성공 시 쿠키 만들기
         Optional<Cookie> optionalCookie = jwtOven(authentication.getName());
         if(optionalCookie.isEmpty()){
             log.info("token make fail");
+            response.sendRedirect("/login");
+            return;
         }
         else {
             response.addCookie(optionalCookie.get());
         }
 
         //todo 로그인 되고 보낼 곳 정하기
-        response.sendRedirect("/");
+        response.sendRedirect("/login-test");
     }
 
     private Optional<Cookie> jwtOven(String id){

@@ -1,5 +1,6 @@
 package store.aurora.config.security.handler.loginHandler.success;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +69,11 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             log.info("회원가입 정보:{}", optionalDto.get());
             ResponseEntity<Map<String, String>> responseEntity = userClient.signUp(optionalDto.get(), true);
 
+//            Map<String, String> result = userClient.signUp(optionalDto.get(), true);
+            SignUpRequest signUpRequest = optionalDto.get();
+            ResponseEntity<Map<String, String>> mapResponseEntity = userClient.signUp(signUpRequest, true);
+            Map<String, String> result = mapResponseEntity.getBody();
+
             if(responseEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201))){ //todo 201 상수로 변경
                 log.info("signup success:{}", responseEntity.getBody().get("message"));
             }
@@ -83,6 +89,8 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         Optional<Cookie> optionalCookie = jwtOven(id);
         if(optionalCookie.isEmpty()){
             log.info("token make fail");
+            response.sendRedirect("/login");
+            return;
         }
         else {
             log.info("cookie = {}", optionalCookie.get().getValue());
@@ -92,7 +100,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         //4. 필요없어진 액세스토큰과 리프레시 토큰을 만료시킨다?? todo 토론 필요 + 토큰 유효시간 감소 필요성
 
         //todo 로그인 되고 보낼 곳 정하기
-        response.sendRedirect("/");
+        response.sendRedirect("/login-test");
     }
 
     private Optional<SignUpRequest> makeSignUpRequest(String id, OAuth2User user, String registrationId){

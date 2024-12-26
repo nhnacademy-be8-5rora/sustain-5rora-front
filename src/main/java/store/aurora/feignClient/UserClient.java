@@ -14,17 +14,17 @@ import java.util.Map;
 public interface UserClient {
 
     @GetMapping("/auth/details")
-    UserPwdAndRoleResponse getPasswordAndRole(@RequestHeader("UserId") String userId);
+    ResponseEntity<UserPwdAndRoleResponse> getPasswordAndRole(@RequestHeader("UserId") String userId);
 
     @GetMapping("/auth/me")
-    UserUsernameAndRoleResponse getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
+    ResponseEntity<UserUsernameAndRoleResponse> getUsernameAndRole(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @GetMapping("/auth/exists")
     ResponseEntity<Boolean> checkUserExists(@RequestHeader("userId") String userId);
 
     //회원가입
     @PostMapping
-    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest signUpRequest,
-                               @RequestParam boolean isOauth);
+    ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest request,
+                                               @RequestParam boolean isOauth);
 
 }
