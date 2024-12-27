@@ -108,11 +108,13 @@
                                             class="category-item">
                                             <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}"
                                                class="nav-link" th:text="${category.name}"></a>
-                                            <ul class="sub-category-list" style="display: none; position: absolute; left: 100%; top: 0;"></ul>
+                                            <!-- 하위 카테고리 리스트 -->
+                                            <ul class="sub-category-list" style="display: none; position: absolute; left: 100%; top: 0;">
+                                                <!-- 하위 카테고리 항목은 JavaScript에서 동적으로 추가됩니다. -->
+                                            </ul>
                                         </li>
                                     </ul>
                                 </li>
-
 
                                 <li class="menu-item has-sub">
                                     <a href="#pages" class="nav-link">Pages</a>
@@ -317,9 +319,10 @@
 
 <script>
     let cachedCategories = {}; // 카테고리 데이터를 캐시로 저장
+    let timeoutId = null; // 디바운스 타이머 저장
 
     // 카테고리 데이터 로드 함수
-    function loadCategoryData(categoryId) {
+    function loadCategoryData(categoryId, level = 0) {
         console.log("Category ID: ", categoryId); // categoryId 값 확인
 
         // categoryId가 null이거나 잘못된 값이 전달되었을 경우
@@ -329,7 +332,7 @@
 
         // 이미 캐시된 데이터가 있다면 API 요청을 생략하고 캐시된 데이터 사용
         if (cachedCategories[categoryId]) {
-            updateCategoryList(categoryId, cachedCategories[categoryId]);
+            updateCategoryList(categoryId, cachedCategories[categoryId], level);
             return;
         }
 
@@ -348,7 +351,7 @@
                 console.log('Parsed Category Data:', data);
                 if (Array.isArray(data)) {
                     cachedCategories[categoryId] = data; // 데이터 캐시
-                    updateCategoryList(categoryId, data); // 카테고리 리스트 업데이트
+                    updateCategoryList(categoryId, data, level); // 카테고리 리스트 업데이트
                 } else {
                     console.error('Invalid category data:', data);
                 }
@@ -358,8 +361,8 @@
             });
     }
 
-    // 카테고리 리스트 업데이트 함수
-    function updateCategoryList(categoryId, categories) {
+    // 하위 카테고리 리스트 업데이트 함수
+    function updateCategoryList(categoryId, categories, level) {
         console.log("Updating Category List for ID:", categoryId);  // 업데이트 시작 로그 확인
 
         // 마우스를 올린 상위 카테고리 항목을 찾음
@@ -383,16 +386,34 @@
         // 하위 카테고리 추가
         categories.forEach(category => {
             const li = document.createElement('li');
-            li.textContent = category.name;
-            li.dataset.id = category.id;
+            const a = document.createElement('a');
+
+            // 하위 카테고리 링크 추가
+            a.href = `/books/search?type=category&keyword=${category.id}&pageNum=1&orderBy=salePrice&orderDirection=desc`;
+            a.classList.add('nav-link');
+            a.textContent = category.name;  // 하위 카테고리 이름
+            li.appendChild(a);
             subCategoryList.appendChild(li);
+
+            // 하위 카테고리가 존재하면 재귀적으로 더 로드
+            a.addEventListener('mouseover', function(event) {
+                if (category.subCategories) {
+                    loadCategoryData(category.id, level + 1);
+                }
+            });
+
+            // 클릭 시 페이지 이동 (이 부분 수정)
+            a.addEventListener('click', function(event) {
+                // 클릭 시 페이지 이동
+                window.location.href = a.href; // 바로 페이지 이동
+            });
         });
 
         // 카테고리 항목의 위치를 기반으로 하위 카테고리 위치 설정
         const rect = categoryItem.getBoundingClientRect();
         subCategoryList.style.display = 'block';
         subCategoryList.style.position = 'absolute';
-        subCategoryList.style.left = `${rect.width}px`; // 카테고리 항목의 너비만큼 오른쪽에 배치
+        subCategoryList.style.left = `${rect.width + (level * 200)}px`; // 각 레벨마다 200px씩 오른쪽으로 이동
         subCategoryList.style.top = '0';
         subCategoryList.style.backgroundColor = 'white';
         subCategoryList.style.border = '1px solid #ddd';
@@ -407,7 +428,11 @@
             console.log("Mouseover Category ID: ", categoryId); // categoryId 값 확인
 
             if (categoryId) {
-                loadCategoryData(categoryId); // 해당 categoryId로 하위 카테고리 로드
+                // 이전 요청을 취소하고 새로운 요청을 설정
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    loadCategoryData(categoryId); // 해당 categoryId로 하위 카테고리 로드
+                }, 200); // 200ms 지연 후 데이터 로드
             } else {
                 console.error("data-id is missing or incorrect!");
             }
@@ -420,6 +445,9 @@
             }
         });
     });
+
+
+
 </script>
 
 
