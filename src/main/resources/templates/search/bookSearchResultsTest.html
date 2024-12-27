@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
-
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Search Results</title>
   <style>
     body {
@@ -153,40 +150,36 @@
     }
   </style>
 </head>
-
-<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
-
-
-<div layout:fragment="content">
-  <section id="billboard">
+<body>
 
 <h1>Book Search Results</h1>
-<form class="search-form" method="get" action="/books/search">
+
+<form class="search-form" method="get" action="http://5rora-test.com:8080/books/search">
   <input type="text" name="keyword" id="keyword" placeholder="검색어를 입력하세요" required>
 
   <!-- type, orderBy, orderDirection, pageNum 쿼리 파라미터 추가 -->
+  <input type="hidden" name="type" value="title" id="type"> <!-- 초기값은 title로 설정 -->
   <input type="hidden" name="orderBy" value="salePrice" id="orderBy"> <!-- 가격 기준 정렬 -->
   <input type="hidden" name="orderDirection" value="desc" id="orderDirection"> <!-- 내림차순 정렬 -->
   <input type="hidden" name="pageNum" value="1"> <!-- 첫 페이지 -->
-  <div>
-    <label><input type="radio" name="type" value="title" id="searchByTitle" checked> 제목으로 검색</label>
-    <label><input type="radio" name="type" value="author" id="searchByAuthor"> 저자 이름으로 검색</label>
-  </div>
+
   <button type="submit">검색</button>
 </form>
 
-
 <!-- 정렬 기준 버튼들 -->
 <div>
-  <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='publishDate', orderDirection='desc')}" class="sort-button">신상품</a>
-  <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='salePrice', orderDirection='asc')}" class="sort-button">최저가</a>
-  <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='salePrice', orderDirection='desc')}" class="sort-button">최고가</a>
-  <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='reviewCount', orderDirection='desc')}" class="sort-button">리뷰 수</a>
-  <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='reviewRating', orderDirection='desc')}" class="sort-button">평점</a>
+  <button class="sort-button" id="sortByDate" onclick="toggleSort('publishDate')">신상품</button>
+  <button class="sort-button" id="sortByLowestPrice" onclick="toggleSort('salePrice', 'asc')">최저가</button>
+  <button class="sort-button" id="sortByHighestPrice" onclick="toggleSort('salePrice', 'desc')">최고가</button>
+  <!-- 리뷰 수 내림차순 정렬 버튼 추가 -->
+  <button class="sort-button" id="sortByReviews" onclick="toggleSort('reviewCount', 'asc')">리뷰 수</button>
+  <button class="sort-button" id="sortByRating" onclick="toggleSort('reviewRating', 'asc')">평점 내림차순</button>
 </div>
 
-
-
+<div>
+  <label><input type="radio" name="searchType" id="searchByTitle" checked> 제목으로 검색</label>
+  <label><input type="radio" name="searchType" id="searchByAuthor"> 저자 이름으로 검색</label>
+</div>
 
 <!-- 검색 결과가 없을 때 표시될 메시지 (라디오 박스 아래로 이동) -->
 <div class="no-results" th:if="${#lists.isEmpty(books)}">
@@ -208,9 +201,17 @@
 
       <p><strong>저자:</strong>
         <span th:each="author, iterStat : ${book.authors}" th:text="${author.name}">
-          <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
-        </span>
+    <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
+  </span>
       </p>
+
+      <p><strong>카테고리:</strong>
+        <span th:each="category, iterStat : ${book.categoryIdList}" th:text="${category}">
+    <span th:if="${iterStat.index < book.categoryIdList.size() - 1}">, </span>
+  </span>
+      </p>
+
+
 
       <div class="star-rating">
         <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
@@ -228,8 +229,56 @@
   </div>
 </div>
 
-  </section>
-</div>
+<script>
+  let currentSort = {
+    'publishDate': 'desc',
+    'salePrice': 'desc',
+    'reviewCount' : 'desc',
+    'reviewRating': 'desc'  // 추가된 부분
+  };
+
+  function toggleSort(criteria, direction = null) {
+    const orderBy = document.getElementById('orderBy');
+    const orderDirection = document.getElementById('orderDirection');
+    const keyword = document.querySelector('input[name="keyword"]').value; // 현재 입력된 검색어 가져오기
+
+    // 검색어를 유지한 채로 정렬 기준을 변경
+    orderBy.value = criteria;
+
+    // 정렬 방향 설정
+    if (direction) {
+      orderDirection.value = direction;
+      currentSort[criteria] = direction;
+    } else {
+      if (currentSort[criteria] === 'desc') {
+        orderDirection.value = 'asc';
+        currentSort[criteria] = 'asc';
+      } else {
+        orderDirection.value = 'desc';
+        currentSort[criteria] = 'desc';
+      }
+    }
+
+    // 폼을 다시 제출하여 새 정렬 기준으로 검색
+    const searchForm = document.querySelector('form');
+
+    // 기존의 hidden keyword input 필드를 제거
+    let existingKeywordInput = document.querySelector('input[name="keyword"]');
+    if (existingKeywordInput) {
+      existingKeywordInput.remove();
+    }
+
+    // 새로운 hidden keyword input 필드 추가
+    const keywordInput = document.createElement('input');
+    keywordInput.type = 'hidden';
+    keywordInput.name = 'keyword';
+    keywordInput.value = keyword;
+    searchForm.appendChild(keywordInput);
+
+    // 폼을 다시 제출하여 새 정렬 기준으로 검색
+    searchForm.submit();
+  }
+</script>
 
 </body>
 </html>
