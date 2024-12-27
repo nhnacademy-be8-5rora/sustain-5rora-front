@@ -1,25 +1,17 @@
 package store.aurora.book.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import store.aurora.book.dto.BookDetailsDto;
-import store.aurora.book.dto.BookDetailsUpdateDTO;
-import store.aurora.book.dto.BookRequestDTO;
-import store.aurora.book.dto.category.BookCategoryDto;
+import store.aurora.book.dto.aladin.BookDto;
+import store.aurora.book.dto.aladin.BookRequestDtoEx;
 import store.aurora.feignClient.book.BookClient;
-import store.aurora.feignClient.book.CategoryClient;
 
 import java.util.List;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/books")
@@ -27,46 +19,56 @@ import java.util.List;
 public class BookController {
 
     private final BookClient bookClient;
-    private final CategoryClient categoryClient;
 
-    // 책 상세 조회
-//    @GetMapping("/{bookId}")
-//    public String getBookDetails(@PathVariable Long bookId, Model model) {
-//        ResponseEntity<BookDetailsDto> response = bookClient.getBookDetails(bookId);
-//        model.addAttribute("book", response.getBody());
-//        return "book/details"; // 뷰 이름 (예: book/details.html)
-//    }
     @GetMapping
-    public String listBooks(Model model) {
-        // Book 리스트를 조회 (FeignClient를 활용해 데이터 가져오기)
-//        List<BookResponseDTO> books = bookClient.getBooks(); // 이 메서드가 정의되어야 합니다.
-//        model.addAttribute("books", books);
-        return "admin/book/list"; // books 리스트를 보여줄 HTML 뷰 이름
-    }
-    // 책 생성 폼 페이지
-    @GetMapping("/create")
-    public String createBookForm(Model model) {
-        model.addAttribute("book", new BookRequestDTO());
-//        List<CategoryResponseDTO> categories = categoryClient.getAllCategories().getBody();
-//        model.addAttribute("categories", categories);
-        return "admin/book/form"; // 뷰 이름 (예: book/form.html)
+    public String searchForm() {
+        return "/admin/book/api/search";
     }
 
+    @GetMapping("/api/search-books")
+    public String searchBooks(@RequestParam String query,
+                              @RequestParam String queryType,
+                              @RequestParam String searchTarget,
+                              @RequestParam(defaultValue = "1") int start,
+                              Model model) {
+        ResponseEntity<List<BookDto>> response = bookClient.searchBooks(query, queryType, searchTarget, start);
+        List<BookDto> books = response.getBody(); // ResponseEntity에서 Body 추출
+        model.addAttribute("books", books); // 검색 결과
+        model.addAttribute("currentPage", start); // 현재 페이지
+        model.addAttribute("query", query); // 검색어
+        model.addAttribute("queryType", queryType); // 검색 유형
+        model.addAttribute("searchTarget", searchTarget); // 검색 대상
+        return "/admin/book/api/search";
+    }
 
+    // API 도서 등록 폼 렌더링
+    @GetMapping("/api/register")
+    public String showRegisterForm(@RequestParam String bookId, Model model) {
+        ResponseEntity<BookDto> response = bookClient.getBookById(bookId);
+        model.addAttribute("book", response.getBody());
+        return "/admin/book/api/register";
+    }
 
+    // API 도서 등록 처리
+    @PostMapping("/api/register")
+    public String registerApiBook(@ModelAttribute BookRequestDtoEx bookRequestDto) {
+        bookClient.registerApiBook(bookRequestDto);
+        return "redirect:/books"; // 검색 페이지로 리다이렉트
+    }
 
+    // 직접 등록 폼 렌더링
+    @GetMapping("/direct/register")
+    public String showDirectRegisterForm(Model model) {
+        model.addAttribute("book", new BookRequestDtoEx()); // 빈 객체 전달
+        return "/admin/book/api/direct-register"; // 직접 등록 페이지 템플릿 경로
+    }
 
-    // 책 판매 정보 수정 폼 페이지
-//    @GetMapping("/{bookId}/edit-sales-info")
-//    public String editBookSalesInfoForm(@PathVariable Long bookId, Model model) {
-//        BookResponseDTO book = bookClient.getBooks(0, 1).getBody().stream()
-//                .filter(b -> b.getId().equals(bookId))
-//                .findFirst()
-//                .orElseThrow(() -> new RuntimeException("Book not found"));
-//        model.addAttribute("bookSalesInfoUpdateDTO", new BookSalesInfoUpdateDTO());
-//        model.addAttribute("book", book);
-//        return "admin/book/edit-sales-info"; // 판매 정보 수정 페이지 뷰
-//    }
+    // 직접 도서 등록 처리
+    @PostMapping("/direct/register")
+    public String registerDirectBook(@ModelAttribute BookRequestDtoEx bookRequestDto) {
+        bookClient.registerDirectBook(bookRequestDto);
+        return "redirect:/books"; // 검색 페이지로 리다이렉트
+    }
 
     @GetMapping("/{bookId}")
     public String singleInquiryBookInfo(@PathVariable Long bookId, Model model) {

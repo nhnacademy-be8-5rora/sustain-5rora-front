@@ -32,7 +32,7 @@ public class CategoryController {
     @PostMapping("/create")
     public String createCategory(@ModelAttribute CategoryRequestDTO categoryRequestDTO) {
         categoryClient.createCategory(categoryRequestDTO);
-        return "redirect:/categories";
+        return "redirect:/books/create";
     }
 
     @PostMapping("/update")

@@ -17,11 +17,11 @@ public class TagController {
 
     private final TagClient tagClient;
 
-    @PostMapping
-    public String createTag(@Valid @RequestBody TagRequestDto tagRequestDto) {
-        tagClient.createTag(tagRequestDto);
-        return "index";
-    }
+//    @PostMapping
+//    public String createTag(@Valid @RequestBody TagRequestDto tagRequestDto) {
+//        tagClient.createTag(tagRequestDto);
+//        return "index";
+//    }
 
     @DeleteMapping("/{tagId}")
     public String removeTage(@PathVariable Long tagId) {

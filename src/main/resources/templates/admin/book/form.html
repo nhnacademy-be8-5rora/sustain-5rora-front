@@ -61,6 +61,24 @@
             <input type="file" id="detailImages" name="detailImages" class="form-control" accept="image/*" multiple>
             <small class="text-muted">여러 이미지를 업로드할 수 있습니다.</small>
         </div>
+<!--         카테고리 선택 -->
+        <label class="form-label">카테고리</label>
+        <div>
+            <div th:if="${categories == null || categories.isEmpty()}">
+                <p class="text-muted">등록된 카테고리가 없습니다.</p>
+            </div>
+            <div th:if="${categories != null && !categories.isEmpty()}">
+                <ul>
+                    <li th:each="category : ${categories}">
+                        <label th:for="'category_' + ${category.id}">
+                            <input type="checkbox" th:id="'category_' + ${category.id}" th:value="${category.id}" name="categoryIds" />
+                            <span th:text="${category.name}"></span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="col-12 text-center">
             <button type="submit" class="btn btn-primary">등록</button>
         </div>

@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import store.aurora.book.dto.category.CategoryRequestDTO;
 import store.aurora.book.dto.category.CategoryResponseDTO;
-import store.aurora.config.FeignConfig;
 
 import java.util.List;
 
-@FeignClient(name = "categoryClient", url = "${api.gateway.base-url}" + "/api/categories", configuration = FeignConfig.class)
+@FeignClient(name = "categoryClient", url = "${api.gateway.base-url}" + "/api/categories")
 public interface CategoryClient {
 
     @PostMapping
