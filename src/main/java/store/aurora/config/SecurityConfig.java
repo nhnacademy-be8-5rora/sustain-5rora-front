@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/error",
                                 "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup",
                                 "/cart/**","/books/search","/books/**",
-                                "/css/**", "/icomoon/**", "/images/**", "/js/**", "/style.css").permitAll() // static
+                                "/static/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .requestMatchers("/mypage/**").hasRole("USER")
                         .anyRequest().authenticated()

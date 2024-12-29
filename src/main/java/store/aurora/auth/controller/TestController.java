@@ -21,6 +21,6 @@ public class TestController {
 
     @GetMapping("/")
     public String indexTest(){
-        return "home/home";
+        return "home";
     }
 }
