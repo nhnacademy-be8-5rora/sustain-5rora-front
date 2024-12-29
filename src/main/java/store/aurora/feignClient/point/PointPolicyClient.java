@@ -8,7 +8,7 @@ import store.aurora.point.dto.PointPolicyUpdateRequest;
 
 import java.util.List;
 
-@FeignClient(name = "pointPolicyClient", url = "${api.gateway.base-url}" + "/api/point-policies", configuration = FeignConfig.class)
+@FeignClient(name = "pointPolicyClient", url = "${api.gateway.base-url}" + "/api/points/policies", configuration = FeignConfig.class)
 public interface PointPolicyClient {
 
     @GetMapping

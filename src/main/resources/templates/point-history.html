@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <meta charset="utf-8">
+    <title>포인트 내역</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+
+<div layout:fragment="content">
+    <h1>사용 가능한 포인트: <span th:text="${availablePoints}"></span> P</h1>
+
+    <h2>포인트 내역</h2>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>포인트</th>
+            <th>유형</th>
+            <th>거래 날짜</th>
+            <th>적립 사유</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="history : ${pointHistory}">
+            <td th:text="${history.id}"></td>
+            <td th:text="${history.pointAmount}"></td>
+            <td th:text="${history.pointType}"></td>
+            <td th:text="${#temporals.format(history.transactionDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${history.from}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <!-- 이전 버튼 -->
+        <a th:if="${!isFirst}" th:href="@{'/points'(page=${currentPage - 1}, size=10)}">이전</a>
+        <!-- 페이지 번호 -->
+        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{'/points'(page=${pageNum}, size=10)}"
+               th:text="${pageNum + 1}"
+               th:classappend="${pageNum == currentPage} ? 'current-page' : ''"></a>
+        </span>
+        <!-- 다음 버튼 -->
+        <a th:if="${!isLast}" th:href="@{'/points'(page=${currentPage + 1}, size=10)}">다음</a>
+    </div>
+</div>
+</body>
+
+</html>
