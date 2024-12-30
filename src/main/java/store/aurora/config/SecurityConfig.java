@@ -51,12 +51,10 @@ public class SecurityConfig {
         //인증, 인가 설정
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .requestMatchers("/","/error",
-                                "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup",
-                                "/cart/**","/books/search","/books/**","/categories/**",
-                                "/static/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .requestMatchers("/mypage/**").hasRole("USER")
+                        .requestMatchers("/", "/login", "/login/process","/logout", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**","/categories/**", "/admin/**", "/error",
+                                "/css/**", "/icomoon/**", "/images/**", "/js/**", "/style.css").permitAll() // static
+//                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .anyRequest().authenticated()
         );
 

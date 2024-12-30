@@ -15,6 +15,7 @@ public class CategoryService {
 
     private final CategoryClient categoryClient;
 
+
     @Autowired
     public CategoryService(@Lazy CategoryClient categoryClient) {
         this.categoryClient = categoryClient;

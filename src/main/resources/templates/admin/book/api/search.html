@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도서 검색</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>도서 검색</h1>
+        <!-- 직접 등록 버튼 -->
+        <a th:href="@{/books/direct/register}" class="btn btn-success">직접 등록</a>
+    </div>
+
+    <!-- 검색 폼 -->
+    <form th:action="@{/books/api/search-books}" method="get" class="row g-3">
+        <input type="hidden" name="start" value="1" />
+        <div class="col-md-4">
+            <label for="query" class="form-label">검색어</label>
+            <input type="text" id="query" name="query" class="form-control" placeholder="검색어를 입력하세요" required>
+        </div>
+        <div class="col-md-4">
+            <label for="queryType" class="form-label">검색 유형</label>
+            <select id="queryType" name="queryType" class="form-select">
+                <option value="Keyword" selected>제목+저자</option>
+                <option value="Title">제목 검색</option>
+                <option value="Author">저자 검색</option>
+                <option value="Publisher">출판사 검색</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="searchTarget" class="form-label">검색 대상</label>
+            <select id="searchTarget" name="searchTarget" class="form-select">
+                <option value="Book" selected>도서</option>
+                <option value="Foreign">외국도서</option>
+            </select>
+        </div>
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </div>
+    </form>
+
+    <!-- 검색 결과 -->
+    <div class="mt-5" id="results">
+        <h2 class="mb-3">검색 결과</h2>
+        <ul class="list-group" th:if="${books}" th:each="book : ${books}">
+            <li class="list-group-item d-flex align-items-start">
+                <img th:src="${book.cover}" alt="책 표지" style="width: 150px;" class="me-3">
+                <div>
+                    <h5 th:text="${book.title}" class="mb-2"></h5>
+                    <p>
+                        <strong>저자:</strong> <span th:text="${book.author}"></span><br>
+                        <strong>출판사:</strong> <span th:text="${book.publisher}"></span><br>
+                        <strong>출판일:</strong> <span th:text="${book.pubDate}"></span><br>
+                        <strong>ISBN-13:</strong> <span th:text="${book.isbn13}"></span>
+                    </p>
+                    <p>
+                        <strong>설명:</strong>
+                        <span th:if="${book.description != null}" th:text="${book.description}"></span>
+                        <span th:if="${book.description == null}">설명이 없습니다.</span>
+                    </p>
+                    <p>
+                        <strong>정가:</strong> <span th:text="${book.priceStandard} + ' 원'"></span><br>
+                        <strong>판매가:</strong> <span th:text="${book.priceSales} + ' 원'"></span>
+                    </p>
+                    <!-- 등록하기 버튼 -->
+                    <a th:href="@{/books/api/register(bookId=${book.isbn13})}" class="btn btn-primary">등록하기</a>
+                </div>
+            </li>
+        </ul>
+        <p th:if="${books == null || books.isEmpty()}" class="text-muted">검색 결과가 없습니다.</p>
+
+        <nav class="mt-4" th:if="${books != null and not #lists.isEmpty(books)}">
+            <ul class="pagination justify-content-center">
+                <!-- 페이지 번호 -->
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, currentPage + 5)}"
+                    th:classappend="${i == currentPage} ? 'active' : ''">
+                    <a class="page-link"
+                       th:href="@{/books/api/search-books(query=${query}, queryType=${queryType}, searchTarget=${searchTarget}, start=${i})}"
+                       th:text="${i}"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
