@@ -33,14 +33,14 @@ public interface CouponClient {
     boolean existWelcomeCoupon(@PathVariable String userId, @RequestBody Long couponPolicyId );
 
     @PostMapping
-    void refund(@Valid List<Long> userCouponId);
+    void refund(@Valid List<String> userCouponId);
 
     @GetMapping
-    Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO, Long userId);
+    Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO, String userId);
 
     @GetMapping("/user/{userId}")
     List<UserCouponDTO> getCouponList(@PathVariable String userId);
 
     @PostMapping
-    void used(@Valid List<Long> userCouponId);
+    void used(@Valid List<String> userCouponId);
 }

@@ -22,6 +22,7 @@ public class AdminCouponController {
     public ResponseEntity<String> couponPolicyCreate(@RequestBody @Validated
                                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
 
+        couponClient.couponPolicyCreate(requestCouponPolicyDTO);
 
         return ResponseEntity.ok("쿠폰정보가 생성되었습니다.");
     }
