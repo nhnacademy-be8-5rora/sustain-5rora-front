@@ -50,45 +50,46 @@ public class SecurityConfig {
         //인증, 인가 설정
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
+                        .requestMatchers("/","/error",
+                                "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup",
+                                "/cart/**","/books/search","/books/**","/categories/**",
+                                "/static/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
+                        .requestMatchers("/mypage/**").hasRole("USER")
                         .requestMatchers("/", "/login", "/login/process","/logout", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**", "/admin/**", "/error",
                                 "/css/**", "/icomoon/**", "/images/**", "/js/**", "/style.css").permitAll() // static
                         .requestMatchers("/", "/login", "/login/process","/logout", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**", "/admin/**", "/categories/**","/tags/**","/error").permitAll()
                         //                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .anyRequest().authenticated()
         );
-//        http.authorizeHttpRequests(authorizeRequests ->
-//                authorizeRequests
-//                        .requestMatchers("/", "/login", "/login/process","/logout", "/oauth2-test", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**").permitAll()  //todo /signup 추가
-//                        .anyRequest().authenticated()
-//        );
 
         //daoAuthenticationProvider설정
-//        http.userDetailsService(apiUserDetailsService);
+        http.userDetailsService(apiUserDetailsService);
 
         //필터 추가
 //        http.addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
 
-//        //로그인 설정
-//        http.formLogin(formLogin -> formLogin
-//                .loginPage("/login")
-//                .usernameParameter("username")
-//                .passwordParameter("password")
-//                .loginProcessingUrl("/login/process")
-//                .successHandler(formLoginSuccessHandler)
-//                .failureUrl("/login")
-//        ).oauth2Login(oauth2 -> oauth2
-//                .loginPage("/login")
-//                .authorizationEndpoint(authorization -> authorization.authorizationRequestResolver(customAuthorizationRequestResolver))
-//                .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
-//                .tokenEndpoint(token -> token.accessTokenResponseClient(customAccessTokenResponseClient))
-//                .successHandler(oauthLoginSuccessHandler)
-//        );
-//
-//        //로그아웃 설정
-//        http.logout(formLogout -> formLogout
-//                .logoutUrl("/logout")
-//                .logoutSuccessHandler(commonLogoutSuccessHandler)
-//        );
+        //로그인 설정
+        http.formLogin(formLogin -> formLogin
+                .loginPage("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .loginProcessingUrl("/login/process")
+                .successHandler(formLoginSuccessHandler)
+                .failureUrl("/login")
+        ).oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .authorizationEndpoint(authorization -> authorization.authorizationRequestResolver(customAuthorizationRequestResolver))
+                .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
+                .tokenEndpoint(token -> token.accessTokenResponseClient(customAccessTokenResponseClient))
+                .successHandler(oauthLoginSuccessHandler)
+        );
+
+        //로그아웃 설정
+        http.logout(formLogout -> formLogout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(commonLogoutSuccessHandler)
+        );
 
         //예외처리 todo
 //        http.exceptionHandling(exception -> exception
