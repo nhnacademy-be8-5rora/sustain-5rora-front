@@ -1,8 +1,9 @@
 package store.aurora.coupon.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.coupon.dto.ProductInfoDTO;
@@ -13,7 +14,7 @@ import store.aurora.feignClient.coupon.CouponClient;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping
 @RequiredArgsConstructor
 public class UserCouponListController {
@@ -21,11 +22,13 @@ public class UserCouponListController {
     private final CouponClient couponClient;
 
 
-    @PostMapping(value = "/couponList/{userId}")
-    public ResponseEntity<List<UserCouponDTO>> couponList(@PathVariable @Valid Long userId) {
+    @GetMapping(value = "/couponList/{userId}")
+    public String couponList(@PathVariable Long userId, Model model) {
         List<UserCouponDTO> userCouponList = couponClient.getCouponList(userId);
 
-        return ResponseEntity.ok(userCouponList);
+        model.addAttribute("userCouponList", userCouponList);
+
+        return "/coupon/couponList";
     }
 
     //결제창에서 상품마다 사용가능 쿠폰 리스트 확인(매 상품마다 사용 가능한 쿠폰이 뜨게 해야 됨.

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@FeignClient(name = "couponClient", url = "${api.gateway.base-url}" + "/api/coupons")
+@FeignClient(name = "couponClient", url = "${api.gateway.base-url}" + "/api/coupon")
 public interface CouponClient {
 
     // 쿠폰 정책 생성
