@@ -7,7 +7,7 @@ import store.aurora.coupon.dto.SaleType;
 
 @Data
 public class RequestCouponPolicyDTO {
-
+    
     @NotNull
     private String policyName;
     @NotNull
@@ -18,3 +18,4 @@ public class RequestCouponPolicyDTO {
     @NotNull
     private DiscountRuleDTO discountRuleDTO;
 }
+
