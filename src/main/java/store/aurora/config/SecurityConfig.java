@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAuthorizationRequestResolver;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAccessTokenResponseClient;
@@ -50,16 +51,10 @@ public class SecurityConfig {
         //인증, 인가 설정
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .requestMatchers("/","/error",
-                                "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup",
-                                "/cart/**","/books/search","/books/**","/categories/**",
-                                "/static/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .requestMatchers("/mypage/**").hasRole("USER")
-                        .requestMatchers("/", "/login", "/login/process","/logout", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**", "/admin/**", "/error",
+                        .requestMatchers("/", "/login", "/login/process","/logout", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**","/categories/**", "/admin/**", "/error",
                                 "/css/**", "/icomoon/**", "/images/**", "/js/**", "/style.css").permitAll() // static
-                        .requestMatchers("/", "/login", "/login/process","/logout", "/login/oauth2/code/**", "/signup", "/cart/**","/books/search","/books/**", "/admin/**", "/categories/**","/tags/**","/error").permitAll()
-                        //                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
+//                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .anyRequest().authenticated()
         );
 
@@ -67,7 +62,7 @@ public class SecurityConfig {
         http.userDetailsService(apiUserDetailsService);
 
         //필터 추가
-//        http.addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
 
         //로그인 설정
         http.formLogin(formLogin -> formLogin

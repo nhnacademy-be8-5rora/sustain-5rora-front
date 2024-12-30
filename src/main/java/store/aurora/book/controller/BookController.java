@@ -83,7 +83,6 @@ public class BookController {
     ) {
         // Feign 클라이언트를 통해 데이터 전달
         bookClient.registerDirectBook(bookDto, coverImage,additionalImages);
-
         return "redirect:/books"; // 검색 페이지로 리다이렉트
     }
 

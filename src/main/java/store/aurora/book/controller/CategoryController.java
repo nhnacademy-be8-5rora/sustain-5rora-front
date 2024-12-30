@@ -25,7 +25,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryClient categoryClient;
-
+//
 //    @ModelAttribute("categories")
 //    public List<CategoryDTO> getCategories(HttpServletRequest request) {
 //        String categoryIdParam = request.getParameter("categoryId");
@@ -52,6 +52,7 @@ public class CategoryController {
         categoryClient.createCategory(categoryRequestDTO);
         return "redirect:/categories";
     }
+
     @GetMapping("/{categoryId}")
     public ResponseEntity<List<CategoryDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
         if (categoryId == null) {
