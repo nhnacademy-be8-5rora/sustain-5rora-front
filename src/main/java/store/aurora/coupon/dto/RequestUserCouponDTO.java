@@ -1,12 +1,14 @@
 package store.aurora.coupon.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@Builder
 public class RequestUserCouponDTO {
     @NotNull
     private List<Long> userId;    // 유저 ID 리스트

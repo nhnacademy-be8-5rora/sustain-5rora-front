@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <meta charset="utf-8">
+    <title>home</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div layout:fragment="content">
+    <h1>Welcome 쿠폰 발급</h1>
+    <form id="welcomeCouponForm">
+        <label for="userId">사용자 ID:</label>
+        <input type="number" id="userId" name="userId" placeholder="사용자 ID를 입력하세요" required>
+        <button type="submit">쿠폰 요청</button>
+    </form>
+    <div class="result" id="resultMessage"></div>
+</div>
+
+<script>
+    const form = document.getElementById("welcomeCouponForm");
+    const resultMessage = document.getElementById("resultMessage");
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault(); // 기본 제출 동작 방지
+
+        const userId = document.getElementById("userId").value;
+
+        try {
+            // API 요청
+            const response = await fetch("/welcomeCoupon", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userId),
+            });
+
+            // 응답 처리
+            if (response.ok) {
+                const message = await response.text();
+                resultMessage.textContent = message;
+                resultMessage.style.color = "green";
+            } else {
+                resultMessage.textContent = "요청에 실패했습니다. 다시 시도해주세요.";
+                resultMessage.style.color = "red";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            resultMessage.textContent = "서버에 문제가 발생했습니다.";
+            resultMessage.style.color = "red";
+        }
+    });
+</script>
+
+</body>
+</html>
