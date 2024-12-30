@@ -6,11 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import store.aurora.coupon.dto.request.RequestCouponPolicyDTO;
-import store.aurora.coupon.dto.request.RequestUserCouponDTO;
-import store.aurora.coupon.dto.request.UpdateUserCouponByUserIdDto;
-import store.aurora.coupon.dto.response.ProductInfoDTO;
-import store.aurora.coupon.dto.response.UserCouponDTO;
+import store.aurora.coupon.dto.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +17,9 @@ public interface CouponClient {
 
     // 쿠폰 정책 생성
     @PostMapping("/coupon/create")
-    ResponseEntity<String> couponPolicyCreate(@RequestBody RequestCouponPolicyDTO requestCouponPolicyDTO);
+    ResponseEntity<String> couponPolicyCreate(@RequestBody RequestCouponPolicyDTO requestCouponPolicyDTO,
+                                              @RequestBody DiscountRuleDTO discountRuleDTO,
+                                              @RequestBody AddPolicyDTO addPolicyDTO);
 
     // 사용자 쿠폰 생성
     @PostMapping("/coupon/distribution")

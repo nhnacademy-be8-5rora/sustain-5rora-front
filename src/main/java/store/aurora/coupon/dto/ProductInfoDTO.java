@@ -1,4 +1,4 @@
-package store.aurora.coupon.dto.response;
+package store.aurora.coupon.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

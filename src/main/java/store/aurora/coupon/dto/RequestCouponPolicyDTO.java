@@ -1,4 +1,4 @@
-package store.aurora.coupon.dto.request;
+package store.aurora.coupon.dto;
 
 
 import jakarta.validation.constraints.NotNull;
