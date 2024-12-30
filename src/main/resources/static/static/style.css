@@ -2442,3 +2442,169 @@ footer#footer {
     width: 100%;
   }
 }
+
+
+/* bookSearchResults.html*/
+
+
+.book-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.book-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-image {
+  width: 180px;
+  height: auto;
+  object-fit: cover;
+}
+
+.book-details {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.book-details h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.book-details p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #555;
+}
+
+.price {
+  margin-top: 10px;
+}
+
+.price .sale-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e60000;
+}
+
+.price .regular-price {
+  font-size: 14px;
+  text-decoration: line-through;
+  color: #888;
+  margin-left: 10px;
+}
+
+.star-rating {
+  margin-top: 10px;
+  font-size: 16px;
+  color: gold;
+}
+
+.star-rating span:last-child {
+  color: #888;
+}
+
+.search-form {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-form input[type="text"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  flex-grow: 1;
+}
+
+.search-form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  background-color: #0056b3;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+  margin-top: 20px;
+}
+
+.sort-button {
+  cursor: pointer;
+  color: #007bff;
+  font-size: 16px;
+  margin-right: 20px;
+  background: none;
+  border: none;
+  text-decoration: underline;
+}
+
+.sort-button:hover {
+  color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .book-card {
+    flex-direction: column;
+  }
+
+  .book-image {
+    width: 100%;
+    height: auto;
+  }
+
+  .search-form {
+    flex-direction: column;
+  }
+
+  .search-form input[type="text"] {
+    width: 100%;
+  }
+
+  .search-form button {
+    width: 100%;
+  }
+}
+/* 카테고리 메뉴 스타일 */
+#categoryMenu {
+  position: relative;
+}
+
+.category-container {
+  position: relative; /* 상위 메뉴 기준 */
+}
+
+.sub-category-list {
+  display: none; /* 기본 숨김 */
+  position: absolute;
+  left: 100%; /* 오른쪽에 표시 */
+  top: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  z-index: 10;
+}
+
+.category-item:hover > .sub-category-list {
+  display: block; /* 하위 카테고리를 보이게 설정 */
+}
+
+

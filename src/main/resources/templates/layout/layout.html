@@ -98,12 +98,20 @@
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
                                 <li class="menu-item active"><a href="#home">Home</a></li>
-                                <!-- 카테고리 메뉴 추가 -->
+                                <!-- 카테고리 메뉴 -->
                                 <li class="menu-item has-sub" id="categoryMenu">
                                     <a href="#" class="nav-link">Categories</a>
-                                    <ul id="categoryList" style="display: none;"> <!-- 초기에는 숨김 상태로 설정 -->
-                                        <li th:each="category : ${categories}" data-id="${category.id}" onmouseover="loadCategoryData(category.id)">
-                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}" th:text="${category.name}"></a>
+                                    <ul class="category-container" id="categoryList" style="display: none;">
+                                        <!-- 상위 카테고리 -->
+                                        <li th:each="category : ${categories}"
+                                            th:data-id="${category.id}"
+                                            class="category-item">
+                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}"
+                                               class="nav-link" th:text="${category.name}"></a>
+                                            <!-- 하위 카테고리 리스트 -->
+                                            <ul class="sub-category-list" style="display: none; position: absolute; left: 100%; top: 0;">
+                                                <!-- 하위 카테고리 항목은 JavaScript에서 동적으로 추가됩니다. -->
+                                            </ul>
                                         </li>
 
 
@@ -320,64 +328,139 @@
             var categoryId = event.target.closest('li').dataset.id;
             loadCategoryData(categoryId); // 해당 카테고리 데이터를 불러옵니다.
 
-            // 서브 메뉴 토글 (열기/닫기)
-            var subMenu = event.target.closest('li').querySelector('ul');
-            if (subMenu) {
-                subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
-            }
+    // 카테고리 데이터 로드 함수
+    function loadCategoryData(categoryId, level = 0) {
+        console.log("Category ID: ", categoryId); // categoryId 값 확인
+
+        if (!categoryId) {
+            categoryId = 0;
         }
-    });
 
-    let cachedCategories = {};
-
-    function loadCategoryData(categoryId) {
         if (cachedCategories[categoryId]) {
-            updateCategoryList(categoryId, cachedCategories[categoryId]);
+            updateCategoryList(categoryId, cachedCategories[categoryId], level);
             return;
         }
 
-        fetch('/api/categories/' + categoryId)
-            .then(response => response.json())
-            .then(data => {
-                cachedCategories[categoryId] = data;
-                updateCategoryList(categoryId, data);
+        fetch(`/categories/${categoryId}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Error response:', text);
+                        throw new Error('Network response was not ok');
+                    });
+                }
+                return response.json();
             })
-            .catch(error => console.error('Error fetching category data:', error));
+            .then(data => {
+                console.log('Parsed Category Data:', data);
+                if (Array.isArray(data)) {
+                    cachedCategories[categoryId] = data;
+                    updateCategoryList(categoryId, data, level);
+                } else {
+                    console.error('Invalid category data:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching category data:', error);
+            });
     }
 
-    function updateCategoryList(categoryId, categories) {
-        const parentCategory = document.querySelector(`[data-id='${categoryId}']`);
-        let subCategoryList = parentCategory.querySelector('ul');
+    function updateCategoryList(categoryId, categories, level) {
+        console.log("Updating Category List for ID:", categoryId);
 
-        if (!subCategoryList) {
-            subCategoryList = document.createElement('ul');
-            parentCategory.appendChild(subCategoryList);
+        const categoryItem = document.querySelector(`[data-id="${categoryId}"]`);
+        if (!categoryItem) {
+            console.error(`Category item with data-id "${categoryId}" not found.`);
+            return;
         }
 
-        subCategoryList.innerHTML = ''; // 기존 하위 카테고리 비우기
+        let subCategoryList = categoryItem.querySelector('.sub-category-list');
+        if (!subCategoryList) {
+            subCategoryList = document.createElement('ul');
+            subCategoryList.classList.add('sub-category-list');
+            categoryItem.appendChild(subCategoryList);
+        }
+
+        subCategoryList.innerHTML = '';
 
         categories.forEach(category => {
             const li = document.createElement('li');
-            li.classList.add('menu-item');
-            li.setAttribute('data-id', category.id);
-
             const a = document.createElement('a');
-            // category.id를 keyword 파라미터로 추가하여 search 페이지로 이동
-            a.href = `/books/search?type=category&keyword=${category.id}&pageNum=1&orderBy=salePrice&orderDirection=desc`;
-            a.textContent = category.name;
 
+            a.href = `/books/search?type=category&keyword=${category.id}&pageNum=1&orderBy=salePrice&orderDirection=desc`;
+            a.classList.add('nav-link');
+            a.textContent = category.name;
             li.appendChild(a);
             subCategoryList.appendChild(li);
 
-            // 자식 카테고리 클릭 시 하위 카테고리 로드
-            li.addEventListener("click", function(event) {
-                event.stopPropagation(); // 부모 메뉴 클릭 이벤트 전파 방지
-                loadCategoryData(category.id); // 해당 카테고리의 하위 카테고리 로드
+            a.addEventListener('mouseover', function(event) {
+                if (category.subCategories) {
+                    loadCategoryData(category.id, level + 1);
+                }
+            });
+
+            a.addEventListener('click', function(event) {
+                window.location.href = a.href;
             });
         });
+
+        const rect = categoryItem.getBoundingClientRect();
+        subCategoryList.style.display = 'block';
+        subCategoryList.style.position = 'absolute';
+        subCategoryList.style.left = `${rect.width + (level * 200)}px`;
+        subCategoryList.style.top = '0';
+        subCategoryList.style.backgroundColor = 'white';
+        subCategoryList.style.border = '1px solid #ddd';
+        subCategoryList.style.zIndex = '10';
     }
 
+    document.querySelectorAll('.category-item').forEach(item => {
+        item.addEventListener("mouseover", function(event) {
+            const categoryId = this.getAttribute('data-id');
+            console.log("Mouseover Category ID: ", categoryId);
+
+            if (categoryId && categoryId !== activeCategoryId) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    activeCategoryId = categoryId;
+                    loadCategoryData(categoryId);
+                }, 200);
+            } else {
+                console.error("data-id is missing or incorrect!");
+            }
+
+            const subCategoryList = item.querySelector('.sub-category-list');
+            if (subCategoryList) {
+                subCategoryList.style.display = 'block';
+            }
+        });
+
+        item.addEventListener("mouseout", function(event) {
+            const subCategoryList = item.querySelector('.sub-category-list');
+            if (subCategoryList) {
+                timeoutId = setTimeout(() => {
+                    // 2단계 이상 깊이의 카테고리는 숨기지 않음
+                    if (item.querySelector('.sub-category-list').querySelector('li')) {
+                        subCategoryList.style.display = 'block';
+                    } else {
+                        subCategoryList.style.display = 'none';
+                    }
+                }, 300);
+            }
+        });
+
+        item.querySelector('.sub-category-list')?.addEventListener("mouseover", function() {
+            clearTimeout(timeoutId); // 서브카테고리 영역에 마우스가 있으면 숨기지 않도록 처리
+        });
+
+        item.querySelector('.sub-category-list')?.addEventListener("mouseout", function() {
+            timeoutId = setTimeout(() => {
+                this.style.display = 'none'; // 서브카테고리 숨기기
+            }, 300);
+        });
+    });
 </script>
+
 
 </body>
 
