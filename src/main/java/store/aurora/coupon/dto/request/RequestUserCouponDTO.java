@@ -1,8 +1,9 @@
-package store.aurora.coupon.dto;
+package store.aurora.coupon.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import store.aurora.coupon.dto.CouponState;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,4 +1,4 @@
-package store.aurora.coupon.dto;
+package store.aurora.coupon.dto.response;
 
 import lombok.Data;
 

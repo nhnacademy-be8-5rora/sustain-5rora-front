@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.coupon.dto.*;
+import store.aurora.coupon.dto.request.AddPolicyDTO;
+import store.aurora.coupon.dto.request.DiscountRuleDTO;
 import store.aurora.feignClient.coupon.CouponClient;
 
 //관리자용 쿠폰 생성 및 배포용

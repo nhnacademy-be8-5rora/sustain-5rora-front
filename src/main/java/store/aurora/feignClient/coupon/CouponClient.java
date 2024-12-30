@@ -3,10 +3,12 @@ package store.aurora.feignClient.coupon;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import store.aurora.coupon.dto.*;
+import org.springframework.web.bind.annotation.*;
+import store.aurora.coupon.dto.request.RequestCouponPolicyDTO;
+import store.aurora.coupon.dto.request.RequestUserCouponDTO;
+import store.aurora.coupon.dto.request.UpdateUserCouponByUserIdDto;
+import store.aurora.coupon.dto.response.ProductInfoDTO;
+import store.aurora.coupon.dto.response.UserCouponDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -16,26 +18,29 @@ import java.util.Map;
 public interface CouponClient {
 
     // 쿠폰 정책 생성
-    @PostMapping("/coupon/create")
-    ResponseEntity<String> couponPolicyCreate(@RequestBody RequestCouponPolicyDTO requestCouponPolicyDTO,
-                                              @RequestBody DiscountRuleDTO discountRuleDTO,
-                                              @RequestBody AddPolicyDTO addPolicyDTO);
+    @PostMapping("/create")
+    ResponseEntity<String> couponPolicyCreate(@RequestBody RequestCouponPolicyDTO requestCouponPolicyDTO);
 
     // 사용자 쿠폰 생성
-    @PostMapping("/coupon/distribution")
+    @PostMapping("/distribution")
     Boolean userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
 
     // 사용자 쿠폰 수정
-    @PutMapping("/coupon/update")
+    @PutMapping("/update")
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponByUserIdDto updateUserCouponByUserIdDto);
 
-    boolean existWelcomeCoupon(Long userId, long l);
+    @PostMapping("/{userId}")
+    boolean existWelcomeCoupon(@PathVariable Long userId, @RequestBody Long couponPolicyId );
 
+    @PostMapping
     void refund(@Valid List<Long> userCouponId);
 
-    Map<Long, List<String>> getCouponListByCategory(List<ProductInfoDTO> productInfoDTO, Long userId);
+    @GetMapping
+    Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO, Long userId);
 
-    List<UserCouponDTO> getCouponList(@Valid Long userId);
+    @GetMapping("/user/{userId}")
+    List<UserCouponDTO> getCouponList(@PathVariable Long userId);
 
+    @PostMapping
     void used(@Valid List<Long> userCouponId);
 }

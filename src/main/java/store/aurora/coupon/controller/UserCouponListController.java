@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.coupon.dto.ProductInfoDTO;
-import store.aurora.coupon.dto.UserCouponDTO;
+import store.aurora.coupon.dto.response.ProductInfoDTO;
+import store.aurora.coupon.dto.response.UserCouponDTO;
 import store.aurora.feignClient.coupon.CouponClient;
 
 
