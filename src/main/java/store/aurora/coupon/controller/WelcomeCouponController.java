@@ -24,13 +24,13 @@ public class WelcomeCouponController {
     private final CouponClient couponClient;
 
     @GetMapping("/welcomeCoupon")
-    public String registerUser(@RequestBody Long userId, Model model) {
+    public String registerUser(@RequestBody String userId, Model model) {
         String message = checkAndCreateWelcomeCoupon(userId);
         model.addAttribute(ALERT_MESSAGE, message);
         return HOME_PAGE;
     }
 
-    private String checkAndCreateWelcomeCoupon(Long userId) {
+    private String checkAndCreateWelcomeCoupon(String userId) {
         // 사용자가 이미 Welcome 쿠폰을 보유하고 있는지 확인
         if (couponClient.existWelcomeCoupon(userId, 1L)) {
             return "이미 Welcome 쿠폰이 발급되었습니다.";
@@ -45,7 +45,7 @@ public class WelcomeCouponController {
                 : "Welcome 쿠폰 발급 요청이 실패되었습니다. 재발급 버튼을 눌러주세요.";
     }
 
-    private RequestUserCouponDTO createWelcomeCouponRequest(Long userId) {
+    private RequestUserCouponDTO createWelcomeCouponRequest(String userId) {
         LocalDate currentDate = LocalDate.now();
         return RequestUserCouponDTO.builder()
                 .userId(List.of(userId))

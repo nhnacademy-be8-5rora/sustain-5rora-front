@@ -30,7 +30,7 @@ public interface CouponClient {
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponByUserIdDto updateUserCouponByUserIdDto);
 
     @PostMapping("/{userId}")
-    boolean existWelcomeCoupon(@PathVariable Long userId, @RequestBody Long couponPolicyId );
+    boolean existWelcomeCoupon(@PathVariable String userId, @RequestBody Long couponPolicyId );
 
     @PostMapping
     void refund(@Valid List<Long> userCouponId);
