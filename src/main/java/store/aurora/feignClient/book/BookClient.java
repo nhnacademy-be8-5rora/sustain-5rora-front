@@ -1,14 +1,14 @@
 package store.aurora.feignClient.book;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import store.aurora.book.dto.*;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookDto;
-import store.aurora.book.dto.aladin.BookRequestDtoEx;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @FeignClient(name = "bookClient", url = "${api.gateway.base-url}" + "/api/books")
@@ -26,21 +26,23 @@ public interface BookClient {
     ResponseEntity<BookDto> getBookById(@PathVariable("bookId") String bookId);
 
     // API 도서 등록
-    @PostMapping("/aladin/register")
-    ResponseEntity<Void> registerApiBook(@ModelAttribute BookRequestDtoEx bookRequestDto);
+    @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Void> registerApiBook(@RequestPart("book") BookDto bookDto,
+                                         @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+    );
 
     // 직접 도서 등록
-    @PostMapping("/register/direct")
-    ResponseEntity<Void> registerDirectBook(@ModelAttribute BookRequestDtoEx bookRequestDto);
+    @PostMapping(value = "/direct/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Void> registerDirectBook(@RequestPart("book") BookDto bookDto,
+                                            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
+                                            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+    );
+
     // 도서 상세 정보 조회
     @GetMapping("/aladin/{bookId}")
     ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("bookId") Long bookId);
 
 
-
-    // 책 등록
-    @PostMapping
-    ResponseEntity<Void> createBook(@RequestBody BookRequestDTO requestDTO);
 
     // 책 세부 정보 업데이트
     @PutMapping("/{bookId}/details")

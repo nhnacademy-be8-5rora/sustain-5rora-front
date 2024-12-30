@@ -18,6 +18,7 @@ public interface CategoryClient {
 
     @GetMapping("/{categoryId}")
     ResponseEntity<List<CategoryDTO>> findCategoriesByParentId(@PathVariable(value = "categoryId") Long categoryId);
+
     @PostMapping
     ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO requestDTO);
 
@@ -30,5 +31,13 @@ public interface CategoryClient {
 
     @GetMapping
     ResponseEntity<List<CategoryResponseDTO>> getAllCategories();
+
+    // 카테고리 계층형 데이터 가져오기
+    @GetMapping("/hierarchy")
+    ResponseEntity<List<CategoryResponseDTO>> getCategoryHierarchy();
+
+    // 특정 카테고리 가져오기
+    @GetMapping("/{categoryId}")
+    ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable("categoryId") Long categoryId);
 }
 
