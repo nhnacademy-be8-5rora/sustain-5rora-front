@@ -22,16 +22,6 @@ public class AdminCouponController {
     public ResponseEntity<String> couponPolicyCreate(@RequestBody @Validated
                                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
 
-        DiscountRuleDTO discountRuleDTO = requestCouponPolicyDTO.getDiscountRuleDTO();
-        AddPolicyDTO addPolicyDTO = requestCouponPolicyDTO.getAddPolicyDTO();
-
-        //salePercent, saleAmount 둘 중 하나는 반드시 값이 있어야 한다
-        if(discountRuleDTO.getSalePercent() == null && discountRuleDTO.getSaleAmount() == null){
-            throw new IllegalArgumentException("salePercent and saleAmount both must not be null");
-        }
-
-        couponClient.couponPolicyCreate(requestCouponPolicyDTO,
-                discountRuleDTO, addPolicyDTO);  // 실제 쿠폰 생성 처리
 
         return ResponseEntity.ok("쿠폰정보가 생성되었습니다.");
     }

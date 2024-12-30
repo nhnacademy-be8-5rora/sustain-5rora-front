@@ -1,11 +1,13 @@
 package store.aurora.coupon.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import store.aurora.common.JwtUtil;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
 import store.aurora.feignClient.coupon.CouponClient;
@@ -22,9 +24,13 @@ public class UserCouponListController {
     private final CouponClient couponClient;
 
 
-    @GetMapping(value = "/couponList/{userId}")
-    public String couponList(@PathVariable Long userId, Model model) {
-        List<UserCouponDTO> userCouponList = couponClient.getCouponList(userId);
+    @GetMapping(value = "/couponList")
+    public String couponList(HttpServletRequest request,
+                             Model model) {
+
+        String jwt = JwtUtil.getJwtFromCookie(request);
+
+        List<UserCouponDTO> userCouponList = couponClient.getCouponList(jwt);
 
         model.addAttribute("userCouponList", userCouponList);
 

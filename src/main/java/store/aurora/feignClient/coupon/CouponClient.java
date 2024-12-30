@@ -4,6 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import store.aurora.coupon.dto.request.RequestCouponPolicyDTO;
+import store.aurora.coupon.dto.request.RequestUserCouponDTO;
+import store.aurora.coupon.dto.request.UpdateUserCouponByUserIdDto;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
 
@@ -36,7 +39,7 @@ public interface CouponClient {
     Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO, Long userId);
 
     @GetMapping("/user/{userId}")
-    List<UserCouponDTO> getCouponList(@PathVariable Long userId);
+    List<UserCouponDTO> getCouponList(@PathVariable String userId);
 
     @PostMapping
     void used(@Valid List<Long> userCouponId);
