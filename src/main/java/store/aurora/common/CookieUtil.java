@@ -13,7 +13,7 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
-    public static Cookie getCookie(HttpServletRequest request, String cookieName) {
+    public static String getCookie(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
 
         // 쿠키가 존재하지 않거나, 쿠키 배열이 비어있는 경우
@@ -24,7 +24,7 @@ public class CookieUtil {
         // 쿠키 배열을 순회하며 원하는 쿠키를 찾음
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookieName)) {
-                return cookie;  // 쿠키 이름이 일치하면 반환
+                return cookie.getValue();  // 쿠키 이름이 일치하면 반환
             }
         }
 

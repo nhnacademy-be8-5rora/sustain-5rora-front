@@ -27,4 +27,11 @@ public interface UserClient {
     ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest request,
                                                @RequestParam boolean isOauth);
 
+    // 회원가입 > 인증번호받기
+    @PostMapping("/send-verification-code")
+    ResponseEntity<Map<String, String>> sendCode(@RequestBody SignUpRequest request);
+
+    // 회원가입 > 인증코드 검증
+    @PostMapping("/verify-code")
+    ResponseEntity<Map<String, String>> verifyCode(@RequestBody SignUpRequest request);
 }
