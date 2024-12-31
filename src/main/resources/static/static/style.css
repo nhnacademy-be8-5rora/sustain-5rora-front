@@ -2445,48 +2445,82 @@ footer#footer {
 
 
 /* bookSearchResults.html*/
+.search-results {
+  display: flex; /* 가로 배치 */
+  gap: 30px; /* 카테고리 박스와 책 리스트 간 간격 */
+  background-color: #EDEBE4; /* 배경 색상 */
+}
 
+.category-container {
+  width: 250px; /* 카테고리 박스 너비 */
+  background-color: #EDEBE4; /* 배경 색상 */
+  padding: 20px;
+  border-radius: 8px;
+  flex-shrink: 0; /* 가로 크기 고정 */
+  position: sticky;
+  top: 0; /* 스크롤 시 고정되도록 */
+}
 
 .book-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 책 리스트 세로 배치 */
   gap: 20px;
+  flex-grow: 1; /* 책 리스트가 가능한 공간을 차지하도록 */
+  background-color: #EDEBE4; /* 배경 색상 설정 */
 }
 
 .book-card {
-  background-color: #ffffff;
+  background-color: #EDEBE4;
   border: 1px solid #ddd;
   border-radius: 10px;
-  display: flex;
+  display: flex; /* 좌우 배치 */
+  flex-direction: row; /* 이미지와 내용이 가로로 배치 */
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%; /* 가로 크기 100% */
+  max-height: 400px; /* 카드 높이 고정 */
+  flex-shrink: 0;
 }
 
 .book-image {
-  width: 180px;
-  height: auto;
-  object-fit: cover;
+  width: 40%; /* 이미지가 40%의 너비를 차지 */
+  height: 100%; /* 높이를 카드와 맞춤 */
+  object-fit: cover; /* 이미지 비율 유지 */
 }
 
 .book-details {
-  padding: 20px;
-  flex-grow: 1;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 내용 위쪽 정렬 */
+  width: 60%; /* 내용이 60%의 너비를 차지 */
+  overflow: hidden;
 }
 
 .book-details h2 {
-  font-size: 22px;
+  font-size: 20px; /* 제목 크기 키움 */
   margin-bottom: 10px;
   color: #333;
+  line-height: 1.4;
+  overflow: visible; /* 잘리지 않도록 */
+  white-space: normal; /* 줄 바꿈 가능 */
+  text-overflow: clip;
 }
 
 .book-details p {
-  font-size: 14px;
+  font-size: 16px; /* 본문 크기 키움 */
   margin: 5px 0;
   color: #555;
+  overflow: visible; /* 넘치지 않도록 */
+  text-overflow: clip;
+  white-space: normal; /* 줄 바꿈 가능 */
 }
 
 .price {
   margin-top: 10px;
+  display: flex;
+  align-items: center; /* 세로 정렬 */
+  gap: 5px; /* 가격 간 간격 조정 */
 }
 
 .price .sale-price {
@@ -2499,8 +2533,8 @@ footer#footer {
   font-size: 14px;
   text-decoration: line-through;
   color: #888;
-  margin-left: 10px;
 }
+
 
 .star-rating {
   margin-top: 10px;
@@ -2517,6 +2551,7 @@ footer#footer {
   display: flex;
   align-items: center;
   gap: 10px;
+  background-color: #EDEBE4; /* 주변 배경색 */
 }
 
 .search-form input[type="text"] {
@@ -2525,6 +2560,7 @@ footer#footer {
   border: 1px solid #ddd;
   border-radius: 5px;
   flex-grow: 1;
+  background-color: white; /* 검색어 입력란만 흰색 배경 */
 }
 
 .search-form button {
@@ -2538,14 +2574,16 @@ footer#footer {
 }
 
 .search-form button:hover {
-  background-color: #0056b3;
+  background-color: #e4ede8;
 }
+
 
 .no-results {
   text-align: center;
   font-size: 18px;
   color: #888;
   margin-top: 20px;
+  background-color: #EDEBE4;
 }
 
 .sort-button {
@@ -2563,8 +2601,23 @@ footer#footer {
 }
 
 @media (max-width: 768px) {
+  .search-results {
+    flex-direction: column; /* 모바일에서는 세로로 배치 */
+  }
+
+  .category-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .book-container {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
   .book-card {
-    flex-direction: column;
+    width: 100%;
+    max-height: none;
   }
 
   .book-image {
@@ -2584,27 +2637,7 @@ footer#footer {
     width: 100%;
   }
 }
-/* 카테고리 메뉴 스타일 */
-#categoryMenu {
-  position: relative;
+
+.hidden {
+  display: none;
 }
-
-.category-container {
-  position: relative; /* 상위 메뉴 기준 */
-}
-
-.sub-category-list {
-  display: none; /* 기본 숨김 */
-  position: absolute;
-  left: 100%; /* 오른쪽에 표시 */
-  top: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  z-index: 10;
-}
-
-.category-item:hover > .sub-category-list {
-  display: block; /* 하위 카테고리를 보이게 설정 */
-}
-
-

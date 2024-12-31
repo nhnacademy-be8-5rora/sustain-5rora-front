@@ -92,6 +92,6 @@ public class BookController {
         BookDetailsDto book = bookClient.getBookDetails(bookId).getBody();
         model.addAttribute("bookInfo", book);
 
-        return "home/home";
+        return "bookdetail-test";
     }
 }
