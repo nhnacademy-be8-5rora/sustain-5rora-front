@@ -1,8 +1,9 @@
-package store.aurora.coupon.dto;
+package store.aurora.coupon.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import store.aurora.coupon.dto.CouponState;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 public class RequestUserCouponDTO {
     @NotNull
-    private List<Long> userId;    // 유저 ID 리스트
+    private List<String> userId;    // 유저 ID 리스트
     @NotNull
     private Long couponPolicyId; // 정책 ID
 
