@@ -50,7 +50,6 @@ public class BookController {
         ResponseEntity<BookDto> response = bookClient.getBookById(bookId);
         ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategoryHierarchy();
         model.addAttribute("categories", responseCategory.getBody());
-        System.out.println("gg"+response);
         model.addAttribute("book", response.getBody());
         return "/admin/book/api/register";
     }
@@ -70,7 +69,7 @@ public class BookController {
         ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategoryHierarchy();
         model.addAttribute("categories", responseCategory.getBody());
         model.addAttribute("book", new BookDto()); // 빈 객체 전달
-        return "/admin/book/api/direct-register"; // 직접 등록 페이지 템플릿 경로
+        return "/admin/book/direct-register"; // 직접 등록 페이지 템플릿 경로
     }
 
     // 직접 도서 등록 처리
@@ -84,6 +83,15 @@ public class BookController {
         // Feign 클라이언트를 통해 데이터 전달
         bookClient.registerDirectBook(bookDto, coverImage,additionalImages);
         return "redirect:/books"; // 검색 페이지로 리다이렉트
+    }
+
+    // 도서 목록 페이지 렌더링
+    @GetMapping("/list")
+    public String listBooks(Model model) {
+        ResponseEntity<List<BookDto>> response = bookClient.getAllBooks();
+        List<BookDto> books = response.getBody();
+        model.addAttribute("books", books);
+        return "/admin/book/book-list"; // 도서 목록 페이지 템플릿
     }
 
 

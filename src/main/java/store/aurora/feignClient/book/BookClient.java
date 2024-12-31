@@ -38,6 +38,9 @@ public interface BookClient {
                                             @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
     );
 
+    @GetMapping
+    ResponseEntity<List<BookDto>> getAllBooks();
+
     // 도서 상세 정보 조회
     @GetMapping("/aladin/{bookId}")
     ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("bookId") Long bookId);
