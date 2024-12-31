@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 등록</title>
+  <style>
+    .rating-container input[type="radio"] {
+      display: none;
+    }
+
+    .rating-container .star {
+      font-size: 2rem;
+      color: lightgray;
+      cursor: pointer;
+    }
+
+    .rating-container input[type="radio"]:checked ~ .star,
+    .rating-container input[type="radio"]:checked + .star {
+      color: gold;
+    }
+
+  </style>
+</head>
+<body>
+<form class="review-form" th:action="@{/submit-review}" method="post" enctype="multipart/form-data">
+  <!-- 평점 선택 -->
+  <div class="form-group">
+    <label>평점 </label>
+    <div class="rating-container">
+      <label th:each="star : ${#numbers.sequence(1, 5)}">
+        <input type="radio" name="rating" th:id="'star' + star" th:value="${star}" th:checked="${rating == star}" />
+        <span th:for="'star' + star" th:text="'⭐'" class="star"></span>
+      </label>
+    </div>
+
+  </div>
+
+  <!-- 리뷰 내용 -->
+  <div class="form-group">
+    <label for="review">리뷰 내용</label><br>
+    <textarea id="review" name="review" placeholder="내용을 10자 이상 입력해 주세요." maxlength="500" style="height: 70px;" th:text="${review}"></textarea>
+    <small th:text="${#strings.length(review) + '/500'}"></small>
+  </div>
+
+  <!-- 사진 첨부 -->
+  <div class="form-group">
+    <label for="images">사진 첨부(선택)</label>
+    <input type="file" id="images" name="images" accept="image/*" multiple />
+    <div class="image-preview-container">
+      <div th:each="image : ${uploadedImages}">
+        <img th:src="${image.src}" th:alt="${image.name}" class="image-preview" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 작성 완료 버튼 -->
+  <button type="submit" class="submit-button">등록</button>
+</form>
+</body>
+</html>
