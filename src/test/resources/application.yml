@@ -1,10 +1,6 @@
-server:
-  port: 9080
-  shutdown: graceful
-
 spring:
-  lifecycle:
-    timeout-per-shutdown-phase: 30s
+  application:
+    name: 5rora-front
   security:
     oauth2:
       client:
@@ -21,20 +17,7 @@ spring:
             token-uri: https://id.payco.com/oauth2.0/token
             user-info-uri: https://apis-payco.krp.toastoven.net/payco/friends/find_member_v2.json
             user-name-attribute: idNo
-  data:
-    redis:
-      host: na
-      port: 0      #각자 쓰고있는 포트에 따라 변경
-      database: 0
-      username: na
-      password: na
-
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB      # 파일 크기 제한
-      max-request-size: 10MB
 
 api:
   gateway:
-    base-url: localhost:9180
+    base-url: localhost:8180
