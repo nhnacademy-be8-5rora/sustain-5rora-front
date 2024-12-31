@@ -40,6 +40,9 @@
             <td th:text="${book.isForSale ? 'Yes' : 'No'}"></td>
             <td th:text="${book.isPackaged ? 'Yes' : 'No'}"></td>
             <td th:text="${book.stock}"></td>
+            <td>
+                <a th:href="@{/books/{bookId}/edit(bookId=${book.id})}" class="btn btn-primary">수정</a>
+            </td>
         </tr>
         </tbody>
     </table>

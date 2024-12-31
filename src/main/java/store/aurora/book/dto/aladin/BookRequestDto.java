@@ -14,10 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BookDto {
+public class BookRequestDto {
     private String title;
     private String author;
     private String description;
+    private String contents;
     private String publisher;
     private String pubDate;
     private String isbn13;
