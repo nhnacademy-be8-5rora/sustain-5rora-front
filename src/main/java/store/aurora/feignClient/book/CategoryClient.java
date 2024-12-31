@@ -16,9 +16,6 @@ import java.util.List;
 @FeignClient(name = "categoryClient", url = "${api.gateway.base-url}" + "/api/categories")
 public interface CategoryClient {
 
-    @GetMapping("/{categoryId}")
-    ResponseEntity<List<CategoryDTO>> findCategoriesByParentId(@PathVariable(value = "categoryId") Long categoryId);
-
     @PostMapping
     ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO requestDTO);
 
@@ -39,7 +36,9 @@ public interface CategoryClient {
     // 특정 카테고리 가져오기
     @GetMapping("/{categoryId}")
     ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable("categoryId") Long categoryId);
-@GetMapping("/{categoryId}")
-ResponseEntity<CategoryDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
+
+    //search용 카테고리 기본값만 가져오기
+    @GetMapping("/{categoryId}")
+    ResponseEntity<CategoryDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
 }
 
