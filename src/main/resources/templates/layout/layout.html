@@ -98,24 +98,16 @@
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
                                 <li class="menu-item active"><a href="#home">Home</a></li>
-                                <!-- 카테고리 메뉴 -->
-                                <li class="menu-item has-sub" id="categoryMenu">
-                                    <a href="#" class="nav-link">Categories</a>
-                                    <ul class="category-container" id="categoryList" style="display: none;">
-                                        <!-- 상위 카테고리 -->
-                                        <li th:each="category : ${categories}"
-                                            th:data-id="${category.id}"
-                                            class="category-item">
-                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}"
-                                               class="nav-link" th:text="${category.name}"></a>
-                                            <!-- 하위 카테고리 리스트 -->
-                                            <ul class="sub-category-list" style="display: none; position: absolute; left: 100%; top: 0;">
-                                                <!-- 하위 카테고리 항목은 JavaScript에서 동적으로 추가됩니다. -->
-                                            </ul>
-                                        </li>
+                                <!-- 국내 도서 메뉴 -->
+                                <li class="menu-item has-sub" id="domesticBooksMenu">
+                                    <a href="#" class="nav-link">국내 도서</a>
+                                    <ul class="category-container" id="domesticCategoryList" style="display: none;"></ul>
+                                </li>
 
-
-                                    </ul>
+                                <!-- 해외 도서 메뉴 -->
+                                <li class="menu-item has-sub" id="foreignBooksMenu">
+                                    <a href="#" class="nav-link">해외 도서</a>
+                                    <ul class="category-container" id="foreignCategoryList" style="display: none;"></ul>
                                 </li>
 
 
@@ -322,40 +314,41 @@
 <script src="/static/js/script.js"></script>
 
 <script>
-    document.getElementById("categoryMenu").addEventListener("click", function(event) {
-        // 클릭한 대상이 <a> 요소인지 확인
-        if (event.target.tagName.toLowerCase() === 'a') {
-            var categoryId = event.target.closest('li').dataset.id;
-            loadCategoryData(categoryId); // 해당 카테고리 데이터를 불러옵니다.
-
-    // 카테고리 데이터 로드 함수
-    function loadCategoryData(categoryId, level = 0) {
-        console.log("Category ID: ", categoryId); // categoryId 값 확인
-
-        if (!categoryId) {
-            categoryId = 0;
+    // 국내 도서 마우스 오버 이벤트
+    document.getElementById("domesticBooksMenu").addEventListener("mouseenter", function () {
+        const categoryList = document.getElementById("domesticCategoryList");
+        if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
+            loadCategoryData(1, "domesticCategoryList"); // 국내 도서 데이터 로드
         }
+        categoryList.style.display = 'block'; // 하위 카테고리 표시
+    });
 
-        if (cachedCategories[categoryId]) {
-            updateCategoryList(categoryId, cachedCategories[categoryId], level);
-            return;
+    // 해외 도서 마우스 오버 이벤트
+    document.getElementById("foreignBooksMenu").addEventListener("mouseenter", function () {
+        const categoryList = document.getElementById("foreignCategoryList");
+        if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
+            loadCategoryData(2, "foreignCategoryList"); // 해외 도서 데이터 로드
         }
+        categoryList.style.display = 'block'; // 하위 카테고리 표시
+    });
 
+    // 하위 카테고리가 사라지지 않도록 유지 (마우스가 벗어날 때 숨김 방지)
+    document.querySelectorAll('.menu-item.has-sub').forEach(menuItem => {
+        menuItem.addEventListener("mouseleave", function () {
+            const categoryList = menuItem.querySelector(".category-container");
+            if (categoryList) {
+                categoryList.style.display = 'none'; // 마우스가 벗어나면 숨김
+            }
+        });
+    });
+
+    // 카테고리 데이터를 API에서 가져와 업데이트
+    function loadCategoryData(categoryId, categoryListId) {
         fetch(`/categories/${categoryId}`)
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        console.error('Error response:', text);
-                        throw new Error('Network response was not ok');
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('Parsed Category Data:', data);
                 if (Array.isArray(data)) {
-                    cachedCategories[categoryId] = data;
-                    updateCategoryList(categoryId, data, level);
+                    updateCategoryList(categoryId, data, categoryListId);
                 } else {
                     console.error('Invalid category data:', data);
                 }
@@ -365,102 +358,21 @@
             });
     }
 
-    function updateCategoryList(categoryId, categories, level) {
-        console.log("Updating Category List for ID:", categoryId);
-
-        const categoryItem = document.querySelector(`[data-id="${categoryId}"]`);
-        if (!categoryItem) {
-            console.error(`Category item with data-id "${categoryId}" not found.`);
-            return;
-        }
-
-        let subCategoryList = categoryItem.querySelector('.sub-category-list');
-        if (!subCategoryList) {
-            subCategoryList = document.createElement('ul');
-            subCategoryList.classList.add('sub-category-list');
-            categoryItem.appendChild(subCategoryList);
-        }
-
-        subCategoryList.innerHTML = '';
+    function updateCategoryList(categoryId, categories, categoryListId) {
+        const categoryList = document.getElementById(categoryListId);
+        if (!categoryList) return;
 
         categories.forEach(category => {
             const li = document.createElement('li');
+            li.dataset.id = category.id;
             const a = document.createElement('a');
-
-            a.href = `/books/search?type=category&keyword=${category.id}&pageNum=1&orderBy=salePrice&orderDirection=desc`;
-            a.classList.add('nav-link');
+            a.href = `/books/search?type=category&keyword=${category.id}`;
             a.textContent = category.name;
             li.appendChild(a);
-            subCategoryList.appendChild(li);
-
-            a.addEventListener('mouseover', function(event) {
-                if (category.subCategories) {
-                    loadCategoryData(category.id, level + 1);
-                }
-            });
-
-            a.addEventListener('click', function(event) {
-                window.location.href = a.href;
-            });
+            categoryList.appendChild(li);
         });
-
-        const rect = categoryItem.getBoundingClientRect();
-        subCategoryList.style.display = 'block';
-        subCategoryList.style.position = 'absolute';
-        subCategoryList.style.left = `${rect.width + (level * 200)}px`;
-        subCategoryList.style.top = '0';
-        subCategoryList.style.backgroundColor = 'white';
-        subCategoryList.style.border = '1px solid #ddd';
-        subCategoryList.style.zIndex = '10';
     }
-
-    document.querySelectorAll('.category-item').forEach(item => {
-        item.addEventListener("mouseover", function(event) {
-            const categoryId = this.getAttribute('data-id');
-            console.log("Mouseover Category ID: ", categoryId);
-
-            if (categoryId && categoryId !== activeCategoryId) {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(() => {
-                    activeCategoryId = categoryId;
-                    loadCategoryData(categoryId);
-                }, 200);
-            } else {
-                console.error("data-id is missing or incorrect!");
-            }
-
-            const subCategoryList = item.querySelector('.sub-category-list');
-            if (subCategoryList) {
-                subCategoryList.style.display = 'block';
-            }
-        });
-
-        item.addEventListener("mouseout", function(event) {
-            const subCategoryList = item.querySelector('.sub-category-list');
-            if (subCategoryList) {
-                timeoutId = setTimeout(() => {
-                    // 2단계 이상 깊이의 카테고리는 숨기지 않음
-                    if (item.querySelector('.sub-category-list').querySelector('li')) {
-                        subCategoryList.style.display = 'block';
-                    } else {
-                        subCategoryList.style.display = 'none';
-                    }
-                }, 300);
-            }
-        });
-
-        item.querySelector('.sub-category-list')?.addEventListener("mouseover", function() {
-            clearTimeout(timeoutId); // 서브카테고리 영역에 마우스가 있으면 숨기지 않도록 처리
-        });
-
-        item.querySelector('.sub-category-list')?.addEventListener("mouseout", function() {
-            timeoutId = setTimeout(() => {
-                this.style.display = 'none'; // 서브카테고리 숨기기
-            }, 300);
-        });
-    });
 </script>
-
 
 </body>
 

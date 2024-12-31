@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import store.aurora.book.CategoryService;
+import store.aurora.book.dto.category.CategoryDTO;
 import store.aurora.feignClient.BookSearchClient;
 import store.aurora.search.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
@@ -18,6 +20,7 @@ import java.util.List;
 public class SearchController {
 
     private final BookSearchClient bookSearchClient;
+    private final CategoryService categoryService;
 
     // 디버그용 요청 예시: http://5rora-test:8080/books/search?type=title&keyword=한강&pageNum=1&orderBy=salePrice&orderDirection=desc
     @GetMapping("/books/search")
@@ -48,7 +51,12 @@ public class SearchController {
                     type, encodedKeyword, pageNum, orderBy, orderDirection
             );
             List<BookSearchResponseDTO> books = bookSearchResponseDTOPage.getContent();
-
+            if(type.equals("category"))
+            {
+                CategoryDTO categories = categoryService.findById(Long.parseLong(keyword)); // 카테고리 하위 목록 조회
+                model.addAttribute("categories", categories);
+                System.out.println(categories);
+            }
             // 검색 결과와 페이징 정보를 모델에 추가
             model.addAttribute("books", books);
             model.addAttribute("currentPage", page + 1); // 현재 페이지 (1-based)
@@ -57,7 +65,6 @@ public class SearchController {
             model.addAttribute("type", type);
             model.addAttribute("orderBy", orderBy);
             model.addAttribute("orderDirection", orderDirection);
-
             return "search/bookSearchResults"; // templates/search/bookSearchResults.html 반환
         } catch (UnsupportedEncodingException e) {
             // 인코딩 에러 처리

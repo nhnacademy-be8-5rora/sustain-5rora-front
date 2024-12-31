@@ -14,6 +14,7 @@ import store.aurora.book.dto.category.CategoryDTO;
 import store.aurora.feignClient.book.CategoryClient;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,19 +23,21 @@ public class CategoryController {
 
     private final CategoryClient categoryClient;
 
+
     @GetMapping("/{categoryId}")
     public ResponseEntity<List<CategoryDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
         if (categoryId == null) {
             categoryId = 0L;
         }
-        ResponseEntity<List<CategoryDTO>> categories = categoryClient.findCategoriesByParentId(categoryId);
+        ResponseEntity<CategoryDTO> categories = categoryClient.findById(categoryId);
         if (categories.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)  // JSON 형식으로 설정
-                    .body(categories.getBody());
+                    .body(Objects.requireNonNull(categories.getBody()).getChildren());
         }
         return ResponseEntity.badRequest().build();
     }
+
 
 
 }

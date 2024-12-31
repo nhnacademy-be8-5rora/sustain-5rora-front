@@ -20,9 +20,9 @@ public class CategoryService {
         this.categoryClient = categoryClient;
     }
 
-    public List<CategoryDTO> findCategoriesByParentId(Long parentId) {
-        parentId = parentId == null ? 0 : parentId;
-        ResponseEntity<List<CategoryDTO>> response = categoryClient.findCategoriesByParentId(parentId);
+    public CategoryDTO findById(Long id) {
+        id = id == null ? 0 : id;
+        ResponseEntity<CategoryDTO> response = categoryClient.findById(id);
         return response.getBody();
     }
 }

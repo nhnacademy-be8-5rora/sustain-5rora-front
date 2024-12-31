@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient(name = "categoryClient", url = "${api.gateway.base-url}" + "/api/categories")
 public interface CategoryClient {
 
-    @GetMapping("/{categoryId}")
-    ResponseEntity<List<CategoryDTO>> findCategoriesByParentId(@PathVariable(value = "categoryId") Long categoryId);
+@GetMapping("/{categoryId}")
+ResponseEntity<CategoryDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
 }
 
