@@ -1,6 +1,5 @@
 package store.aurora.feignClient.coupon;
 
-import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public interface CouponClient {
     boolean existWelcomeCoupon(@PathVariable String userId, @RequestBody Long couponPolicyId );
 
     @PostMapping
-    void refund(@Valid List<String> userCouponId);
+    void refund(String userCouponId);
 
     @GetMapping
     Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO, String userId);
@@ -42,5 +41,5 @@ public interface CouponClient {
     List<UserCouponDTO> getCouponList(@PathVariable String userId);
 
     @PostMapping
-    void used(@Valid List<String> userCouponId);
+    void used(String userCouponId);
 }

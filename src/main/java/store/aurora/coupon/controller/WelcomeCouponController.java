@@ -1,11 +1,12 @@
 package store.aurora.coupon.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import store.aurora.common.JwtUtil;
 import store.aurora.coupon.dto.request.RequestUserCouponDTO;
 import store.aurora.feignClient.coupon.CouponClient;
 
@@ -24,8 +25,11 @@ public class WelcomeCouponController {
     private final CouponClient couponClient;
 
     @GetMapping("/welcomeCoupon")
-    public String registerUser(@RequestBody String userId, Model model) {
-        String message = checkAndCreateWelcomeCoupon(userId);
+    public String registerUser(HttpServletRequest request, Model model) {
+
+        String jwt = JwtUtil.getJwtFromCookie(request);
+
+        String message = checkAndCreateWelcomeCoupon(jwt);
         model.addAttribute(ALERT_MESSAGE, message);
         return HOME_PAGE;
     }
