@@ -1,4 +1,4 @@
-package store.aurora.coupon.dto;
+package store.aurora.coupon.dto.response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,15 +16,4 @@ public class ProductInfoDTO {
     private Long bookId; //상품의 고유 ID
     @NotNull
     private Integer price; //상품의 가격
-
-    public ProductInfoDTO(Long productId, List<Long> categoryIds, Long bookId, Integer price) {
-        this.productId = productId;
-        this.categoryIds = categoryIds;
-        this.bookId = bookId;
-        this.price = price;
-    }
-
-    public ProductInfoDTO() {
-
-    }
 }
