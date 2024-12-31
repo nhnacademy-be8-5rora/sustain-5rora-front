@@ -53,7 +53,7 @@ public class SecurityConfig {
                 authorizeRequests
                         .requestMatchers("/","/error",
                                 "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup", // 로그인, 로그아웃 관련
-                                "/cart/**","/books/search","/books/**","/categories/**",
+                                "/cart/**","/books/search","/books/**","/categories/**","/tags/**",
                                 "/static/**").permitAll() // static
                         .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .requestMatchers("/mypage/**").hasRole("USER")

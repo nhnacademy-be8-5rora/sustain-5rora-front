@@ -9,7 +9,7 @@
     <h1 class="text-center mb-4">알라딘 도서 등록</h1>
     <form th:action="@{/books/api/register}" method="post" enctype="multipart/form-data" class="row g-3">
         <div class="col-md-12 text-center">
-            <img th:src="${#strings.replace(book.cover, 'coversum', 'cover500')}"
+            <img th:src="${book.cover}"
                  alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
         </div>
         <input type="hidden" name="cover" th:value="${book.cover}">
@@ -95,11 +95,11 @@
                 </li>
             </ul>
         </div>
-        <div class="col-md-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                카테고리 추가
-            </button>
-        </div>
+<!--        <div class="col-md-12">-->
+<!--            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">-->
+<!--                카테고리 추가-->
+<!--            </button>-->
+<!--        </div>-->
 
         <!--        &lt;!&ndash; 카테고리 추가 모달 &ndash;&gt;-->
         <!--        <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">-->
@@ -130,6 +130,15 @@
         <!--                </div>-->
         <!--            </div>-->
         <!--        </div>-->
+        <div class="col-md-12">
+            <h5>태그</h5>
+            <ul th:each="tag : ${tags}">
+                <li>
+                    <input type="checkbox" th:name="tagIds" th:value="${tag.id}">
+                    <span th:text="${tag.name}"></span>
+                </li>
+            </ul>
+        </div>
         <div class="col-12 text-center">
             <button type="submit" class="btn btn-success">등록</button>
         </div>
