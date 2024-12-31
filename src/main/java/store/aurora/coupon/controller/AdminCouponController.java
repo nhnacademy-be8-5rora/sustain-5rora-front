@@ -16,7 +16,7 @@ public class AdminCouponController {
 
     private final CouponClient couponClient;
 
-    // 쿠폰정책 생성 (관리자) -> 쿠폰 정책은 생성밖에 안됨(정책 수정, 삭제시 -> 이전에 해당 쿠폰을 가진 유저들이 피해를 볼 수 있음)
+    // 쿠폰정책 생성 (관리자) -> 쿠폰 정책은 생성밖에 안됨(정책 수정, 삭제시 -> 이전에 해당 쿠폰을 가진 유저들이 피해를 볼 수 있기에)
     //@Validated 유효 검증(무결성)
     @PostMapping(value = "/coupon/create")
     public ResponseEntity<String> couponPolicyCreate(@RequestBody @Validated

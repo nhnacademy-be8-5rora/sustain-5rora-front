@@ -18,29 +18,29 @@ import java.util.Map;
 public interface CouponClient {
 
     // 쿠폰 정책 생성
-    @PostMapping("/create")
+    @PostMapping("/admin/create")
     ResponseEntity<String> couponPolicyCreate(@RequestBody RequestCouponPolicyDTO requestCouponPolicyDTO);
 
     // 사용자 쿠폰 생성
-    @PostMapping("/distribution")
+    @PostMapping("/admin/distribution")
     Boolean userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
 
     // 사용자 쿠폰 수정
-    @PutMapping("/update")
+    @PutMapping("/admin/update")
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponDto updateUserCouponDto);
 
-    @PostMapping
-    void refund(String userCouponId);
+    @PostMapping("/refund")
+    void refund(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
-    @PostMapping
+    @PostMapping("/using")
+    void used(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
+
+    @PostMapping("/coupon/usable")
     Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO,
                                                     @RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
-    @PostMapping("/user")
+    @PostMapping("/coupon/list")
     List<UserCouponDTO> getCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
-
-    @PostMapping
-    void used(String userCouponId);
 
     @PostMapping("/welcome")
     String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
