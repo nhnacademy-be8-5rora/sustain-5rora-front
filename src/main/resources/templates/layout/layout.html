@@ -372,8 +372,28 @@
             li.appendChild(a);
             categoryList.appendChild(li);
         });
+
+        // 하위 카테고리 클릭 시 이벤트 전파 방지
+        categoryList.addEventListener('click', function (event) {
+            event.stopPropagation(); // 상위로 이벤트 전파 방지
+        });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 국내 도서 클릭 이벤트
+        document.getElementById('domesticBooksMenu').addEventListener('click', function (event) {
+            event.preventDefault(); // 기본 클릭 동작 방지
+            window.location.href = '/books/search?type=category&keyword=1'; // 국내 도서로 이동
+        });
+
+        // 해외 도서 클릭 이벤트
+        document.getElementById('foreignBooksMenu').addEventListener('click', function (event) {
+            event.preventDefault(); // 기본 클릭 동작 방지
+            window.location.href = '/books/search?type=category&keyword=2'; // 해외 도서로 이동
+        });
+    });
 </script>
+
 
 </body>
 
