@@ -3,6 +3,7 @@ package store.aurora.feignClient.coupon;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.coupon.dto.request.RequestCouponPolicyDTO;
 import store.aurora.coupon.dto.request.RequestUserCouponDTO;
 import store.aurora.coupon.dto.request.UpdateUserCouponDto;
@@ -28,18 +29,21 @@ public interface CouponClient {
     @PutMapping("/update")
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponDto updateUserCouponDto);
 
-    @PostMapping("/{userId}")
-    boolean existWelcomeCoupon(@PathVariable String userId, @RequestBody Long couponPolicyId );
-
     @PostMapping
     void refund(String userCouponId);
 
-    @GetMapping
-    Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO, String userId);
+    @PostMapping
+    Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO,
+                                                    @RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
-    @GetMapping("/user/{userId}")
-    List<UserCouponDTO> getCouponList(@PathVariable String userId);
+    @PostMapping("/user")
+    List<UserCouponDTO> getCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @PostMapping
     void used(String userCouponId);
+
+    @PostMapping("/welcome")
+    String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
+                              @RequestBody Long couponPolicyId);
+
 }
