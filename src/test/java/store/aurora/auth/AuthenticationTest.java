@@ -11,18 +11,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//@Slf4j
-//public class AuthenticationTest {
-//
-//    @Autowired
-//    MockMvc mockMvc;
-//
-//    @Test
-//    void loginFormTest() throws Exception {
-//        mockMvc.perform(get("/login"))
-//                .andExpect(status().isOk());
-//    }
-//
-//}
+@SpringBootTest
+@AutoConfigureMockMvc
+@Slf4j
+class AuthenticationTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Test
+    void loginFormTest() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk());
+    }
+
+}

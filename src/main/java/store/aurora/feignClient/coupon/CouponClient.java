@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.coupon.dto.request.RequestCouponPolicyDTO;
 import store.aurora.coupon.dto.request.RequestUserCouponDTO;
-import store.aurora.coupon.dto.request.UpdateUserCouponByUserIdDto;
+import store.aurora.coupon.dto.request.UpdateUserCouponDto;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
 
@@ -26,7 +26,7 @@ public interface CouponClient {
 
     // 사용자 쿠폰 수정
     @PutMapping("/update")
-    ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponByUserIdDto updateUserCouponByUserIdDto);
+    ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponDto updateUserCouponDto);
 
     @PostMapping("/{userId}")
     boolean existWelcomeCoupon(@PathVariable String userId, @RequestBody Long couponPolicyId );

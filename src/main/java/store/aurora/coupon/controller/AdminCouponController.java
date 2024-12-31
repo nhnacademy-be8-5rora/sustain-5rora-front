@@ -40,9 +40,9 @@ public class AdminCouponController {
     // 사용자쿠폰 수정 (관리자)
     @PutMapping(value = "/coupon/update/")
     public ResponseEntity<String> userCouponUpdate(@RequestBody @Validated
-                                                   UpdateUserCouponByUserIdDto updateUserCouponByUserIdDto) {
+                                                   UpdateUserCouponDto updateUserCouponDto) {
 
-        couponClient.couponUpdate(updateUserCouponByUserIdDto);  // 실제 쿠폰 수정 처리
+        couponClient.couponUpdate(updateUserCouponDto);  // 실제 쿠폰 수정 처리
         return ResponseEntity.ok("사용자쿠폰이 수정되었습니다.");
     }
 
