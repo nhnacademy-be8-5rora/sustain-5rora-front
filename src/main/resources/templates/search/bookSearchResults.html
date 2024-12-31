@@ -111,10 +111,12 @@
               <span class="regular-price" th:text="${book.regularPrice} + '원'"></span>
             </div>
             <p><strong>저자:</strong>
-              <span th:each="author, iterStat : ${book.authors}" th:text="${author.name}">
-              <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
-            </span>
+              <span th:each="author, iterStat : ${book.authors}">
+              <span th:text="${author.name}"></span>
+                <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
+                </span>
             </p>
+
             <div class="star-rating">
               <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
               <span th:text="${book.reviewRating}"></span>

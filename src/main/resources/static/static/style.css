@@ -2519,8 +2519,8 @@ footer#footer {
 .price {
   margin-top: 10px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: center; /* 세로 정렬 */
+  gap: 5px; /* 가격 간 간격 조정 */
 }
 
 .price .sale-price {
@@ -2533,8 +2533,8 @@ footer#footer {
   font-size: 14px;
   text-decoration: line-through;
   color: #888;
-  margin-left: 10px;
 }
+
 
 .star-rating {
   margin-top: 10px;
