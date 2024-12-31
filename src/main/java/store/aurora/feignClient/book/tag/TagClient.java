@@ -2,22 +2,24 @@ package store.aurora.feignClient.book.tag;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import store.aurora.book.dto.tag.BookTagRequestDto;
 import store.aurora.book.dto.tag.TagRequestDto;
+import store.aurora.book.dto.tag.TagResponseDto;
 
-@FeignClient(name = "tagClient", url = "${api.gateway.base-url}/api/tags")
+import java.util.List;
+
+@FeignClient(name = "tagClient", url = "${api.gateway.base-url}")
 public interface TagClient {
 
+    @GetMapping("/api/tags")
+    ResponseEntity<List<TagResponseDto>> getAllTags();
     // 태그 생성
-    @PostMapping
+    @PostMapping("/api/tags")
     ResponseEntity<Void> createTag(@RequestBody TagRequestDto requestDto);
 
     // 태그 삭제
-    @DeleteMapping("/{tagId}")
+    @DeleteMapping("/api/tags/{tagId}")
     ResponseEntity<Void> removeTag(@PathVariable(value = "tagId") Long tagId);
 
     // 책에 태그 추가
