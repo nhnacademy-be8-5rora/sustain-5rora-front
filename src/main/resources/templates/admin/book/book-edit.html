@@ -1,154 +1,161 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
 <head>
+    <meta charset="UTF-8">
     <title>도서 수정</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container mt-5">
-    <h1 class="text-center mb-4">도서 수정</h1>
-    <form th:action="@{/books/{bookId}/edit(bookId=${book.id})}" method="post" enctype="multipart/form-data" class="row g-3">
-        <!-- Hidden field for book ID -->
-        <input type="hidden" name="bookId" th:value="${book.id}"/>
 
-        <!-- 기존 커버 이미지 -->
-        <div class="col-md-12 text-center">
-            <h5>기존 커버 이미지</h5>
-            <img th:src="${book.cover}" alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
-            <label>
-                <input type="checkbox" name="deleteImages" th:value="${book.cover}"> 삭제
-            </label>
-            <label for="coverImage" class="form-label mt-2">새 커버 이미지 업로드</label>
-            <input type="file" id="coverImage" name="coverImage" class="form-control">
-        </div>
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+<div layout:fragment="content">
+    <section class="container mt-5">
+        <h1 class="text-center mb-4">도서 수정</h1>
+        <form th:action="@{/books/{bookId}/edit(bookId=${book.id})}" method="post" enctype="multipart/form-data" class="row g-3">
+            <!-- Hidden field for book ID -->
+            <input type="hidden" name="bookId" th:value="${book.id}"/>
 
-        <!-- 부가 이미지 -->
-        <div class="col-md-12">
-            <h5>부가 이미지</h5>
-            <div class="row g-3">
-                <div class="col-md-3" th:each="image : ${book.additionalImages}">
-                    <img th:src="${image}" alt="부가 이미지" class="img-thumbnail" style="max-width: 100px;">
-                    <label>
-                        <input type="checkbox" name="deleteImages" th:value="${image}"> 삭제
-                    </label>
+            <!-- 기존 커버 이미지 -->
+            <div class="col-md-12 text-center">
+                <h5>기존 커버 이미지</h5>
+                <img th:src="${book.cover}" alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
+                <label>
+                    <input type="checkbox" name="deleteImages" th:value="${book.cover}"> 삭제
+                </label>
+                <label for="coverImage" class="form-label mt-2">새 커버 이미지 업로드</label>
+                <input type="file" id="coverImage" name="coverImage" class="form-control">
+            </div>
+
+            <!-- 부가 이미지 -->
+            <div class="col-md-12">
+                <h5>부가 이미지</h5>
+                <div class="row g-3">
+                    <div class="col-md-3" th:each="image : ${book.additionalImages}">
+                        <img th:src="${image}" alt="부가 이미지" class="img-thumbnail" style="max-width: 100px;">
+                        <label>
+                            <input type="checkbox" name="deleteImages" th:value="${image}"> 삭제
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 새 부가 이미지 업로드 -->
-        <div class="col-md-12">
-            <label for="additionalImages" class="form-label">새 부가 이미지 업로드</label>
-            <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
-        </div>
+            <!-- 새 부가 이미지 업로드 -->
+            <div class="col-md-12">
+                <label for="additionalImages" class="form-label">새 부가 이미지 업로드</label>
+                <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
+            </div>
 
-        <!-- 도서 정보 -->
-        <div class="col-md-6">
-            <label for="title" class="form-label">제목</label>
-            <input type="text" id="title" name="title" th:value="${book.title}" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="author" class="form-label">저자</label>
-            <input type="text" id="author" name="author" th:value="${book.author}" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="isbn13" class="form-label">ISBN</label>
-            <input type="text" id="isbn13" name="isbn13" th:value="${book.isbn13}" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="publisher" class="form-label">출판사</label>
-            <input type="text" id="publisher" name="publisher" th:value="${book.publisher}" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="pubDate" class="form-label">출판일</label>
-            <input type="date" id="pubDate" name="pubDate" th:value="${book.pubDate}" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
-            <input type="text" id="seriesInfo.seriesName" name="seriesInfo.seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}">
-        </div>
-        <div class="col-md-12">
-            <label for="description" class="form-label">책 설명</label>
-            <textarea id="description" name="description" class="form-control" rows="3" th:text="${book.description}"></textarea>
-        </div>
-        <div class="col-md-12">
-            <label for="contents" class="form-label">목차</label>
-            <textarea id="contents" name="contents" class="form-control" rows="3" th:text="${book.contents}"></textarea>
-        </div>
-        <div class="col-md-6">
-            <label for="priceStandard" class="form-label">정가</label>
-            <input type="number" id="priceStandard" name="priceStandard" th:value="${book.priceStandard}" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="priceSales" class="form-label">판매가</label>
-            <input type="number" id="priceSales" name="priceSales" th:value="${book.priceSales}" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-            <label for="stock" class="form-label">재고</label>
-            <input type="number" id="stock" name="stock" th:value="${book.stock}" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-            <label for="isForSale" class="form-label">판매 여부</label>
-            <select id="isForSale" name="isForSale" class="form-select">
-                <option value="true" th:selected="${book.isForSale}">판매</option>
-                <option value="false" th:selected="${!book.isForSale}">미판매</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="isPackaged" class="form-label">포장 여부</label>
-            <select id="isPackaged" name="isPackaged" class="form-select">
-                <option value="true" th:selected="${book.isPackaged}">포장</option>
-                <option value="false" th:selected="${!book.isPackaged}">비포장</option>
-            </select>
-        </div>
+            <!-- 도서 정보 -->
+            <div class="col-md-6">
+                <label for="title" class="form-label">제목</label>
+                <input type="text" id="title" name="title" th:value="${book.title}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="author" class="form-label">저자</label>
+                <input type="text" id="author" name="author" th:value="${book.author}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="isbn13" class="form-label">ISBN</label>
+                <input type="text" id="isbn13" name="isbn13" th:value="${book.isbn13}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="publisher" class="form-label">출판사</label>
+                <input type="text" id="publisher" name="publisher" th:value="${book.publisher}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="pubDate" class="form-label">출판일</label>
+                <input type="date" id="pubDate" name="pubDate" th:value="${book.pubDate}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesInfo.seriesName" name="seriesInfo.seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}">
+            </div>
+            <div class="col-md-12">
+                <label for="description" class="form-label">책 설명</label>
+                <textarea id="description" name="description" class="form-control" rows="3" th:text="${book.description}"></textarea>
+            </div>
+            <div class="col-md-12">
+                <label for="contents" class="form-label">목차</label>
+                <textarea id="contents" name="contents" class="form-control" rows="3" th:text="${book.contents}"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="priceStandard" class="form-label">정가</label>
+                <input type="number" id="priceStandard" name="priceStandard" th:value="${book.priceStandard}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="priceSales" class="form-label">판매가</label>
+                <input type="number" id="priceSales" name="priceSales" th:value="${book.priceSales}" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="stock" class="form-label">재고</label>
+                <input type="number" id="stock" name="stock" th:value="${book.stock}" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="isForSale" class="form-label">판매 여부</label>
+                <select id="isForSale" name="isForSale" class="form-select">
+                    <option value="true" th:selected="${book.isForSale}">판매</option>
+                    <option value="false" th:selected="${!book.isForSale}">미판매</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="isPackaged" class="form-label">포장 여부</label>
+                <select id="isPackaged" name="isPackaged" class="form-select">
+                    <option value="true" th:selected="${book.isPackaged}">포장</option>
+                    <option value="false" th:selected="${!book.isPackaged}">비포장</option>
+                </select>
+            </div>
 
-        <!-- 카테고리 선택 -->
-        <div class="col-md-12">
-            <h5>카테고리</h5>
-            <ul>
-                <li th:each="category : ${categories}">
-                    <div>
-                        <input type="checkbox" th:name="categoryIds" th:value="${category.id}" th:checked="${book.categoryIds.contains(category.id)}">
-                        <span th:text="${category.name}"></span>
-                    </div>
-                    <!-- 하위 카테고리 재귀 호출 -->
-                    <ul th:if="${category.children != null and #lists.size(category.children) > 0}">
-                        <li th:each="child : ${category.children}">
-                            <div>
-                                <input type="checkbox" th:name="categoryIds" th:value="${child.id}" th:checked="${book.categoryIds.contains(child.id)}">
-                                <span th:text="${child.name}"></span>
-                            </div>
-                            <!-- 재귀 호출 -->
-                            <ul th:if="${child.children != null and #lists.size(child.children) > 0}">
-                                <li th:each="subChild : ${child.children}">
-                                    <div>
-                                        <input type="checkbox" th:name="categoryIds" th:value="${subChild.id}" th:checked="${book.categoryIds.contains(subChild.id)}">
-                                        <span th:text="${subChild.name}"></span>
-                                    </div>
-                                </li>
-                            </ul>
+            <!-- 카테고리 선택 -->
+            <div class="col-md-12">
+                <h5>카테고리</h5>
+                <ul>
+                    <li th:each="category : ${categories}">
+                        <div>
+                            <input type="checkbox" th:name="categoryIds" th:value="${category.id}" th:checked="${book.categoryIds.contains(category.id)}">
+                            <span th:text="${category.name}"></span>
+                        </div>
+                        <!-- 하위 카테고리 재귀 호출 -->
+                        <ul th:if="${category.children != null and #lists.size(category.children) > 0}">
+                            <li th:each="child : ${category.children}">
+                                <div>
+                                    <input type="checkbox" th:name="categoryIds" th:value="${child.id}" th:checked="${book.categoryIds.contains(child.id)}">
+                                    <span th:text="${child.name}"></span>
+                                </div>
+                                <!-- 재귀 호출 -->
+                                <ul th:if="${child.children != null and #lists.size(child.children) > 0}">
+                                    <li th:each="subChild : ${child.children}">
+                                        <div>
+                                            <input type="checkbox" th:name="categoryIds" th:value="${subChild.id}" th:checked="${book.categoryIds.contains(subChild.id)}">
+                                            <span th:text="${subChild.name}"></span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+            <!-- 태그 선택 -->
+            <div class="col-md-12">
+                <h5>태그</h5>
+                <ul th:each="tag : ${tags}">
+                    <li>
+                        <input type="checkbox" th:name="tagIds" th:value="${tag.id}" th:checked="${book.tagIds.contains(tag.id)}">
+                        <span th:text="${tag.name}"></span>
+                    </li>
+                </ul>
+            </div>
 
-        <!-- 태그 선택 -->
-        <div class="col-md-12">
-            <h5>태그</h5>
-            <ul th:each="tag : ${tags}">
-                <li>
-                    <input type="checkbox" th:name="tagIds" th:value="${tag.id}" th:checked="${book.tagIds.contains(tag.id)}">
-                    <span th:text="${tag.name}"></span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- 제출 버튼 -->
-        <div class="col-12 text-center">
-            <button type="submit" class="btn btn-success">수정</button>
-        </div>
-    </form>
+            <!-- 제출 버튼 -->
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-success">수정</button>
+            </div>
+        </form>
+    </section>
 </div>
 </body>
+
 </html>
