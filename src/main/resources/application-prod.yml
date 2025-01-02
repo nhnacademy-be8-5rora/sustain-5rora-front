@@ -26,7 +26,7 @@ spring:
       host: na
       port: 0      #각자 쓰고있는 포트에 따라 변경
       database: 1
-      username: na
+      username:
       password: na
 
   servlet:
