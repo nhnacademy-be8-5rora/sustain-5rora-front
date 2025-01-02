@@ -33,10 +33,6 @@ spring:
       database: 1
       username:
       password:
-  session:
-    timeout: 3600   #todo 세션 유지시간
-    redis:
-      namespace: spring:session   #redis에 저장될때의 접두사?
 
 api:
   gateway:
