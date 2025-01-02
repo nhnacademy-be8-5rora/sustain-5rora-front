@@ -1,4 +1,4 @@
-package store.aurora.book.controller.admin;
+package store.aurora.admin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +12,6 @@ public class AdminController {
     @GetMapping
     public String adminPage(Model model) {
         model.addAttribute("title", "관리자 페이지");
-        return "admin/index";
+        return "admin/admin";
     }
 }
