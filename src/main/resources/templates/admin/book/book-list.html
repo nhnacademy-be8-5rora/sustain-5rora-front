@@ -54,6 +54,29 @@
             </tr>
             </tbody>
         </table>
+
+        <!-- 페이지네이션 -->
+        <p>현재 페이지: <span th:text="${currentPage}"></span></p>
+        <p>총 페이지 수: <span th:text="${totalPages}"></span></p>
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- 이전 버튼 -->
+                <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/books/list(page=${currentPage - 1}, size=2)}" class="page-link">이전</a>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
+                    <a th:href="@{/books/list(page=${i}, size=2)}" th:text="${i + 1}" class="page-link"></a>
+                </li>
+
+                <!-- 다음 버튼 -->
+                <li th:class="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/books/list(page=${currentPage + 1}, size=2)}" class="page-link">다음</a>
+                </li>
+            </ul>
+        </nav>
     </section>
 </div>
 </body>
