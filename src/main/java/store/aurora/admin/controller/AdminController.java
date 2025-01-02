@@ -1,4 +1,4 @@
-package store.aurora.book.controller.admin;
+package store.aurora.admin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

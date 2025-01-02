@@ -2,139 +2,175 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Book Search Results</title>
-    <link rel="stylesheet" href="/style.css">
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // 모든 + 버튼에 이벤트 리스너 추가
-            const toggleButtons = document.querySelectorAll('.toggle-btn');
-
-            toggleButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    const subCategoryList = button.closest('.category-item').nextElementSibling;
-
-                    // 하위 카테고리 목록의 표시/숨김을 토글
-                    if (subCategoryList) {
-                        subCategoryList.classList.toggle('hidden');
-                        // 버튼 텍스트를 + 또는 -로 토글
-                        button.textContent = subCategoryList.classList.contains('hidden') ? '+' : '-';
-                    }
-                });
-            });
+  <meta charset="UTF-8">
+  <title>Book Search Results</title>
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // 모든 + 버튼에 이벤트 리스너 추가
+      const toggleButtons = document.querySelectorAll('.toggle-btn');
+      const heartButtons = document.querySelectorAll('.heart-button');
+      heartButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          // 버튼에 `filled` 클래스가 있으면 제거하고, 없으면 추가
+          button.classList.toggle('filled');
+          button.classList.toggle('empty');
         });
-    </script>
+      });
+      toggleButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          const subCategoryList = button.closest('.category-item').nextElementSibling;
+
+          // 하위 카테고리 목록의 표시/숨김을 토글
+          if (subCategoryList) {
+            subCategoryList.classList.toggle('hidden');
+            // 버튼 텍스트를 + 또는 -로 토글
+            button.textContent = subCategoryList.classList.contains('hidden') ? '+' : '-';
+          }
+        });
+      });
+    });
+  </script>
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 
 <div layout:fragment="content">
-    <section id="billboard">
-        <h1>Book Search Results</h1>
-        <form class="search-form" method="get" action="/books/search">
-            <input type="text" name="keyword" id="keyword" placeholder="검색어를 입력하세요" required>
-            <input type="hidden" name="orderBy" value="salePrice" id="orderBy">
-            <input type="hidden" name="orderDirection" value="desc" id="orderDirection">
-            <input type="hidden" name="pageNum" value="1">
-            <div>
-                <label><input type="radio" name="type" value="title" id="searchByTitle" checked> 제목으로 검색</label>
-                <label><input type="radio" name="type" value="author" id="searchByAuthor"> 저자 이름으로 검색</label>
-            </div>
-            <button type="submit">검색</button>
-        </form>
+  <section id="billboard">
+    <h1>Book Search Results</h1>
+    <form class="search-form" method="get" action="/books/search">
+      <input type="text" name="keyword" id="keyword" placeholder="검색어를 입력하세요" required>
+      <input type="hidden" name="orderBy" value="salePrice" id="orderBy">
+      <input type="hidden" name="orderDirection" value="desc" id="orderDirection">
+      <input type="hidden" name="pageNum" value="1">
+      <div>
+        <label><input type="radio" name="type" value="title" id="searchByTitle" checked> 제목으로 검색</label>
+        <label><input type="radio" name="type" value="author" id="searchByAuthor"> 저자 이름으로 검색</label>
+      </div>
+      <button type="submit">검색</button>
+    </form>
 
-        <div>
-            <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='publishdate', orderDirection='desc')}" class="sort-button">신상품</a>
-            <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='saleprice', orderDirection='asc')}" class="sort-button">최저가</a>
-            <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='saleprice', orderDirection='desc')}" class="sort-button">최고가</a>
-            <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='reviewCount', orderDirection='desc')}" class="sort-button">리뷰 수</a>
-            <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='reviewrating', orderDirection='desc')}" class="sort-button">평점</a>
-        </div>
+    <div>
+      <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='publishdate', orderDirection='desc')}" class="sort-button">신상품</a>
+      <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='saleprice', orderDirection='asc')}" class="sort-button">최저가</a>
+      <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='saleprice', orderDirection='desc')}" class="sort-button">최고가</a>
+      <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='reviewCount', orderDirection='desc')}" class="sort-button">리뷰 수</a>
+      <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=1, orderBy='reviewrating', orderDirection='desc')}" class="sort-button">평점</a>
+    </div>
 
-        <div class="search-results">
+    <div class="search-results">
 
-            <div class="category-container" th:if="${categories != null}">
-                <h2>카테고리</h2>
-                <div class="treeview">
-                    <ul class="category-list">
-                        <li th:each="category : ${categories.children}">
-                            <div class="category-item">
-                                <span class="toggle-btn">+</span>
-                                <a th:href="'/books/search?type=category&keyword=' + ${category.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
-                                   th:text="${category.name}"></a>
-                            </div>
-                            <!-- 하위 카테고리 출력 -->
-                            <ul th:attr="id='cat-' + ${category.id}" class="sub-category hidden">
-                                <li th:each="subCategory : ${category.children}">
-                                    <div class="category-item">
-                                        <span class="toggle-btn">+</span>
-                                        <a th:href="'/books/search?type=category&keyword=' + ${subCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
-                                           th:text="${subCategory.name}"></a>
-                                    </div>
-                                    <!-- 추가적인 하위 카테고리들에 대해 재귀적으로 출력 -->
-                                    <ul th:attr="id='cat-' + ${subCategory.id}" class="sub-category hidden">
-                                        <li th:each="subSubCategory : ${subCategory.children}">
-                                            <div class="category-item">
-                                                <span class="toggle-btn">+</span>
-                                                <a th:href="'/books/search?type=category&keyword=' + ${subSubCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
-                                                   th:text="${subSubCategory.name}"></a>
-                                            </div>
-                                            <!-- 하위 카테고리가 있다면, 계속해서 재귀적으로 출력 -->
-                                            <ul th:attr="id='cat-' + ${subSubCategory.id}" class="sub-category hidden">
-                                                <li th:each="subSubSubCategory : ${subSubCategory.children}">
-                                                    <div class="category-item">
-                                                        <span class="toggle-btn">+</span>
-                                                        <a th:href="'/books/search?type=category&keyword=' + ${subSubSubCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
-                                                           th:text="${subSubSubCategory.name}"></a>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+      <div class="category-container" th:if="${categories != null}">
+        <h2>카테고리</h2>
+        <div class="treeview">
+          <ul class="category-list">
+            <li th:each="category : ${categories.children}">
+              <div class="category-item">
+                <span class="toggle-btn">+</span>
+                <a th:href="'/books/search?type=category&keyword=' + ${category.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
+                   th:text="${category.name}"></a>
+              </div>
+              <!-- 하위 카테고리 출력 -->
+              <ul th:attr="id='cat-' + ${category.id}" class="sub-category hidden">
+                <li th:each="subCategory : ${category.children}">
+                  <div class="category-item">
+                    <span class="toggle-btn">+</span>
+                    <a th:href="'/books/search?type=category&keyword=' + ${subCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
+                       th:text="${subCategory.name}"></a>
+                  </div>
+                  <!-- 추가적인 하위 카테고리들에 대해 재귀적으로 출력 -->
+                  <ul th:attr="id='cat-' + ${subCategory.id}" class="sub-category hidden">
+                    <li th:each="subSubCategory : ${subCategory.children}">
+                      <div class="category-item">
+                        <span class="toggle-btn">+</span>
+                        <a th:href="'/books/search?type=category&keyword=' + ${subSubCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
+                           th:text="${subSubCategory.name}"></a>
+                      </div>
+                      <!-- 하위 카테고리가 있다면, 계속해서 재귀적으로 출력 -->
+                      <ul th:attr="id='cat-' + ${subSubCategory.id}" class="sub-category hidden">
+                        <li th:each="subSubSubCategory : ${subSubCategory.children}">
+                          <div class="category-item">
+                            <span class="toggle-btn">+</span>
+                            <a th:href="'/books/search?type=category&keyword=' + ${subSubSubCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
+                               th:text="${subSubSubCategory.name}"></a>
+                          </div>
                         </li>
-                    </ul>
-                </div>
-            </div>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-            <div class="book-container" th:if="${books != null}">
-                <h2>책 목록</h2>
-                <div class="book-card" th:each="book : ${books}">
-                    <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
-                    <div class="book-details">
-                        <h2><a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title}"></a></h2>
-                        <p><strong>출판사:</strong> <span th:text="${book.publisherName}"></span></p>
-                        <p><strong>출판일:</strong> <span th:text="${book.publishDate}"></span></p>
-                        <div class="price">
-                            <span class="sale-price" th:text="${book.salePrice} + '원'"></span>
-                            <span class="regular-price" th:text="${book.regularPrice} + '원'"></span>
-                        </div>
-                        <p><strong>저자:</strong>
-                            <span th:each="author, iterStat : ${book.authors}">
+      <div class="book-container" th:if="${books != null}">
+        <h2>책 목록</h2>
+        <div class="book-card" th:each="book : ${books}">
+          <div class="book-image-container">
+            <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+
+            <!-- 하트 버튼 폼 -->
+            <form th:action="@{/books/likes/{bookId}(bookId=${book.id})}" method="post" style="display: inline;">
+              <button type="submit" class="heart-button" th:classappend="${book.liked ? 'filled' : 'empty'}">
+                <span th:text="${book.liked ? '♥' : '♡'}"></span>
+              </button>
+            </form>
+
+          </div>
+          <div class="book-details">
+            <h2><a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title}"></a></h2>
+            <p><strong>출판사:</strong> <span th:text="${book.publisherName}"></span></p>
+            <p><strong>출판일:</strong> <span th:text="${book.publishDate}"></span></p>
+            <div class="price">
+              <span class="sale-price" th:text="${book.salePrice} + '원'"></span>
+              <span class="regular-price" th:text="${book.regularPrice} + '원'"></span>
+            </div>
+            <p><strong>저자:</strong>
+              <span th:each="author, iterStat : ${book.authors}">
               <span th:text="${author.name}"></span>
                 <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
                 </span>
-                        </p>
+            </p>
 
-                        <div class="star-rating">
-                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
-                            <span th:text="${book.reviewRating}"></span>
-                            <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span>
-                        </div>
-
-                        <form method="post" action="/cart">
-                            <input type="hidden" name="bookId" th:value="${book.id}">
-                            <input type="number" name="quantity" value="1" min="1" required>
-                            <button type="submit">장바구니에 추가</button>
-                        </form>
-                    </div>
-                </div>
+            <div class="star-rating">
+              <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
+              <span th:text="${book.reviewRating}"></span>
+              <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span>
             </div>
+
+            <form method="post" action="/cart">
+              <input type="hidden" name="bookId" th:value="${book.id}">
+              <input type="number" name="quantity" value="1" min="1" required>
+              <button type="submit">장바구니에 추가</button>
+            </form>
+          </div>
+        </div>
+      </div>
 
         </div>
 
     </section>
+    </div>
+    <div class="pagination">
+      <!-- 이전 페이지 링크 -->
+      <a href="#"
+         th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage > 1 ? currentPage - 1 : 1)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+         th:class="${currentPage > 1 ? '' : 'disabled'}">이전</a>
+
+      <!-- 페이지 번호들 -->
+      <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+        <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${i}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+           th:text="${i}" th:class="${i == currentPage ? 'active' : ''}"></a>
+      </span>
+
+      <!-- 다음 페이지 링크 -->
+      <a href="#"
+         th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage < totalPages ? currentPage + 1 : totalPages)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+         th:class="${currentPage < totalPages ? '' : 'disabled'}">다음</a>
+    </div>
+  </section>
 </div>
 
 </body>
