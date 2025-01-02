@@ -1,139 +1,114 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>직접 도서 등록</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
-    <h1 class="text-center mb-4">직접 도서 등록</h1>
-    <form th:action="@{/books/direct/register}" method="post" enctype="multipart/form-data" class="row g-3">
-        <div class="col-md-6">
-            <label for="title" class="form-label">제목</label>
-            <input type="text" id="title" name="title" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="author" class="form-label">저자</label>
-            <input type="text" id="author" name="author" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="isbn13" class="form-label">ISBN</label>
-            <input type="text" id="isbn13" name="isbn13" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="publisher" class="form-label">출판사</label>
-            <input type="text" id="publisher" name="publisher" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="pubDate" class="form-label">출판일</label>
-            <input type="date" id="pubDate" name="pubDate" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="seriesName" class="form-label">시리즈 이름</label>
-            <input type="text" id="seriesName" name="seriesName" class="form-control">
-        </div>
-        <div class="col-md-12">
-            <label for="description" class="form-label">책 설명</label>
-            <textarea id="description" name="description" class="form-control" rows="3" placeholder="책에 대한 설명을 입력하세요"></textarea>
-        </div>
-        <div class="col-md-6">
-            <label for="priceStandard" class="form-label">정가</label>
-            <input type="number" id="priceStandard" name="priceStandard" class="form-control" min="0" required>
-        </div>
-        <div class="col-md-6">
-            <label for="priceSales" class="form-label">판매가</label>
-            <input type="number" id="priceSales" name="priceSales" class="form-control" min="0" required>
-        </div>
-        <div class="col-md-4">
-            <label for="stock" class="form-label">재고</label>
-            <input type="number" id="stock" name="stock" class="form-control" value="100" required>
-        </div>
-        <div class="col-md-4">
-            <label for="isForSale" class="form-label">판매 여부</label>
-            <select id="isForSale" name="isForSale" class="form-select" required>
-                <option value="true">판매</option>
-                <option value="false" selected>미판매</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="isPackaged" class="form-label">포장 여부</label>
-            <select id="isPackaged" name="isPackaged" class="form-select" required>
-                <option value="true">포장</option>
-                <option value="false" selected>비포장</option>
-            </select>
-        </div>
-        <div class="col-md-12">
-            <label for="coverImage" class="form-label">표지 이미지 업로드</label>
-            <input type="file" id="coverImage" name="coverImage" class="form-control">
-        </div>
-        <div class="col-md-12">
-            <label for="additionalImages" class="form-label">추가 이미지 업로드</label>
-            <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
-        </div>
-        <!-- 카테고리 선택 -->
-        <div class="col-md-12">
-            <h5>카테고리</h5>
-            <ul th:each="category : ${categories}">
-                <li>
-                    <input type="checkbox" th:name="categoryIds" th:value="${category.id}">
-                    <span th:text="${category.name}"></span>
-                    <ul th:each="child : ${category.children}">
-                        <li>
-                            <input type="checkbox" th:name="categoryIds" th:value="${child.id}">
-                            <span th:text="${child.name}"></span>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-<!--        <div class="col-md-12">-->
-<!--            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">-->
-<!--                카테고리 추가-->
-<!--            </button>-->
-<!--        </div>-->
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 
-        <!-- 카테고리 추가 모달 -->
-<!--        <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">-->
-<!--            <div class="modal-dialog">-->
-<!--                <div class="modal-content">-->
-<!--                    <form th:action="@{/categories/add}" method="post">-->
-<!--                        <div class="modal-header">-->
-<!--                            <h5 class="modal-title" id="addCategoryModalLabel">카테고리 추가</h5>-->
-<!--                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                            <div class="mb-3">-->
-<!--                                <label for="categoryName" class="form-label">카테고리 이름</label>-->
-<!--                                <input type="text" id="categoryName" name="name" class="form-control" required>-->
-<!--                            </div>-->
-<!--                            <div class="mb-3">-->
-<!--                                <label for="parentId" class="form-label">부모 카테고리</label>-->
-<!--                                <select id="parentId" name="parentId" class="form-select">-->
-<!--                                    <option value="">루트 카테고리</option>-->
-<!--                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="modal-footer">-->
-<!--                            <button type="submit" class="btn btn-primary">추가</button>-->
-<!--                        </div>-->
-<!--                    </form>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-        <div class="col-md-12">
-            <h5>태그</h5>
-            <ul th:each="tag : ${tags}">
-                <li>
-                    <input type="checkbox" th:name="tagIds" th:value="${tag.id}">
-                    <span th:text="${tag.name}"></span>
-                </li>
-            </ul>
-        </div>
-        <div class="col-12 text-center">
-            <button type="submit" class="btn btn-success">등록</button>
-        </div>
-    </form>
+<head>
+    <meta charset="UTF-8">
+    <title>직접 도서 등록</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+<div layout:fragment="content">
+    <section class="container mt-5">
+        <h1 class="text-center mb-4">직접 도서 등록</h1>
+        <form th:action="@{/books/direct/register}" method="post" enctype="multipart/form-data" class="row g-3">
+            <div class="col-md-6">
+                <label for="title" class="form-label">제목</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="author" class="form-label">저자</label>
+                <input type="text" id="author" name="author" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="isbn13" class="form-label">ISBN</label>
+                <input type="text" id="isbn13" name="isbn13" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="publisher" class="form-label">출판사</label>
+                <input type="text" id="publisher" name="publisher" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="pubDate" class="form-label">출판일</label>
+                <input type="date" id="pubDate" name="pubDate" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesName" name="seriesName" class="form-control">
+            </div>
+            <div class="col-md-12">
+                <label for="description" class="form-label">책 설명</label>
+                <textarea id="description" name="description" class="form-control" rows="3"
+                          placeholder="책에 대한 설명을 입력하세요"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="priceStandard" class="form-label">정가</label>
+                <input type="number" id="priceStandard" name="priceStandard" class="form-control" min="0" required>
+            </div>
+            <div class="col-md-6">
+                <label for="priceSales" class="form-label">판매가</label>
+                <input type="number" id="priceSales" name="priceSales" class="form-control" min="0" required>
+            </div>
+            <div class="col-md-4">
+                <label for="stock" class="form-label">재고</label>
+                <input type="number" id="stock" name="stock" class="form-control" value="100" required>
+            </div>
+            <div class="col-md-4">
+                <label for="isForSale" class="form-label">판매 여부</label>
+                <select id="isForSale" name="isForSale" class="form-select" required>
+                    <option value="true">판매</option>
+                    <option value="false" selected>미판매</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="isPackaged" class="form-label">포장 여부</label>
+                <select id="isPackaged" name="isPackaged" class="form-select" required>
+                    <option value="true">포장</option>
+                    <option value="false" selected>비포장</option>
+                </select>
+            </div>
+            <div class="col-md-12">
+                <label for="coverImage" class="form-label">표지 이미지 업로드</label>
+                <input type="file" id="coverImage" name="coverImage" class="form-control">
+            </div>
+            <div class="col-md-12">
+                <label for="additionalImages" class="form-label">추가 이미지 업로드</label>
+                <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
+            </div>
+            <!-- 카테고리 선택 -->
+            <div class="col-md-12">
+                <h5>카테고리</h5>
+                <ul th:each="category : ${categories}">
+                    <li>
+                        <input type="checkbox" th:name="categoryIds" th:value="${category.id}">
+                        <span th:text="${category.name}"></span>
+                        <ul th:each="child : ${category.children}">
+                            <li>
+                                <input type="checkbox" th:name="categoryIds" th:value="${child.id}">
+                                <span th:text="${child.name}"></span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-12">
+                <h5>태그</h5>
+                <ul th:each="tag : ${tags}">
+                    <li>
+                        <input type="checkbox" th:name="tagIds" th:value="${tag.id}">
+                        <span th:text="${tag.name}"></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-success">등록</button>
+            </div>
+        </form>
+    </section>
 </div>
 </body>
+
 </html>

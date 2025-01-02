@@ -86,7 +86,7 @@ public class BookController {
     public String registerDirectBook(
             @ModelAttribute BookRequestDto bookDto,
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
-            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
 
     ) {
         // Feign 클라이언트를 통해 데이터 전달
