@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 
@@ -42,8 +41,7 @@
 
             // 응답 처리
             if (response.ok) {
-                const message = await response.text();
-                resultMessage.textContent = message;
+                resultMessage.textContent = await response.text();
                 resultMessage.style.color = "green";
             } else {
                 resultMessage.textContent = "요청에 실패했습니다. 다시 시도해주세요.";

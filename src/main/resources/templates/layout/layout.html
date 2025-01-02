@@ -89,7 +89,7 @@
 
                 <div class="col-md-2">
                     <div class="main-logo">
-                        <a href="index.html"><img src="/static/images/main-logo.png" alt="logo"></a>
+                        <a href="/"><img src="/static/images/main-logo.png" alt="logo"></a>
                     </div>
 
                 </div>
@@ -99,6 +99,22 @@
                     <nav id="navbar">
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
+                                <li class="menu-item active"><a href="/">Home</a></li>
+                                <!-- 카테고리 메뉴 -->
+                                <li class="menu-item has-sub" id="categoryMenu">
+                                    <a href="#" class="nav-link">Categories</a>
+                                    <ul class="category-container" id="categoryList" style="display: none;">
+                                        <!-- 상위 카테고리 -->
+                                        <li th:each="category : ${categories}"
+                                            th:data-id="${category.id}"
+                                            class="category-item">
+                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}"
+                                               class="nav-link" th:text="${category.name}"></a>
+                                            <!-- 하위 카테고리 리스트 -->
+                                            <ul class="sub-category-list" style="display: none; position: absolute; left: 100%; top: 0;">
+                                                <!-- 하위 카테고리 항목은 JavaScript에서 동적으로 추가됩니다. -->
+                                            </ul>
+                                        </li>
                                 <li class="menu-item active"><a href="#home">Home</a></li>
                                 <!-- 국내 도서 메뉴 -->
                                 <li class="menu-item has-sub" id="domesticBooksMenu">
@@ -314,6 +330,26 @@
         crossorigin="anonymous"></script>
 <script src="/static/js/plugins.js"></script>
 <script src="/static/js/script.js"></script>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    function sample4_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                document.getElementById("roadAddress").value = data.roadAddress;
+            }
+        }).open();
+    }
+
+    function validateForm() {
+        const roadAddress = document.getElementById("roadAddress").value;
+        if (!roadAddress.trim()) {
+            alert("도로명 주소를 입력해주세요.");
+            return false; // 폼 제출 방지
+        }
+        return true; // 폼 제출 허용
+    }
+</script>
 
 <script>
     // 국내 도서 마우스 오버 이벤트

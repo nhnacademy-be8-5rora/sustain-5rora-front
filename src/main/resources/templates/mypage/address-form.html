@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <meta charset="utf-8">
+  <title>배송지 입력</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+
+<div layout:fragment="content">
+  <section id="featured-books" class="py-5 my-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="section-header align-center">
+
+            <div class="title">
+              <span>Some quality items</span>
+            </div>
+            <h2 class="section-title" th:text="${address.id != null ? '배송지 수정' : '배송지 추가'}"></h2>
+          </div>
+
+          <div class="product-list" data-aos="fade-up">
+            <div class="row">
+
+              <form th:action="${address.id != null ? '/mypage/addresses/' + address.id : '/mypage/addresses/new'}"
+                    th:object="${address}"
+                    method="POST" onsubmit="return validateForm()">
+                <input type="text" name="receiver" placeholder="받는사람" th:field="*{receiver}" required/><br>
+                <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명주소" th:field="*{roadAddress}" readonly> <!-- readonly 때문에 required 동작x-->
+                <input type="button" onclick="sample4_execDaumPostcode()" value="주소 찾기"><br>
+                <input type="text" placeholder="상세주소" name="addrDetail" th:field="*{addrDetail}" required><br>
+                <button type="submit">저장</button>
+              </form>
+
+              <!-- 삭제 버튼 -->
+              <form th:if="${address.id != null}" th:action="@{/mypage/addresses/delete}" method="POST" style="margin-top: 10px;">
+                <input type="hidden" name="id" th:value="${address.id}">
+                <button type="submit" class="btn btn-danger">삭제</button>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+
+</html>
