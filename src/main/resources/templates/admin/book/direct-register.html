@@ -86,11 +86,11 @@
                 </li>
             </ul>
         </div>
-        <div class="col-md-12">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                카테고리 추가
-            </button>
-        </div>
+<!--        <div class="col-md-12">-->
+<!--            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">-->
+<!--                카테고리 추가-->
+<!--            </button>-->
+<!--        </div>-->
 
         <!-- 카테고리 추가 모달 -->
 <!--        <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">-->
@@ -121,6 +121,15 @@
 <!--                </div>-->
 <!--            </div>-->
 <!--        </div>-->
+        <div class="col-md-12">
+            <h5>태그</h5>
+            <ul th:each="tag : ${tags}">
+                <li>
+                    <input type="checkbox" th:name="tagIds" th:value="${tag.id}">
+                    <span th:text="${tag.name}"></span>
+                </li>
+            </ul>
+        </div>
         <div class="col-12 text-center">
             <button type="submit" class="btn btn-success">등록</button>
         </div>

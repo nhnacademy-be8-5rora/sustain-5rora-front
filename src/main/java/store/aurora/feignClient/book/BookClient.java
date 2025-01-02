@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.aurora.book.dto.*;
 import store.aurora.book.dto.aladin.BookDetailDto;
-import store.aurora.book.dto.aladin.BookDto;
+import store.aurora.book.dto.aladin.BookRequestDto;
+import store.aurora.book.dto.aladin.BookResponseDto;
 
 import java.util.List;
 
@@ -16,52 +17,49 @@ public interface BookClient {
 
     // 도서 검색 API
     @GetMapping("/aladin/search")
-    ResponseEntity<List<BookDto>> searchBooks(@RequestParam("query") String query,
+    ResponseEntity<List<BookRequestDto>> searchBooks(@RequestParam("query") String query,
                                               @RequestParam("queryType") String queryType,
                                               @RequestParam("searchTarget") String searchTarget,
                                               @RequestParam(value = "start", defaultValue = "1") int start);
 
     // 특정 도서 정보 가져오기
     @GetMapping("/aladin/{bookId}")
-    ResponseEntity<BookDto> getBookById(@PathVariable("bookId") String bookId);
+    ResponseEntity<BookRequestDto> getBookById(@PathVariable("bookId") String bookId);
 
     // API 도서 등록
     @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Void> registerApiBook(@RequestPart("book") BookDto bookDto,
-                                         @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+    ResponseEntity<Void> registerApiBook(@RequestPart("book") BookRequestDto bookDto,
+                                         @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
     );
 
     // 직접 도서 등록
     @PostMapping(value = "/direct/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Void> registerDirectBook(@RequestPart("book") BookDto bookDto,
+    ResponseEntity<Void> registerDirectBook(@RequestPart("book") BookRequestDto bookDto,
                                             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
-                                            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+                                            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
     );
 
-    // 도서 상세 정보 조회
+    @GetMapping
+    ResponseEntity<List<BookResponseDto>> getAllBooks();
+
+    @PutMapping(value = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    void editBook(@PathVariable Long bookId,
+                  @RequestPart("book") BookRequestDto bookDto,
+                  @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
+                  @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
+                  @RequestPart(value = "deleteImages", required = false) List<Long> deleteImageIds);
+
+    @GetMapping("/{bookId}/edit")
+    ResponseEntity<BookDetailDto> getBookDetailsForAdmin(@PathVariable Long bookId);
+
+    @GetMapping("/{bookId}")
+    ResponseEntity<BookDetailsDto> getBookDetails(@PathVariable Long bookId);
+
+        // 도서 상세 정보 조회
     @GetMapping("/aladin/{bookId}")
     ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("bookId") Long bookId);
 
 
-
-    // 책 세부 정보 업데이트
-    @PutMapping("/{bookId}/details")
-    ResponseEntity<Void> updateBookDetails(@PathVariable("bookId") Long bookId,
-                                           @RequestBody BookDetailsUpdateDTO updateDTO);
-
-    // 책 판매 정보 업데이트
-    @PutMapping("/{bookId}/sales-info")
-    ResponseEntity<Void> updateBookSalesInfo(@PathVariable("bookId") Long bookId,
-                                             @RequestBody BookSalesInfoUpdateDTO salesInfoDTO);
-
-    // 책 포장 상태 업데이트
-    @PatchMapping("/{bookId}/packaging")
-    ResponseEntity<Void> updateBookPackaging(@PathVariable("bookId") Long bookId,
-                                             @RequestParam("packaging") boolean packaging);
-
-    // 책 세부 정보 조회
-    @GetMapping("/{bookId}")
-    ResponseEntity<BookDetailsDto> getBookDetails(@PathVariable("bookId") Long bookId);
 
 
     // 책 삭제

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.feignClient.UserClient;
 import store.aurora.user.dto.request.SignUpRequest;
@@ -18,11 +17,16 @@ public class SignupController {
     private final UserClient userClient;
 
 
-    @PostMapping
+
+    @GetMapping("/signup")
+    public String signUp() {
+        return "signup";
+    }
+
+    @PostMapping("/signup")
     public String signUp(@ModelAttribute SignUpRequest signUpRequest,
-                         @RequestParam boolean isOauth,
                          HttpServletResponse response) {
-        ResponseEntity<Map<String, String>> clientResponse = userClient.signUp(signUpRequest, isOauth);
+        ResponseEntity<Map<String, String>> clientResponse = userClient.signUp(signUpRequest, false);
         return processClientRes(response, clientResponse);
     }
 
