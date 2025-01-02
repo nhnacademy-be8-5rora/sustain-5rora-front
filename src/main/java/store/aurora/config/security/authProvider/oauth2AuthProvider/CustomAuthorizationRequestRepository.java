@@ -1,6 +1,5 @@
 package store.aurora.config.security.authProvider.oauth2AuthProvider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,11 +26,9 @@ public class CustomAuthorizationRequestRepository implements AuthorizationReques
     private static final Logger log = LoggerFactory.getLogger("user-logger");
 
     private final RedisTemplate<String, Oauth2AuthorizationRequestDto> template;
-    private final ObjectMapper objectMapper;
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-
 
         Optional<String> optionalCookie = getCookie(request);
         if(optionalCookie.isEmpty()){
@@ -58,7 +55,6 @@ public class CustomAuthorizationRequestRepository implements AuthorizationReques
 
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
-
 
         if (authorizationRequest == null) {
             removeAuthorizationRequest(request, response);
