@@ -25,7 +25,7 @@ spring:
     redis:
       host: na
       port: 0      #각자 쓰고있는 포트에 따라 변경
-      database: 0
+      database: 1
       username: na
       password: na
 
