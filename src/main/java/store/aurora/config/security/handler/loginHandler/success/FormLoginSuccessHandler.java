@@ -40,8 +40,7 @@ public class FormLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
             response.addCookie(optionalCookie.get());
         }
 
-        //todo 로그인 되고 보낼 곳 정하기
-        response.sendRedirect("/login-test");
+        response.sendRedirect("/");
     }
 
     private Optional<Cookie> jwtOven(String id){
