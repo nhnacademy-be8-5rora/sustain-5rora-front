@@ -34,7 +34,7 @@ public class BookSearchResponseDTO {
     private Long viewCount;
     private int reviewCount;
     private double reviewRating; // 리뷰 평점
-
+    private boolean liked;
     @Override
     public String toString() {
         return "BookSearchResponseDTO [id=" + id +

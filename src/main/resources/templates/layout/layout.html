@@ -52,7 +52,6 @@
                 </div>
                 <div class="col-md-6">
                     <div class="right-element">
-                        <a href="/admin" class="user-account for-buy"><i class="icon icon-cogs"></i><span>관리자페이지</span></a>
                         <a href="#" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>Account</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
@@ -89,7 +88,7 @@
 
                 <div class="col-md-2">
                     <div class="main-logo">
-                        <a href="/"><img src="/static/images/main-logo.png" alt="logo"></a>
+                        <a href="index.html"><img src="/static/images/main-logo.png" alt="logo"></a>
                     </div>
 
                 </div>
@@ -100,22 +99,6 @@
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
                                 <li class="menu-item active"><a href="/">Home</a></li>
-                                <!-- 카테고리 메뉴 -->
-                                <li class="menu-item has-sub" id="categoryMenu">
-                                    <a href="#" class="nav-link">Categories</a>
-                                    <ul class="category-container" id="categoryList" style="display: none;">
-                                        <!-- 상위 카테고리 -->
-                                        <li th:each="category : ${categories}"
-                                            th:data-id="${category.id}"
-                                            class="category-item">
-                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}"
-                                               class="nav-link" th:text="${category.name}"></a>
-                                            <!-- 하위 카테고리 리스트 -->
-                                            <ul class="sub-category-list" style="display: none; position: absolute; left: 100%; top: 0;">
-                                                <!-- 하위 카테고리 항목은 JavaScript에서 동적으로 추가됩니다. -->
-                                            </ul>
-                                        </li>
-                                <li class="menu-item active"><a href="#home">Home</a></li>
                                 <!-- 국내 도서 메뉴 -->
                                 <li class="menu-item has-sub" id="domesticBooksMenu">
                                     <a href="#" class="nav-link">국내 도서</a>
@@ -409,8 +392,28 @@
             li.appendChild(a);
             categoryList.appendChild(li);
         });
+
+        // 하위 카테고리 클릭 시 이벤트 전파 방지
+        categoryList.addEventListener('click', function (event) {
+            event.stopPropagation(); // 상위로 이벤트 전파 방지
+        });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 국내 도서 클릭 이벤트
+        document.getElementById('domesticBooksMenu').addEventListener('click', function (event) {
+            event.preventDefault(); // 기본 클릭 동작 방지
+            window.location.href = '/books/search?type=category&keyword=1'; // 국내 도서로 이동
+        });
+
+        // 해외 도서 클릭 이벤트
+        document.getElementById('foreignBooksMenu').addEventListener('click', function (event) {
+            event.preventDefault(); // 기본 클릭 동작 방지
+            window.location.href = '/books/search?type=category&keyword=2'; // 해외 도서로 이동
+        });
+    });
 </script>
+
 
 </body>
 
