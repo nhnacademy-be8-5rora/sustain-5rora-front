@@ -1,5 +1,6 @@
 package store.aurora.search.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ public class SearchController {
             @RequestParam(defaultValue = "1") String pageNum,
             @RequestParam(required = false) String orderBy,
             @RequestParam(required = false) String orderDirection,
+            HttpServletRequest request,  // HttpServletRequest 추가
             Model model) {
 
         try {
@@ -51,12 +53,12 @@ public class SearchController {
                     type, encodedKeyword, pageNum, orderBy, orderDirection
             );
             List<BookSearchResponseDTO> books = bookSearchResponseDTOPage.getContent();
-            if(type.equals("category"))
-            {
+            if (type.equals("category")) {
                 CategoryDTO categories = categoryService.findById(Long.parseLong(keyword)); // 카테고리 하위 목록 조회
                 model.addAttribute("categories", categories);
                 System.out.println(categories);
             }
+
             // 검색 결과와 페이징 정보를 모델에 추가
             model.addAttribute("books", books);
             model.addAttribute("currentPage", page + 1); // 현재 페이지 (1-based)
@@ -65,6 +67,7 @@ public class SearchController {
             model.addAttribute("type", type);
             model.addAttribute("orderBy", orderBy);
             model.addAttribute("orderDirection", orderDirection);
+
             return "search/bookSearchResults"; // templates/search/bookSearchResults.html 반환
         } catch (UnsupportedEncodingException e) {
             // 인코딩 에러 처리

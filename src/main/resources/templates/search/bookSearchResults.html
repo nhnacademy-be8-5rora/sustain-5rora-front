@@ -9,7 +9,14 @@
     document.addEventListener("DOMContentLoaded", function() {
       // 모든 + 버튼에 이벤트 리스너 추가
       const toggleButtons = document.querySelectorAll('.toggle-btn');
-
+      const heartButtons = document.querySelectorAll('.heart-button');
+      heartButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          // 버튼에 `filled` 클래스가 있으면 제거하고, 없으면 추가
+          button.classList.toggle('filled');
+          button.classList.toggle('empty');
+        });
+      });
       toggleButtons.forEach(function(button) {
         button.addEventListener('click', function() {
           const subCategoryList = button.closest('.category-item').nextElementSibling;
@@ -101,7 +108,17 @@
       <div class="book-container" th:if="${books != null}">
         <h2>책 목록</h2>
         <div class="book-card" th:each="book : ${books}">
-          <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+          <div class="book-image-container">
+            <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+
+            <!-- 하트 버튼 폼 -->
+            <form th:action="@{/books/likes/{bookId}(bookId=${book.id})}" method="post" style="display: inline;">
+              <button type="submit" class="heart-button" th:classappend="${book.liked ? 'filled' : 'empty'}">
+                <span th:text="${book.liked ? '♥' : '♡'}"></span>
+              </button>
+            </form>
+
+          </div>
           <div class="book-details">
             <h2><a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title}"></a></h2>
             <p><strong>출판사:</strong> <span th:text="${book.publisherName}"></span></p>
@@ -129,46 +146,29 @@
               <button type="submit">장바구니에 추가</button>
             </form>
           </div>
-          <div class="like-button-container">
-            <button class="like-button" data-book-id="${book.id}" aria-label="좋아요">
-              ❤
-            </button>
-          </div>
         </div>
       </div>
 
     </div>
+    <div class="pagination">
+      <!-- 이전 페이지 링크 -->
+      <a href="#"
+         th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage > 1 ? currentPage - 1 : 1)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+         th:class="${currentPage > 1 ? '' : 'disabled'}">이전</a>
 
+      <!-- 페이지 번호들 -->
+      <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+        <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${i}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+           th:text="${i}" th:class="${i == currentPage ? 'active' : ''}"></a>
+      </span>
+
+      <!-- 다음 페이지 링크 -->
+      <a href="#"
+         th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage < totalPages ? currentPage + 1 : totalPages)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+         th:class="${currentPage < totalPages ? '' : 'disabled'}">다음</a>
+    </div>
   </section>
 </div>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const likeButtons = document.querySelectorAll('.like-button');
-
-    likeButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const bookId = this.dataset.bookId;
-
-        // AJAX 요청을 통해 좋아요 상태를 서버로 전송
-        fetch(`/books/likes/${bookId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        })
-                .then(response => {
-                  if (response.ok) {
-                    alert('좋아요를 눌렀습니다!');
-                  } else {
-                    alert('좋아요 처리 중 문제가 발생했습니다.');
-                  }
-                })
-                .catch(error => console.error('Error:', error));
-      });
-    });
-  });
-</script>
 
 </body>
 </html>

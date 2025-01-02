@@ -2445,82 +2445,95 @@ footer#footer {
 
 
 /* bookSearchResults.html*/
-.search-results {
-  display: flex; /* 가로 배치 */
-  gap: 30px; /* 카테고리 박스와 책 리스트 간 간격 */
-  background-color: #EDEBE4; /* 배경 색상 */
+/* 공통 스타일 정의 */
+body, .search-results, .category-container, .book-container, .book-card, .book-image-container, .book-details {
+  background-color: #EDEBE4; /* 공통 배경색 */
 }
 
+a {
+  text-decoration: none;
+}
+
+button, .pagination a {
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* search-results 스타일 */
+.search-results {
+  display: flex;
+  gap: 30px;
+}
+
+/* 카테고리 박스 스타일 */
 .category-container {
-  width: 250px; /* 카테고리 박스 너비 */
-  background-color: #EDEBE4; /* 배경 색상 */
+  width: 250px;
   padding: 20px;
   border-radius: 8px;
-  flex-shrink: 0; /* 가로 크기 고정 */
+  flex-shrink: 0;
   position: sticky;
-  top: 0; /* 스크롤 시 고정되도록 */
+  top: 0;
 }
 
+/* 책 리스트 스타일 */
 .book-container {
   display: flex;
-  flex-direction: column; /* 책 리스트 세로 배치 */
+  flex-direction: column;
   gap: 20px;
-  flex-grow: 1; /* 책 리스트가 가능한 공간을 차지하도록 */
-  background-color: #EDEBE4; /* 배경 색상 설정 */
+  flex-grow: 1;
 }
 
 .book-card {
-  background-color: #EDEBE4;
   border: 1px solid #ddd;
   border-radius: 10px;
-  display: flex; /* 좌우 배치 */
-  flex-direction: row; /* 이미지와 내용이 가로로 배치 */
+  display: flex;
+  flex-direction: row;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%; /* 가로 크기 100% */
-  max-height: 400px; /* 카드 높이 고정 */
-  flex-shrink: 0;
+  width: 100%;
+  max-height: 400px;
+}
+
+.book-image-container {
+  position: relative;
+  width: 20%;
+  height: 100%;
 }
 
 .book-image {
-  width: 40%; /* 이미지가 40%의 너비를 차지 */
-  height: 100%; /* 높이를 카드와 맞춤 */
-  object-fit: cover; /* 이미지 비율 유지 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .book-details {
   padding: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* 내용 위쪽 정렬 */
-  width: 60%; /* 내용이 60%의 너비를 차지 */
+  justify-content: flex-start;
+  width: 60%;
   overflow: hidden;
 }
 
 .book-details h2 {
-  font-size: 20px; /* 제목 크기 키움 */
+  font-size: 20px;
   margin-bottom: 10px;
   color: #333;
   line-height: 1.4;
-  overflow: visible; /* 잘리지 않도록 */
-  white-space: normal; /* 줄 바꿈 가능 */
-  text-overflow: clip;
 }
 
 .book-details p {
-  font-size: 16px; /* 본문 크기 키움 */
+  font-size: 16px;
   margin: 5px 0;
   color: #555;
-  overflow: visible; /* 넘치지 않도록 */
-  text-overflow: clip;
-  white-space: normal; /* 줄 바꿈 가능 */
 }
 
 .price {
   margin-top: 10px;
   display: flex;
-  align-items: center; /* 세로 정렬 */
-  gap: 5px; /* 가격 간 간격 조정 */
+  align-items: center;
+  gap: 5px;
 }
 
 .price .sale-price {
@@ -2535,7 +2548,6 @@ footer#footer {
   color: #888;
 }
 
-
 .star-rating {
   margin-top: 10px;
   font-size: 16px;
@@ -2546,21 +2558,42 @@ footer#footer {
   color: #888;
 }
 
+/* 하트 버튼 스타일 */
+.heart-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: none;
+  font-size: 24px;
+  color: #808080;
+  transition: transform 0.3s ease;
+}
+
+.heart-button:hover {
+  transform: scale(1.2);
+}
+
+.heart-button.filled .heart-icon {
+  color: red;
+}
+
+.heart-button.empty .heart-icon {
+  color: gray;
+}
+
+/* 검색 폼 스타일 */
 .search-form {
   margin-bottom: 30px;
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: #EDEBE4; /* 주변 배경색 */
 }
 
 .search-form input[type="text"] {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
-  border-radius: 5px;
   flex-grow: 1;
-  background-color: white; /* 검색어 입력란만 흰색 배경 */
 }
 
 .search-form button {
@@ -2568,31 +2601,26 @@ footer#footer {
   font-size: 16px;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .search-form button:hover {
   background-color: #e4ede8;
 }
 
-
+/* 결과 없음 표시 스타일 */
 .no-results {
   text-align: center;
   font-size: 18px;
   color: #888;
   margin-top: 20px;
-  background-color: #EDEBE4;
 }
 
+/* 정렬 버튼 스타일 */
 .sort-button {
   cursor: pointer;
   color: #007bff;
   font-size: 16px;
   margin-right: 20px;
-  background: none;
-  border: none;
   text-decoration: underline;
 }
 
@@ -2600,9 +2628,10 @@ footer#footer {
   color: #0056b3;
 }
 
+/* 반응형 스타일 */
 @media (max-width: 768px) {
   .search-results {
-    flex-direction: column; /* 모바일에서는 세로로 배치 */
+    flex-direction: column;
   }
 
   .category-container {
@@ -2640,4 +2669,32 @@ footer#footer {
 
 .hidden {
   display: none;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination a {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  color: #007bff;
+}
+
+.pagination a:hover {
+  background-color: #f1f1f1;
+}
+
+.pagination .active {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination .disabled {
+  color: #ccc;
+  pointer-events: none;
 }
