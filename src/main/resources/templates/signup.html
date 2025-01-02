@@ -8,15 +8,12 @@
 <body>
     <div class="signup-container">
         <h2>회원가입</h2>
-        <form method="POST" action="/api/users" id="signupForm">
+        <form method="POST" action="/signup" id="signupForm">
             <label for="id">아이디</label><br>
             <input type="text" id="id" name="id" placeholder="아이디를 입력하세요" required><br>
 
             <label for="password">비밀번호</label><br>
             <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required><br>
-
-<!--            <label for="confirmPassword">비밀번호 확인</label><br>-->
-<!--            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 다시 입력하세요" required><br>-->
 
             <label for="name">이름</label><br>
             <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required><br>
@@ -24,26 +21,80 @@
             <label for="birth">생년월일</label><br>
             <input type="text" id="birth" name="birth" placeholder="생년월일을 입력하세요" required><br>
 
-
             <label for="phoneNumber">전화번호</label><br>
-            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="전화번호를 입력하세요" required>
-            <button formaction="/api/users/send-verification-code" formmethod="POST" type="submit">
-                인증번호 받기
-            </button>
-            <br>
+            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="전화번호를 입력하세요" required><br>
+<!--        </form>-->
 
-            <label for="verificationCode">인증번호</label><br>
-            <input type="number" id="verificationCode" name="verificationCode" placeholder="인증번호를 입력하세요" required>
-            <button formaction="/api/users/verify-code" formmethod="POST" type="submit">
-                인증하기
-            </button>
-            <br>
+        <!-- 인증번호 받기 -->
+<!--        <form method="POST" action="/api/users/send-verification-code">-->
+<!--            <button type="submit" id="sendCodeButton">인증번호 받기</button>-->
+<!--        </form>-->
 
+        <!-- 인증번호 확인 -->
+<!--        <form method="POST" action="/api/users/verify-code">-->
+<!--            <label for="verificationCode">인증번호</label><br>-->
+<!--            <input type="text" id="verificationCode" name="verificationCode" placeholder="인증번호를 입력하세요" required>-->
+<!--            <button type="submit" id="verifyCodeButton">인증하기</button>-->
+<!--        </form>-->
+
+<!--        <form method="POST" action="/api/users" id="signupFormContinue">-->
             <label for="email">이메일</label><br>
             <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required><br><br>
 
             <button type="submit">회원가입</button>
         </form>
+
+
     </div>
+
+    <script>
+        // 인증번호 전송
+        // document.querySelector('#sendCodeButton').addEventListener('click', function(event) {
+        //     event.preventDefault(); // 기본 폼 제출 방지
+        //     const phoneNumber = document.querySelector('#phoneNumber').value;
+        //
+        //     fetch('http://localhost:8280/api/users/send-verification-code', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({ phoneNumber }),
+        //     })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             alert(data.message);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // });
+        //
+        // // 인증번호 검증
+        // document.querySelector('#verifyCodeButton').addEventListener('click', function(event) {
+        //     event.preventDefault();
+        //     const phoneNumber = document.querySelector('#phoneNumber').value;
+        //     const verificationCode = document.querySelector('#verificationCode').value;
+        //
+        //     fetch('http://localhost:8280/api/users/verify-code', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({ phoneNumber, verificationCode }),
+        //     })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.message === "인증이 완료되었습니다.") {
+        //                 alert("인증 완료!");
+        //             } else {
+        //                 alert("인증 실패: " + data.message);
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // });
+    </script>
+
 </body>
 </html>
