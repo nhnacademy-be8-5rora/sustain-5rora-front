@@ -40,5 +40,9 @@ public interface CategoryClient {
     //search용 카테고리 기본값만 가져오기
     @GetMapping("/{categoryId}")
     ResponseEntity<CategoryDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
+
+    //최상위 카테고리 가져오기
+    @GetMapping("/root")
+    ResponseEntity<List<CategoryResponseDTO>> getRootCategories();
 }
 
