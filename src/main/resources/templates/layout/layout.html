@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>BookSaw - Free Book Store HTML CSS Template</title>
@@ -54,8 +55,10 @@
                     <div class="right-element">
                         <a href="/admin" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>관리자페이지</span></a>
-                        <a href="/login" class="user-account for-buy"><i
-                                class="icon icon-user"></i><span>Account</span></a>
+                        <a href="/login" class="user-account for-buy" sec:authorize="isAnonymous()"><i
+                                class="icon icon-user"></i><span>로그인</span></a>
+                        <a href="/logout" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
+                                class="icon icon-user"></i><span>로그아웃</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>마이페이지</span></a>
                         <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
