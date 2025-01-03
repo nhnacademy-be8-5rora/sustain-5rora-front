@@ -26,7 +26,7 @@ public class WelcomeCouponController {
         String jwt = JwtUtil.getJwtFromCookie(request);
 
         String message = couponClient.existWelcomeCoupon(jwt, 1L);  //쿠폰정책(1L) -> 신규가입 쿠폰 정책
-        model.addAttribute(ALERT_MESSAGE, message);
+        model.addAttribute(ALERT_MESSAGE, message); //쿠폰 유무 파악후에 메시지전달
 
         return HOME_PAGE;   //홈페이지로 이동
     }

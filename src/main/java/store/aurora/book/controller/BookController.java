@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.aurora.book.CustomPage;
 import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
@@ -16,7 +17,9 @@ import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.feignClient.book.BookClient;
 import store.aurora.feignClient.book.CategoryClient;
 import store.aurora.feignClient.book.tag.TagClient;
+import store.aurora.search.Page;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -86,7 +89,7 @@ public class BookController {
     public String registerDirectBook(
             @ModelAttribute BookRequestDto bookDto,
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
-            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
 
     ) {
         // Feign 클라이언트를 통해 데이터 전달
@@ -96,10 +99,21 @@ public class BookController {
 
     // 도서 목록 페이지 렌더링
     @GetMapping("/list")
-    public String listBooks(Model model) {
-        ResponseEntity<List<BookResponseDto>> response = bookClient.getAllBooks();
-        List<BookResponseDto> books = response.getBody();
-        model.addAttribute("books", books);
+    public String listBooks(@RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "2") int size,
+                            Model model) {
+        ResponseEntity<CustomPage<BookResponseDto>> response = bookClient.getAllBooks(page, size);
+        CustomPage<BookResponseDto> bookPage = response.getBody();
+
+        if (bookPage != null) {
+            model.addAttribute("books", bookPage.getContent());
+            model.addAttribute("currentPage", bookPage.getCurrentPage());
+            model.addAttribute("totalPages", bookPage.getTotalPages());
+        } else {
+            model.addAttribute("books", Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+        }
         return "/admin/book/book-list"; // 도서 목록 페이지 템플릿
     }
 

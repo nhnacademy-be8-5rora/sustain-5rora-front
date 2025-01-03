@@ -22,8 +22,7 @@ public class UserCouponListController {
 
     private final CouponClient couponClient;
 
-
-    @GetMapping(value = "/couponList")
+    @GetMapping(value = "/coupon/list")
     public String couponList(HttpServletRequest request,
                              Model model) {
 

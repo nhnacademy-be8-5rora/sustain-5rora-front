@@ -35,11 +35,10 @@ public interface CouponClient {
     @PostMapping("/using")
     void used(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
-    @PostMapping("/coupon/usable")
+    @GetMapping("/usable")
     Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO,
                                                     @RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
-
-    @PostMapping("/coupon/list")
+    @GetMapping("/list")
     List<UserCouponDTO> getCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @PostMapping("/welcome")

@@ -9,11 +9,12 @@ import java.util.List;
 //사용자에게 필요한 쿠폰 정보
 @Data
 public class UserCouponDTO {
+
     private String couponName;       // 쿠폰 ID
-    private Long needCost;
-    private Long maxSale;
-    private Long salePercent;
-    private Long saleAmount;
+    private Integer needCost;
+    private Integer maxSale;
+    private Integer salePercent;
+    private Integer saleAmount;
     private LocalDate startDate; // 시작 날짜
     private LocalDate endDate;   // 종료 날짜
     private List<Long> bookIdList;  //쿠폰 사용 가능한 책 ID

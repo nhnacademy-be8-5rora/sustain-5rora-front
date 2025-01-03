@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <meta charset="utf-8">
+  <title>배송지 목록</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+
+<div layout:fragment="content">
+  <section id="featured-books" class="py-5 my-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="section-header align-center">
+            <div class="title">
+              <span>Some quality items</span>
+            </div>
+            <h2 class="section-title">배송지 목록</h2>
+          </div>
+
+          <div class="product-list" data-aos="fade-up">
+            <div class="row">
+
+              <table>
+                <thead>
+                <tr>
+                  <th>수취인</th>
+                  <th>도로명 주소</th>
+                  <th>상세 주소</th>
+                  <th>작업</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="address : ${addresses}">
+                  <td th:text="${address.receiver}">홍길동</td>
+                  <td th:text="${address.roadAddress}">서울특별시 강남구 테헤란로</td>
+                  <td th:text="${address.addrDetail}">101호</td>
+                  <td>
+                    <a th:href="@{/mypage/addresses/{id}(id=${address.id})}" class="btn btn-primary btn-sm">수정</a>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+
+              <div class="mt-3">
+                <a href="/mypage/addresses/new" class="btn btn-success">등록</a>
+              </div>
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+
+</html>
