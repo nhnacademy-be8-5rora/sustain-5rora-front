@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAuthorizationRequestRepository;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAuthorizationRequestResolver;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAccessTokenResponseClient;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomOauth2UserService;
@@ -38,6 +39,7 @@ public class SecurityConfig {
     private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
     private final CustomAccessTokenResponseClient customAccessTokenResponseClient;
     private final CustomOauth2UserService customOauth2UserService;
+    private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -53,9 +55,9 @@ public class SecurityConfig {
                 authorizeRequests
                         .requestMatchers("/","/error",
                                 "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup", // 로그인, 로그아웃 관련
-                                "/cart/**","/books/search","/books/**","/categories/**","/tags/**",
+                                "/cart/**","/books/search","/books/**","/categories/**","/tags/**","/admin/**",
                                 "/static/**").permitAll() // static
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
+//                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .requestMatchers("/mypage/**").hasRole("USER")
                         .anyRequest().authenticated()
         );
@@ -76,7 +78,9 @@ public class SecurityConfig {
                 .failureUrl("/login")
         ).oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
-                .authorizationEndpoint(authorization -> authorization.authorizationRequestResolver(customAuthorizationRequestResolver))
+                .authorizationEndpoint(authorization -> authorization
+                        .authorizationRequestResolver(customAuthorizationRequestResolver)
+                        .authorizationRequestRepository(customAuthorizationRequestRepository))
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService))
                 .tokenEndpoint(token -> token.accessTokenResponseClient(customAccessTokenResponseClient))
                 .successHandler(oauthLoginSuccessHandler)

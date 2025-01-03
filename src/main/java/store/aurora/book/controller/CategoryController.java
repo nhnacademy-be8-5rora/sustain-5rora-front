@@ -26,18 +26,12 @@ import java.util.Objects;
 public class CategoryController {
 
     private final CategoryClient categoryClient;
-//
-//    @ModelAttribute("categories")
-//    public List<CategoryDTO> getCategories(HttpServletRequest request) {
-//        String categoryIdParam = request.getParameter("categoryId");
-//        Long categoryId = (categoryIdParam != null && !categoryIdParam.isEmpty())
-//                ? Long.parseLong(categoryIdParam) : 0L;
-//
-//        // 카테고리 조회
-//        ResponseEntity<List<CategoryDTO>> categoriesResponse = categoryClient.findCategoriesByParentId(categoryId);
-//        return categoriesResponse.getBody();
-//    }
 
+    @GetMapping("/root")
+    public ResponseEntity<List<CategoryResponseDTO>> getRootCategories() {
+        System.out.println("카테고리 확인"+categoryClient.getRootCategories().getBody());
+        return ResponseEntity.ok(categoryClient.getRootCategories().getBody());
+    }
 
 
     @GetMapping
