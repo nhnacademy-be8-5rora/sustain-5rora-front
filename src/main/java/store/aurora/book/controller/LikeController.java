@@ -17,11 +17,12 @@ import store.aurora.feignClient.book.LikeClient;
 public class LikeController {
 
     private final LikeClient likeClient;
-    @PostMapping("/likes/{bookId}")
-    public void doLike(@PathVariable("bookId") String bookId,
-                                         HttpServletRequest request) {
-        String jwt = JwtUtil.getJwtFromCookie(request);
-        likeClient.doLike(jwt,bookId);
 
+    @PostMapping("/likes/{bookId}")
+    public ResponseEntity<Boolean> doLike(@PathVariable("bookId") String bookId,
+                                          HttpServletRequest request) {
+        String jwt = JwtUtil.getJwtFromCookie(request);
+        boolean isLiked = likeClient.doLike(jwt, bookId);  // 서버에서 좋아요 상태 처리
+        return ResponseEntity.ok(isLiked);  // 응답으로 좋아요 상태(true/false) 반환
     }
 }

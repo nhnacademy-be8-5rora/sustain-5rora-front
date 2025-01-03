@@ -2674,28 +2674,28 @@ button, .pagination a {
 
 /* 페이지네이션 스타일 */
 .pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .pagination a {
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  color: #007bff;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    color: #007bff;
 }
 
 .pagination a:hover {
-  background-color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 
 .pagination .active {
-  background-color: #007bff;
-  color: white;
+    background-color: #007bff;
+    color: white;
 }
 
 .pagination .disabled {
-  color: #ccc;
-  pointer-events: none;
+    color: #ccc;
+    pointer-events: none;
 }
