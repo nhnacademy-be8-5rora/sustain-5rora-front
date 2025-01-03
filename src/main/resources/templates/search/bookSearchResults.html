@@ -7,16 +7,76 @@
   <link rel="stylesheet" href="/style.css">
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // 모든 + 버튼에 이벤트 리스너 추가
       const toggleButtons = document.querySelectorAll('.toggle-btn');
       const heartButtons = document.querySelectorAll('.heart-button');
+
       heartButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-          // 버튼에 `filled` 클래스가 있으면 제거하고, 없으면 추가
-          button.classList.toggle('filled');
-          button.classList.toggle('empty');
+        button.addEventListener('click', function(event) {
+          event.preventDefault(); // 폼 제출을 막습니다.
+          console.log("하트 버튼 클릭됨");
+
+          const bookId = button.getAttribute('data-book-id');
+          console.log("클릭된 책의 ID: ", bookId);
+
+          // 버튼 비활성화
+          button.disabled = true;
+          console.log("버튼 비활성화");
+
+          // 서버로 AJAX 요청 보내기
+          fetch(`/books/likes/${bookId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bookId: bookId }) // 서버로 bookId 보내기
+          })
+                  .then(response => {
+                    console.log("서버 응답 상태: ", response.status);  // 응답 상태 코드 출력
+                    return response.text();  // JSON이 아닌 텍스트로 응답받기
+                  })
+                  .then(text => {
+                    console.log("서버 응답 텍스트: ", text);  // 응답 텍스트 출력
+                    try {
+                      const liked = JSON.parse(text);  // 텍스트를 JSON으로 파싱
+                      if (typeof liked !== 'boolean') {
+                        throw new Error('Expected boolean value');
+                      }
+
+                      // 버튼 상태 업데이트
+                      if (liked) {
+                        console.log("현재 상태와 반대색으로 전환");
+
+                        // 현재 상태를 확인하여 반대 상태로 전환
+                        if (button.classList.contains('filled')) {
+                          button.classList.remove('filled');
+                          button.classList.add('empty');
+                          button.querySelector('span').textContent = '♡'; // 빈 하트
+                        } else {
+                          button.classList.remove('empty');
+                          button.classList.add('filled');
+                          button.querySelector('span').textContent = '♥'; // 채워진 하트
+                        }
+                      } else {
+                        console.error("좋아요 중 오류");
+                        // 필요 시, 버튼 상태를 유지하거나 오류 메시지를 화면에 표시 가능
+                      }
+
+                    } catch (error) {
+                      console.error('JSON 파싱 오류: ', error);
+                    }
+                  })
+                  .catch(error => {
+                    console.error('오류 발생: ', error);
+                    alert('좋아요 기능에 오류가 발생했습니다.');
+                  })
+                  .finally(() => {
+                    console.log("버튼 다시 활성화");
+                    button.disabled = false; // 요청 후 버튼 다시 활성화
+                  });
         });
       });
+
+
       toggleButtons.forEach(function(button) {
         button.addEventListener('click', function() {
           const subCategoryList = button.closest('.category-item').nextElementSibling;
@@ -31,6 +91,7 @@
       });
     });
   </script>
+
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
@@ -111,12 +172,14 @@
           <div class="book-image-container">
             <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
 
-            <!-- 하트 버튼 폼 -->
-            <form th:action="@{/books/likes/{bookId}(bookId=${book.id})}" method="post" style="display: inline;">
-              <button type="submit" class="heart-button" th:classappend="${book.liked ? 'filled' : 'empty'}">
-                <span th:text="${book.liked ? '♥' : '♡'}"></span>
-              </button>
-            </form>
+            <!-- 하트 버튼을 클릭하여 AJAX 요청을 보내는 방식으로 변경 -->
+            <button type="button" class="heart-button"
+                    th:data-book-id="${book.id}"
+                    th:data-liked="${book.liked}"
+                    th:classappend="${book.liked ? 'filled' : 'empty'}">
+              <span th:text="${book.liked ? '♥' : '♡'}"></span>
+            </button>
+
 
           </div>
           <div class="book-details">
@@ -152,26 +215,25 @@
         </div>
 
     </section>
-    </div>
-    <div class="pagination">
-      <!-- 이전 페이지 링크 -->
-      <a href="#"
-         th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage > 1 ? currentPage - 1 : 1)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
-         th:class="${currentPage > 1 ? '' : 'disabled'}">이전</a>
+  <div class="pagination">
+    <!-- 이전 페이지 링크 -->
+    <a href="#"
+       th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage > 1 ? currentPage - 1 : 1)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+       th:class="${currentPage > 1 ? '' : 'disabled'}">이전</a>
 
-      <!-- 페이지 번호들 -->
-      <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+    <!-- 페이지 번호들 -->
+    <span th:each="i : ${#numbers.sequence(1, totalPages)}">
         <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${i}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
            th:text="${i}" th:class="${i == currentPage ? 'active' : ''}"></a>
       </span>
 
-      <!-- 다음 페이지 링크 -->
-      <a href="#"
-         th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage < totalPages ? currentPage + 1 : totalPages)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
-         th:class="${currentPage < totalPages ? '' : 'disabled'}">다음</a>
+    <!-- 다음 페이지 링크 -->
+    <a href="#"
+       th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage < totalPages ? currentPage + 1 : totalPages)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+       th:class="${currentPage < totalPages ? '' : 'disabled'}">다음</a>
+  </div>
     </div>
-  </section>
-</div>
+
 
 </body>
 </html>
