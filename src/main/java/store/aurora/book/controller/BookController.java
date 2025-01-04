@@ -177,7 +177,7 @@ public class BookController {
         model.addAttribute("books", books.getContent());
         model.addAttribute("currentPage", page+1);  // `Long` 타입
         model.addAttribute("totalPages", books.getTotalPages());  // `Integer` 타입
-        return "/book/book-likes";
+        return "book/book-likes";
     }
 
 }
