@@ -1,13 +1,13 @@
 package store.aurora.book.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import store.aurora.book.CustomPage;
 import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
@@ -17,7 +17,6 @@ import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.feignClient.book.BookClient;
 import store.aurora.feignClient.book.CategoryClient;
 import store.aurora.feignClient.book.tag.TagClient;
-import store.aurora.search.Page;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +30,7 @@ public class BookController {
     private final CategoryClient categoryClient;
     private final TagClient tagClient;
 
-    @GetMapping
+    @GetMapping("search-books")
     public String searchForm() {
         return "/admin/book/api/search";
     }
@@ -54,13 +53,14 @@ public class BookController {
 
     // API 도서 등록 폼 렌더링
     @GetMapping("/api/register")
-    public String showRegisterForm(@RequestParam String bookId, Model model) {
+    public String showRegisterForm(@RequestParam String bookId,
+                                   Model model) {
         ResponseEntity<BookRequestDto> response = bookClient.getBookById(bookId);
-        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategoryHierarchy();
-        ResponseEntity<List<TagResponseDto>> tagResponse = tagClient.getAllTags();
-        model.addAttribute("categories", responseCategory.getBody());
-        model.addAttribute("tags", tagResponse.getBody());
         model.addAttribute("book", response.getBody());
+
+        ResponseEntity<List<CategoryResponseDTO>> categoriesResponse = categoryClient.getCategoryHierarchy();
+        model.addAttribute("categories", categoriesResponse.getBody());
+
         return "/admin/book/api/register";
     }
 
@@ -70,16 +70,14 @@ public class BookController {
                                   @RequestPart(value = "uploadedImages", required = false) List<MultipartFile> additionalImages
     ) {
         bookClient.registerApiBook(bookDto,additionalImages);
-        return "redirect:/books/list";
+        return "redirect:/books";
     }
 
     // 직접 등록 폼 렌더링
     @GetMapping("/direct/register")
     public String showDirectRegisterForm(Model model) {
         ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategoryHierarchy();
-        ResponseEntity<List<TagResponseDto>> tagResponse = tagClient.getAllTags();
         model.addAttribute("categories", responseCategory.getBody());
-        model.addAttribute("tags", tagResponse.getBody());
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
         return "/admin/book/direct-register"; // 직접 등록 페이지 템플릿 경로
     }
@@ -94,20 +92,20 @@ public class BookController {
     ) {
         // Feign 클라이언트를 통해 데이터 전달
         bookClient.registerDirectBook(bookDto, coverImage,additionalImages);
-        return "redirect:/books/list";
+        return "redirect:/books";
     }
 
     // 도서 목록 페이지 렌더링
-    @GetMapping("/list")
+    @GetMapping()
     public String listBooks(@RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "2") int size,
                             Model model) {
-        ResponseEntity<CustomPage<BookResponseDto>> response = bookClient.getAllBooks(page, size);
-        CustomPage<BookResponseDto> bookPage = response.getBody();
+        ResponseEntity<Page<BookResponseDto>> response = bookClient.getAllBooks(page, size);
+        Page<BookResponseDto> bookPage = response.getBody();
 
         if (bookPage != null) {
             model.addAttribute("books", bookPage.getContent());
-            model.addAttribute("currentPage", bookPage.getCurrentPage());
+            model.addAttribute("currentPage", bookPage.getNumber());
             model.addAttribute("totalPages", bookPage.getTotalPages());
         } else {
             model.addAttribute("books", Collections.emptyList());
@@ -146,7 +144,7 @@ public class BookController {
         // Feign 클라이언트를 통해 수정 요청 전달
         bookClient.editBook(bookId, bookDto, coverImage, additionalImages, deleteImageIds);
 
-        return "redirect:/books/list"; // 수정 후 목록 페이지로 리다이렉트
+        return "redirect:/books"; // 수정 후 목록 페이지로 리다이렉트
     }
 
 

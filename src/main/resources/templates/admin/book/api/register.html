@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+      layout:decorate="~{layout/admin-layout}">
 
 <head>
     <meta charset="UTF-8">
@@ -98,15 +98,14 @@
                     </li>
                 </ul>
             </div>
+
             <div class="col-md-12">
-                <h5>태그</h5>
-                <ul th:each="tag : ${tags}">
-                    <li>
-                        <input type="checkbox" th:name="tagIds" th:value="${tag.id}">
-                        <span th:text="${tag.name}"></span>
-                    </li>
-                </ul>
+                <label for="tags" class="form-label">태그</label>
+                <textarea id="tags" name="tags" class="form-control" rows="2"
+                          placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
             </div>
+
+
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-success">등록</button>
             </div>
