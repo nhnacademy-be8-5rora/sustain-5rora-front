@@ -1,5 +1,6 @@
 package store.aurora.book.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -7,16 +8,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.aurora.book.CustomPage;
 import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.book.dto.tag.TagResponseDto;
+import store.aurora.common.JwtUtil;
+import store.aurora.feignClient.BookSearchClient;
 import store.aurora.feignClient.book.BookClient;
 import store.aurora.feignClient.book.CategoryClient;
 import store.aurora.feignClient.book.tag.TagClient;
+import store.aurora.search.Page;
+import store.aurora.search.dto.BookSearchResponseDTO;
 
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -96,10 +103,21 @@ public class BookController {
 
     // 도서 목록 페이지 렌더링
     @GetMapping("/list")
-    public String listBooks(Model model) {
-        ResponseEntity<List<BookResponseDto>> response = bookClient.getAllBooks();
-        List<BookResponseDto> books = response.getBody();
-        model.addAttribute("books", books);
+    public String listBooks(@RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "2") int size,
+                            Model model) {
+        ResponseEntity<CustomPage<BookResponseDto>> response = bookClient.getAllBooks(page, size);
+        CustomPage<BookResponseDto> bookPage = response.getBody();
+
+        if (bookPage != null) {
+            model.addAttribute("books", bookPage.getContent());
+            model.addAttribute("currentPage", bookPage.getCurrentPage());
+            model.addAttribute("totalPages", bookPage.getTotalPages());
+        } else {
+            model.addAttribute("books", Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+        }
         return "/admin/book/book-list"; // 도서 목록 페이지 템플릿
     }
 
@@ -144,4 +162,22 @@ public class BookController {
 
         return "bookdetail-test";
     }
+
+    @GetMapping("/likes")
+    public String getLikeBooks(@RequestParam(defaultValue = "1") String pageNum,
+                               Model model, HttpServletRequest request) {
+        String jwt = JwtUtil.getJwtFromCookie(request);
+        if (jwt.equals("Bearer null")) {
+            jwt = "";  // jwt가 null일 경우 빈 문자열 설정
+        }
+        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikeBooks(jwt, Long.parseLong(pageNum));
+        int page = Integer.parseInt(pageNum) - 1; // 페이지 번호 0-based
+
+        Page<BookSearchResponseDTO> books = likeBooks.getBody();
+        model.addAttribute("books", books.getContent());
+        model.addAttribute("currentPage", page+1);  // `Long` 타입
+        model.addAttribute("totalPages", books.getTotalPages());  // `Integer` 타입
+        return "book/book-likes";
+    }
+
 }

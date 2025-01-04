@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Book Search Results</title>
+    <link rel="stylesheet" href="/style.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const heartButtons = document.querySelectorAll('.heart-button');
+
+            heartButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // 폼 제출을 막습니다.
+                    console.log("하트 버튼 클릭됨");
+
+                    const bookId = button.getAttribute('data-book-id');
+                    console.log("클릭된 책의 ID: ", bookId);
+
+                    // 사용자에게 삭제 확인을 요청
+                    const confirmDelete = confirm("정말 삭제하시겠습니까?");
+                    if (!confirmDelete) {
+                        return; // 삭제하지 않고 종료
+                    }
+
+                    // 버튼 비활성화
+                    button.disabled = true;
+                    console.log("버튼 비활성화");
+
+                    // 서버로 AJAX 요청 보내기
+                    fetch(`/books/likes/${bookId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ bookId: bookId }) // 서버로 bookId 보내기
+                    })
+                        .then(response => {
+                            console.log("서버 응답 상태: ", response.status);  // 응답 상태 코드 출력
+                            return response.text();  // JSON이 아닌 텍스트로 응답받기
+                        })
+                        .then(text => {
+                            console.log("서버 응답 텍스트: ", text);  // 응답 텍스트 출력
+                            try {
+                                const liked = JSON.parse(text);  // 텍스트를 JSON으로 파싱
+                                if (typeof liked !== 'boolean') {
+                                    throw new Error('Expected boolean value');
+                                }
+
+                                // 삭제가 성공하면 해당 책을 DOM에서 제거
+                                if (liked) {
+                                    console.log("좋아요 책 삭제");
+
+                                    // 삭제가 성공하면 해당 책을 DOM에서 제거
+                                    const bookCard = button.closest('.book-card');
+                                    if (bookCard) {
+                                        bookCard.remove(); // 책 카드 삭제
+                                    }
+                                } else {
+                                    console.error("좋아요 중 오류");
+                                }
+
+                            } catch (error) {
+                                console.error('JSON 파싱 오류: ', error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('오류 발생: ', error);
+                            alert('좋아요 기능에 오류가 발생했습니다.');
+                        })
+                        .finally(() => {
+                            console.log("버튼 다시 활성화");
+                            button.disabled = false; // 요청 후 버튼 다시 활성화
+                        });
+                });
+            });
+        });
+    </script>
+
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div layout:fragment="content">
+    <section id="billboard">
+        <h1>내 찜 목록</h1>
+
+
+        <div class="search-results">
+            <div class="book-container" th:if="${books != null}">
+                <h2>책 목록</h2>
+                <div class="book-card" th:each="book : ${books}">
+                    <div class="book-image-container">
+                        <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+
+                        <!-- 하트 버튼을 클릭하여 AJAX 요청을 보내는 방식으로 변경 -->
+                        <button type="button" class="heart-button"
+                                th:data-book-id="${book.id}"
+                                th:classappend="${book.liked ? 'filled' : 'empty'}">
+                            <span class="heart-icon" th:text="${book.liked ? '♥' : '♡'}"></span>
+                        </button>
+
+                    </div>
+                    <div class="book-details">
+                        <h2><a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title}"></a></h2>
+                        <p><strong>출판사:</strong> <span th:text="${book.publisherName}"></span></p>
+                        <p><strong>출판일:</strong> <span th:text="${book.publishDate}"></span></p>
+                        <div class="price">
+                            <span class="sale-price" th:text="${book.salePrice} + '원'"></span>
+                            <span class="regular-price" th:text="${book.regularPrice} + '원'"></span>
+                        </div>
+                        <p><strong>저자:</strong>
+                            <span th:each="author, iterStat : ${book.authors}">
+              <span th:text="${author.name}"></span>
+                <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
+                </span>
+                        </p>
+
+                        <div class="star-rating">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= book.reviewRating ? 'filled' : ''}">★</span>
+                            <span th:text="${book.reviewRating}"></span>
+                            <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span>
+                        </div>
+
+                        <div class="action-buttons">
+                            <div class="quantity-and-buttons">
+                                <!-- 숫자 선택 바 -->
+                                <input type="number" name="quantity" value="1" min="1" required>
+
+                                <!-- 장바구니와 바로구매 버튼 -->
+                                <form method="post" action="/cart" class="action-form">
+                                    <input type="hidden" name="bookId" th:value="${book.id}">
+                                    <!-- quantity 값을 input 태그로 전송 -->
+                                    <input type="hidden" name="quantity" value="1" id="cartQuantity">
+                                    <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">장바구니에 추가</button>
+                                </form>
+
+                                <form method="post" action="/checkout" class="action-form">
+                                    <input type="hidden" name="bookId" th:value="${book.id}">
+                                    <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">바로구매하기</button>
+                                </form>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+</div>
+
+
+</body>
+</html>
