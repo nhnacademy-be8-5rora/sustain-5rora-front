@@ -184,7 +184,7 @@
                         <!-- 이미지 영역 -->
                         <div class="col-md-6">
                             <figure class="products-thumb">
-                                <img th:src="@{${mostSellerBook.imgPath != null ? mostSellerBook.imgPath : '/static/images/default.jpg'}}"
+                                <img th:src="${mostSellerBook != null && mostSellerBook.imgPath != null ? mostSellerBook.imgPath : '/static/images/default.jpg'}" alt="book" class="single-image">
                                      alt="book" class="single-image">
                             </figure>
                         </div>
@@ -195,11 +195,11 @@
                                 <h2 class="section-title divider">Best Selling Book</h2>
                                 <div class="products-content">
                                     <!-- 저자 이름 -->
-                                    <span th:text="${mostSellerBook.authors != null && !mostSellerBook.authors.isEmpty() ? mostSellerBook.authors[0].name : 'No authors available'}"></span>
+                                    <span th:text="${mostSellerBook != null && mostSellerBook.authors != null && !mostSellerBook.authors.isEmpty() ? mostSellerBook.authors[0].name : 'No authors available'}"></span>
                                     <!-- 책 제목 -->
-                                    <h3 class="item-title" th:text="${mostSellerBook.title}">Untitled Book</h3>
+                                    <h3 class="item-title" th:text="${mostSellerBook != null && mostSellerBook.title != null ? mostSellerBook.title : 'Untitled Book'}">Untitled Book</h3>
                                     <!-- 가격 -->
-                                    <div class="item-price" th:text="'$ ' + ${mostSellerBook.salePrice}">40.00</div>
+                                    <div class="item-price" th:text="${mostSellerBook != null && mostSellerBook.salePrice != null ? '$ ' + mostSellerBook.salePrice : '$ 0.00'}">40.00</div>
                                     <div class="btn-wrap">
                                         <a href="#" class="btn-accent-arrow">shop it now <i class="icon icon-ns-arrow-right"></i></a>
                                     </div>
