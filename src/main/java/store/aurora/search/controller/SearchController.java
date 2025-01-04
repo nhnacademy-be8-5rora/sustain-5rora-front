@@ -63,7 +63,6 @@ public class SearchController {
                 CategoryDTO categories = categoryService.findById(Long.parseLong(keyword)); // 카테고리 하위 목록 조회
                 model.addAttribute("categories", categories);
             }
-            System.out.println("books 확인"+books);
             // 검색 결과와 페이징 정보를 모델에 추가
             model.addAttribute("books", books);
             model.addAttribute("currentPage", page + 1); // 현재 페이지 (1-based)
