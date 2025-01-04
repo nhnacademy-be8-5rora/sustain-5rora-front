@@ -67,5 +67,9 @@ public interface CategoryClient {
      */
     @GetMapping("/{parentId}/children")
     ResponseEntity<List<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId);
+
+    //최상위 카테고리 가져오기
+    @GetMapping("/root/all")
+    ResponseEntity<List<CategoryResponseDTO>> getCategories();
 }
 

@@ -12,7 +12,7 @@ import store.aurora.config.security.constants.SecurityConstants;
 public interface LikeClient {
 
     @PostMapping("/{bookId}")
-    public ResponseEntity<LikeDto> doLike( @RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
+    public boolean doLike( @RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
                                             @PathVariable("bookId") String bookId);
 
 }

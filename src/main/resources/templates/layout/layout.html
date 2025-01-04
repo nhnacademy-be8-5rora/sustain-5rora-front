@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>BookSaw - Free Book Store HTML CSS Template</title>
@@ -54,8 +55,10 @@
                     <div class="right-element">
                         <a href="/admin" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>관리자페이지</span></a>
-                        <a href="/login" class="user-account for-buy"><i
-                                class="icon icon-user"></i><span>Account</span></a>
+                        <a href="/login" class="user-account for-buy" sec:authorize="isAnonymous()"><i
+                                class="icon icon-user"></i><span>로그인</span></a>
+                        <a href="/logout" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
+                                class="icon icon-user"></i><span>로그아웃</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>마이페이지</span></a>
                         <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
@@ -101,17 +104,12 @@
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
                                 <li class="menu-item active"><a href="/">Home</a></li>
-                                <!-- 국내 도서 메뉴 -->
-                                <li class="menu-item has-sub" id="domesticBooksMenu">
-                                    <a href="#" class="nav-link">국내 도서</a>
-                                    <ul class="category-container" id="domesticCategoryList" style="display: none;"></ul>
+                                        <!-- 카테고리 별로 보기-->
+                                <li class="menu-item has-sub" id="categories">
+                                    <a href="#" class="nav-link">카테고리</a>
+                                    <ul class="category-container" id="categoryList" style="display: none;"></ul>
                                 </li>
 
-                                <!-- 해외 도서 메뉴 -->
-                                <li class="menu-item has-sub" id="foreignBooksMenu">
-                                    <a href="#" class="nav-link">해외 도서</a>
-                                    <ul class="category-container" id="foreignCategoryList" style="display: none;"></ul>
-                                </li>
 
 
 
@@ -244,10 +242,10 @@
             <div class="col-md-2">
 
                 <div class="footer-menu">
-                    <h5>Help</h5>
+                    <h5>Api 명세</h5>
                     <ul class="menu-list">
                         <li class="menu-item">
-                            <a href="#">Help center</a>
+                            <a href="/api-doc-shop">shop api 명세</a>
                         </li>
                         <li class="menu-item">
                             <a href="#">Report a problem</a>
@@ -337,43 +335,47 @@
 </script>
 
 <script>
-    // 국내 도서 마우스 오버 이벤트
-    document.getElementById("domesticBooksMenu").addEventListener("mouseenter", function () {
-        const categoryList = document.getElementById("domesticCategoryList");
+    // 카테고리 마우스 오버 이벤트
+    document.getElementById("categories").addEventListener("mouseenter", function () {
+        const categoryList = document.getElementById("categoryList"); // DOM 요소 수정
         if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
-            loadCategoryData(1, "domesticCategoryList"); // 국내 도서 데이터 로드
+            console.log('Loading category data...');
+            loadCategoryData(); // 카테고리 데이터 로드
         }
         categoryList.style.display = 'block'; // 하위 카테고리 표시
-    });
-
-    // 해외 도서 마우스 오버 이벤트
-    document.getElementById("foreignBooksMenu").addEventListener("mouseenter", function () {
-        const categoryList = document.getElementById("foreignCategoryList");
-        if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
-            loadCategoryData(2, "foreignCategoryList"); // 해외 도서 데이터 로드
-        }
-        categoryList.style.display = 'block'; // 하위 카테고리 표시
+        console.log('Category list shown');
     });
 
     // 하위 카테고리가 사라지지 않도록 유지 (마우스가 벗어날 때 숨김 방지)
-    document.querySelectorAll('.menu-item.has-sub').forEach(menuItem => {
-        menuItem.addEventListener("mouseleave", function () {
-            const categoryList = menuItem.querySelector(".category-container");
-            if (categoryList) {
-                categoryList.style.display = 'none'; // 마우스가 벗어나면 숨김
-            }
-        });
+    document.getElementById("categories").addEventListener("mouseleave", function () {
+        const categoryList = document.getElementById("categoryList");
+        categoryList.style.display = 'none'; // 하위 카테고리 숨기기
+        console.log('Category list hidden');
     });
 
     // 카테고리 데이터를 API에서 가져와 업데이트
-    function loadCategoryData(categoryId, categoryListId) {
-        fetch(`/categories/${categoryId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    updateCategoryList(categoryId, data, categoryListId);
-                } else {
-                    console.error('Invalid category data:', data);
+    function loadCategoryData() {
+        console.log('Fetching Root categories');
+        fetch(`/categories/root`)
+            .then(response => {
+                console.log('Response status:', response.status); // 상태 코드 확인
+                if (!response.ok) { // 응답이 정상적이지 않으면 에러 처리
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text(); // 응답을 텍스트로 읽음
+            })
+            .then(text => {
+                console.log('Raw response text:', text); // 받은 응답 텍스트 확인
+                try {
+                    const data = JSON.parse(text); // 응답을 JSON으로 파싱
+                    console.log('Category data received:', data);
+                    if (Array.isArray(data)) {
+                        updateCategoryList(data); // 받은 데이터를 카테고리 리스트에 추가
+                    } else {
+                        console.error('Invalid category data:', data);
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
                 }
             })
             .catch(error => {
@@ -381,40 +383,41 @@
             });
     }
 
-    function updateCategoryList(categoryId, categories, categoryListId) {
-        const categoryList = document.getElementById(categoryListId);
+
+
+    // 카테고리 리스트 업데이트
+    function updateCategoryList(categories) {
+        console.log('Updating category list...');
+        const categoryList = document.getElementById("categoryList"); // DOM 요소 수정
         if (!categoryList) return;
 
+        // 기존 카테고리 목록 초기화
+        categoryList.innerHTML = '';
+
         categories.forEach(category => {
+            console.log(`Adding category: ${category.name}`);
             const li = document.createElement('li');
             li.dataset.id = category.id;
             const a = document.createElement('a');
             a.href = `/books/search?type=category&keyword=${category.id}`;
             a.textContent = category.name;
+
+            // 클릭 시 해당 카테고리 페이지로 이동
+            a.addEventListener('click', function (event) {
+                console.log(`Redirecting to category: ${category.name}`);
+                // 클릭 이벤트 전파 방지
+                event.stopPropagation();
+            });
+
             li.appendChild(a);
             categoryList.appendChild(li);
         });
 
-        // 하위 카테고리 클릭 시 이벤트 전파 방지
-        categoryList.addEventListener('click', function (event) {
-            event.stopPropagation(); // 상위로 이벤트 전파 방지
-        });
+        console.log('Category list updated');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // 국내 도서 클릭 이벤트
-        document.getElementById('domesticBooksMenu').addEventListener('click', function (event) {
-            event.preventDefault(); // 기본 클릭 동작 방지
-            window.location.href = '/books/search?type=category&keyword=1'; // 국내 도서로 이동
-        });
-
-        // 해외 도서 클릭 이벤트
-        document.getElementById('foreignBooksMenu').addEventListener('click', function (event) {
-            event.preventDefault(); // 기본 클릭 동작 방지
-            window.location.href = '/books/search?type=category&keyword=2'; // 해외 도서로 이동
-        });
-    });
 </script>
+
 
 
 </body>

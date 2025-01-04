@@ -10,6 +10,9 @@ import store.aurora.book.dto.*;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
+import store.aurora.config.security.constants.SecurityConstants;
+import store.aurora.search.Page;
+import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.List;
 
@@ -67,4 +70,12 @@ public interface BookClient {
     // 책 삭제
     @DeleteMapping("/{bookId}")
     ResponseEntity<Void> deleteBook(@PathVariable("bookId") Long bookId);
+
+    @GetMapping("/likes")
+    ResponseEntity<Page<BookSearchResponseDTO>> getLikeBooks(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,
+                                                             @RequestParam Long pageNum);
+
+    @GetMapping("/most")
+    ResponseEntity<BookSearchResponseDTO> getMostBook();
+
 }
