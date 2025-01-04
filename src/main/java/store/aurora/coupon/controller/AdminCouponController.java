@@ -27,7 +27,6 @@ public class AdminCouponController {
     @PostMapping(value = "/policy/create")
     public String couponPolicyCreate(@RequestBody @Validated
                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
-
         couponClient.couponPolicyCreate(requestCouponPolicyDTO);
 
         return COUPON_ADMIN_URL;
@@ -37,7 +36,6 @@ public class AdminCouponController {
     @PostMapping("/coupon/distribution")
     public String userCouponCreate(@RequestBody @Validated
                                                    RequestUserCouponDTO requestUserCouponDTO) {
-
         couponClient.userCouponCreate(requestUserCouponDTO);
 
         return COUPON_ADMIN_URL;
@@ -47,7 +45,6 @@ public class AdminCouponController {
     @PutMapping(value = "/coupon/update/")
     public String userCouponUpdate(@RequestBody @Validated
                                                    UpdateUserCouponDto updateUserCouponDto) {
-
         couponClient.couponUpdate(updateUserCouponDto);  // 실제 쿠폰 수정 처리
         return COUPON_ADMIN_URL;
     }
