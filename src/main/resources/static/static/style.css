@@ -2529,6 +2529,8 @@ button, .pagination a {
   color: #555;
 }
 
+
+
 .price {
   margin-top: 10px;
   display: flex;
@@ -2558,6 +2560,39 @@ button, .pagination a {
 .star-rating span:last-child {
     color: #888;
 }
+/* action-buttons 클래스를 추가하여 버튼을 나란히 배치 */
+.action-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.quantity-and-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+}
+
+.action-form button.disabled-button {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.action-form button:hover {
+    background-color: #0056b3;
+}
+
+
+
 
 /* 하트 버튼 스타일 */
 .heart-button {
@@ -2698,4 +2733,9 @@ button, .pagination a {
 .pagination .disabled {
     color: #ccc;
     pointer-events: none;
+}
+/* 버튼 비활성화 상태에서 투명도를 낮추기 */
+.disabled-button {
+    opacity: 0.5; /* 버튼을 반투명하게 만듦 */
+    pointer-events: none; /* 클릭 이벤트 비활성화 */
 }
