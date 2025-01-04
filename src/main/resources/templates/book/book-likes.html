@@ -134,11 +134,25 @@
                             <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span>
                         </div>
 
-                        <form method="post" action="/cart">
-                            <input type="hidden" name="bookId" th:value="${book.id}">
-                            <input type="number" name="quantity" value="1" min="1" required>
-                            <button type="submit">장바구니에 추가</button>
-                        </form>
+                        <div class="action-buttons">
+                            <div class="quantity-and-buttons">
+                                <!-- 숫자 선택 바 -->
+                                <input type="number" name="quantity" value="1" min="1" required>
+
+                                <!-- 장바구니와 바로구매 버튼 -->
+                                <form method="post" action="/cart" class="action-form">
+                                    <input type="hidden" name="bookId" th:value="${book.id}">
+                                    <!-- quantity 값을 input 태그로 전송 -->
+                                    <input type="hidden" name="quantity" value="1" id="cartQuantity">
+                                    <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">장바구니에 추가</button>
+                                </form>
+
+                                <form method="post" action="/checkout" class="action-form">
+                                    <input type="hidden" name="bookId" th:value="${book.id}">
+                                    <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">바로구매하기</button>
+                                </form>
+                            </div>
+
                     </div>
                 </div>
             </div>
