@@ -74,4 +74,8 @@ public interface BookClient {
     @GetMapping("/likes")
     ResponseEntity<Page<BookSearchResponseDTO>> getLikeBooks(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,
                                                              @RequestParam Long pageNum);
+
+    @GetMapping("/most")
+    ResponseEntity<BookSearchResponseDTO> getMostBook();
+
 }

@@ -12,7 +12,8 @@ import store.aurora.coupon.dto.response.ProductInfoDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
 import store.aurora.feignClient.coupon.CouponClient;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ import java.util.Map;
 public class UserCouponListController {
 
     private final CouponClient couponClient;
+    private static final Logger USER_LOG = LoggerFactory.getLogger("user-logger");
+
 
     @GetMapping(value = "/coupon/list")
     public String couponList(HttpServletRequest request,
@@ -28,7 +31,11 @@ public class UserCouponListController {
 
         String jwt = JwtUtil.getJwtFromCookie(request);
 
+        USER_LOG.info("유저명 : {}", jwt);
+
         List<UserCouponDTO> userCouponList = couponClient.getCouponList(jwt);
+
+        USER_LOG.info("유저쿠폰정보 수 : {}", userCouponList.size());
 
         model.addAttribute("userCouponList", userCouponList);
 
