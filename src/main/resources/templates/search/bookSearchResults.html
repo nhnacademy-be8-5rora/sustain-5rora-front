@@ -50,11 +50,11 @@
                         if (button.classList.contains('filled')) {
                           button.classList.remove('filled');
                           button.classList.add('empty');
-                          button.querySelector('span').textContent = '♡'; // 빈 하트
+                          button.querySelector('.heart-icon').textContent = '♡'; // 빈 하트
                         } else {
                           button.classList.remove('empty');
                           button.classList.add('filled');
-                          button.querySelector('span').textContent = '♥'; // 채워진 하트
+                          button.querySelector('.heart-icon').textContent = '♥'; // 채워진 하트
                         }
                       } else {
                         console.error("좋아요 중 오류");
@@ -175,10 +175,10 @@
             <!-- 하트 버튼을 클릭하여 AJAX 요청을 보내는 방식으로 변경 -->
             <button type="button" class="heart-button"
                     th:data-book-id="${book.id}"
-                    th:data-liked="${book.liked}"
                     th:classappend="${book.liked ? 'filled' : 'empty'}">
-              <span th:text="${book.liked ? '♥' : '♡'}"></span>
+              <span class="heart-icon" th:text="${book.liked ? '♥' : '♡'}"></span>
             </button>
+
 
 
           </div>
@@ -192,9 +192,9 @@
             </div>
             <p><strong>저자:</strong>
               <span th:each="author, iterStat : ${book.authors}">
-              <span th:text="${author.name}"></span>
-                <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
-                </span>
+            <span th:text="${author.name}"></span>
+            <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
+        </span>
             </p>
 
             <div class="star-rating">
@@ -203,12 +203,28 @@
               <span> (리뷰 수 : <span th:text="${book.reviewCount}"></span>)</span>
             </div>
 
-            <form method="post" action="/cart">
-              <input type="hidden" name="bookId" th:value="${book.id}">
-              <input type="number" name="quantity" value="1" min="1" required>
-              <button type="submit">장바구니에 추가</button>
-            </form>
+            <div class="action-buttons">
+              <div class="quantity-and-buttons">
+                <!-- 숫자 선택 바 -->
+                <input type="number" name="quantity" value="1" min="1" required>
+
+                <!-- 장바구니와 바로구매 버튼 -->
+                <form method="post" action="/cart" class="action-form">
+                  <input type="hidden" name="bookId" th:value="${book.id}">
+                  <!-- quantity 값을 input 태그로 전송 -->
+                  <input type="hidden" name="quantity" value="1" id="cartQuantity">
+                  <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">장바구니에 추가</button>
+                </form>
+
+                <form method="post" action="/checkout" class="action-form">
+                  <input type="hidden" name="bookId" th:value="${book.id}">
+                  <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">바로구매하기</button>
+                </form>
+              </div>
+            </div>
           </div>
+
+
         </div>
       </div>
 

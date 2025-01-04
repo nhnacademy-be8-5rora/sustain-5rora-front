@@ -29,7 +29,6 @@ public class CategoryController {
 
     @GetMapping("/root")
     public ResponseEntity<List<CategoryResponseDTO>> getRootCategories() {
-        System.out.println("카테고리 확인"+categoryClient.getRootCategories().getBody());
         return ResponseEntity.ok(categoryClient.getRootCategories().getBody());
     }
 
