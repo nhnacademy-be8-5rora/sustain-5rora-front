@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>BookSaw - Free Book Store HTML CSS Template</title>
@@ -52,8 +53,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="right-element">
-                        <a href="#" class="user-account for-buy"><i
-                                class="icon icon-user"></i><span>Account</span></a>
+                        <a href="/admin" class="user-account for-buy"><i
+                                class="icon icon-user"></i><span>관리자페이지</span></a>
+                        <a href="/login" class="user-account for-buy" sec:authorize="isAnonymous()"><i
+                                class="icon icon-user"></i><span>로그인</span></a>
+                        <a href="/logout" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
+                                class="icon icon-user"></i><span>로그아웃</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>마이페이지</span></a>
                         <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
@@ -98,18 +103,13 @@
                     <nav id="navbar">
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
-                                <li class="menu-item active"><a href="#home">Home</a></li>
-                                <!-- 카테고리 메뉴 추가 -->
-                                <li class="menu-item has-sub" id="categoryMenu">
-                                    <a href="#" class="nav-link">Categories</a>
-                                    <ul id="categoryList" style="display: none;"> <!-- 초기에는 숨김 상태로 설정 -->
-                                        <li th:each="category : ${categories}" data-id="${category.id}" onmouseover="loadCategoryData(category.id)">
-                                            <a th:href="@{/books/search(type='category', keyword=${category.id}, pageNum=1, orderBy='salePrice', orderDirection='desc')}" th:text="${category.name}"></a>
-                                        </li>
-
-
-                                    </ul>
+                                <li class="menu-item active"><a href="/">Home</a></li>
+                                        <!-- 카테고리 별로 보기-->
+                                <li class="menu-item has-sub" id="categories">
+                                    <a href="#" class="nav-link">카테고리</a>
+                                    <ul class="category-container" id="categoryList" style="display: none;"></ul>
                                 </li>
+
 
 
 
@@ -242,10 +242,10 @@
             <div class="col-md-2">
 
                 <div class="footer-menu">
-                    <h5>Help</h5>
+                    <h5>Api 명세</h5>
                     <ul class="menu-list">
                         <li class="menu-item">
-                            <a href="#">Help center</a>
+                            <a href="/api-doc-shop">shop api 명세</a>
                         </li>
                         <li class="menu-item">
                             <a href="#">Report a problem</a>
@@ -314,71 +314,111 @@
 <script src="/static/js/plugins.js"></script>
 <script src="/static/js/script.js"></script>
 
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    document.getElementById("categoryMenu").addEventListener("click", function(event) {
-        // 클릭한 대상이 <a> 요소인지 확인
-        if (event.target.tagName.toLowerCase() === 'a') {
-            var categoryId = event.target.closest('li').dataset.id;
-            loadCategoryData(categoryId); // 해당 카테고리 데이터를 불러옵니다.
-
-            // 서브 메뉴 토글 (열기/닫기)
-            var subMenu = event.target.closest('li').querySelector('ul');
-            if (subMenu) {
-                subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
+    function sample4_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                document.getElementById("roadAddress").value = data.roadAddress;
             }
-        }
-    });
-
-    let cachedCategories = {};
-
-    function loadCategoryData(categoryId) {
-        if (cachedCategories[categoryId]) {
-            updateCategoryList(categoryId, cachedCategories[categoryId]);
-            return;
-        }
-
-        fetch('/api/categories/' + categoryId)
-            .then(response => response.json())
-            .then(data => {
-                cachedCategories[categoryId] = data;
-                updateCategoryList(categoryId, data);
-            })
-            .catch(error => console.error('Error fetching category data:', error));
+        }).open();
     }
 
-    function updateCategoryList(categoryId, categories) {
-        const parentCategory = document.querySelector(`[data-id='${categoryId}']`);
-        let subCategoryList = parentCategory.querySelector('ul');
-
-        if (!subCategoryList) {
-            subCategoryList = document.createElement('ul');
-            parentCategory.appendChild(subCategoryList);
+    function validateForm() {
+        const roadAddress = document.getElementById("roadAddress").value;
+        if (!roadAddress.trim()) {
+            alert("도로명 주소를 입력해주세요.");
+            return false; // 폼 제출 방지
         }
+        return true; // 폼 제출 허용
+    }
+</script>
 
-        subCategoryList.innerHTML = ''; // 기존 하위 카테고리 비우기
+<script>
+    // 카테고리 마우스 오버 이벤트
+    document.getElementById("categories").addEventListener("mouseenter", function () {
+        const categoryList = document.getElementById("categoryList"); // DOM 요소 수정
+        if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
+            console.log('Loading category data...');
+            loadCategoryData(); // 카테고리 데이터 로드
+        }
+        categoryList.style.display = 'block'; // 하위 카테고리 표시
+        console.log('Category list shown');
+    });
+
+    // 하위 카테고리가 사라지지 않도록 유지 (마우스가 벗어날 때 숨김 방지)
+    document.getElementById("categories").addEventListener("mouseleave", function () {
+        const categoryList = document.getElementById("categoryList");
+        categoryList.style.display = 'none'; // 하위 카테고리 숨기기
+        console.log('Category list hidden');
+    });
+
+    // 카테고리 데이터를 API에서 가져와 업데이트
+    function loadCategoryData() {
+        console.log('Fetching Root categories');
+        fetch(`/categories/root`)
+            .then(response => {
+                console.log('Response status:', response.status); // 상태 코드 확인
+                if (!response.ok) { // 응답이 정상적이지 않으면 에러 처리
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text(); // 응답을 텍스트로 읽음
+            })
+            .then(text => {
+                console.log('Raw response text:', text); // 받은 응답 텍스트 확인
+                try {
+                    const data = JSON.parse(text); // 응답을 JSON으로 파싱
+                    console.log('Category data received:', data);
+                    if (Array.isArray(data)) {
+                        updateCategoryList(data); // 받은 데이터를 카테고리 리스트에 추가
+                    } else {
+                        console.error('Invalid category data:', data);
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching category data:', error);
+            });
+    }
+
+
+
+    // 카테고리 리스트 업데이트
+    function updateCategoryList(categories) {
+        console.log('Updating category list...');
+        const categoryList = document.getElementById("categoryList"); // DOM 요소 수정
+        if (!categoryList) return;
+
+        // 기존 카테고리 목록 초기화
+        categoryList.innerHTML = '';
 
         categories.forEach(category => {
+            console.log(`Adding category: ${category.name}`);
             const li = document.createElement('li');
-            li.classList.add('menu-item');
-            li.setAttribute('data-id', category.id);
-
+            li.dataset.id = category.id;
             const a = document.createElement('a');
-            // category.id를 keyword 파라미터로 추가하여 search 페이지로 이동
-            a.href = `/books/search?type=category&keyword=${category.id}&pageNum=1&orderBy=salePrice&orderDirection=desc`;
+            a.href = `/books/search?type=category&keyword=${category.id}`;
             a.textContent = category.name;
 
-            li.appendChild(a);
-            subCategoryList.appendChild(li);
-
-            // 자식 카테고리 클릭 시 하위 카테고리 로드
-            li.addEventListener("click", function(event) {
-                event.stopPropagation(); // 부모 메뉴 클릭 이벤트 전파 방지
-                loadCategoryData(category.id); // 해당 카테고리의 하위 카테고리 로드
+            // 클릭 시 해당 카테고리 페이지로 이동
+            a.addEventListener('click', function (event) {
+                console.log(`Redirecting to category: ${category.name}`);
+                // 클릭 이벤트 전파 방지
+                event.stopPropagation();
             });
+
+            li.appendChild(a);
+            categoryList.appendChild(li);
         });
+
+        console.log('Category list updated');
     }
 
 </script>
+
+
 
 </body>
 

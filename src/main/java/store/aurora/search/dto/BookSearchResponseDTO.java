@@ -34,7 +34,8 @@ public class BookSearchResponseDTO {
     private Long viewCount;
     private int reviewCount;
     private double reviewRating; // 리뷰 평점
-
+    private boolean liked;
+    private boolean isSale;
     @Override
     public String toString() {
         return "BookSearchResponseDTO [id=" + id +
@@ -48,7 +49,8 @@ public class BookSearchResponseDTO {
                 ", categoryIdList=" + categoryIdList +  // categoryNames 추가
                 ", viewCount=" + viewCount +  // viewCount 추가
                 ", reviewCount=" + reviewCount +
-                ", reviewRating=" + reviewRating + "]";
+                ", reviewRating=" + reviewRating +
+                ", liked=" + liked +"]";
     }
 
 

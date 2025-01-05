@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <meta charset="utf-8">
+    <title>CouponList</title>
+    <style>
+        .coupon-container {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .coupon-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .coupon-info {
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+        .no-coupon-message {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div layout:fragment="content">
+
+    <div th:if="${not #lists.isEmpty(userCouponList)}">
+        <div th:each="coupon : ${userCouponList}">
+            <div th:if="${coupon.couponName != null}">
+                <span th:text="'쿠폰명: ' + ${coupon.couponName}"></span>
+            </div>
+
+            <div th:if="${coupon.needCost != null}">
+                <span th:text="'필요 비용: ' + ${coupon.needCost}"></span>
+            </div>
+
+            <div th:if="${coupon.maxSale != null}">
+                <span th:text="'최대 할인액: ' + ${coupon.maxSale}"></span>
+            </div>
+
+            <div th:if="${coupon.salePercent != null}">
+                <span th:text="'할인액: ' + ${coupon.salePercent}+'%'"></span>
+            </div>
+
+            <div th:if="${coupon.saleAmount != null}">
+                <span th:text="'할인액: ' + ${coupon.saleAmount}"></span>
+            </div>
+
+            <div th:if="${coupon.startDate != null or coupon.endDate != null}">
+    <span th:text="'쿠폰 기간: '
+                 + (${coupon.startDate != null} ? ${coupon.startDate} : '시작일 없음')
+                 + ' ~ '
+                 + (${coupon.endDate != null} ? ${coupon.endDate} : '종료일 없음')"></span>
+            </div>
+
+            <!-- 해당 책만 사용 가능 항목 -->
+            <div th:if="${coupon.bookIdList != null and not #lists.isEmpty(coupon.bookIdList)}">
+                <span th:text="'사용 가능 책:  '"></span>
+                <span th:each="bookId, iterStat : ${coupon.bookIdList}"
+                      th:text="${bookId} + (${iterStat.last} ? '' : ',')"> </span>
+            </div>
+
+            <!-- 해당 카테고리만 사용 가능 항목 -->
+            <div th:if="${coupon.categoryIdList != null and not #lists.isEmpty(coupon.categoryIdList)}">
+                <span th:text="'사용 가능 카테고리:  '"></span>
+                <span th:each="categoryId, iterStat : ${coupon.categoryIdList}"
+                      th:text="${categoryId} + (${iterStat.last} ? '' : ',')"> </span>
+            </div>
+
+            <hr th:if="${#lists.size(userCouponList) >= 1}" />
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(userCouponList)}">
+            <p>사용 가능한 쿠폰이 없습니다.</p>
+        </div>
+</div>
+
+</body>
+
+</html>
