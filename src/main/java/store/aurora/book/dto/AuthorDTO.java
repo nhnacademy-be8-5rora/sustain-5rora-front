@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthorDTO {
     private String name;
-    private AuthorRoleDTO.Role role;
+    private String role;
 
-    public AuthorDTO(String name, AuthorRoleDTO.Role role) {
+    public AuthorDTO(String name, String role) {
         this.name = name;
         this.role = role;
     }
