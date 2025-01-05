@@ -32,6 +32,8 @@
       // 콘텐츠 변경 스크립트
       const contentArea = document.getElementById('content-area');
 
+      const userId = document.getElementById('user-id').innerText;
+
       // document.getElementById('menu-personal-info').addEventListener('click', () => {
       //   contentArea.innerHTML = `
       //     <h2>개인 정보</h2>
@@ -69,7 +71,9 @@
            </div>
            <p class="mt-4">회원탈퇴를 진행하시겠습니까? 탈퇴 시 모든 정보가 삭제됩니다.</p>
            <div class="d-flex justify-content-center">
-            <button class="btn btn-danger">회원탈퇴</button>
+            <form method="POST" action="/mypage/delete/${userId}" onsubmit="return confirm('정말로 탈퇴하시겠습니까?');">
+                <button type="submit" class="btn btn-danger">회원탈퇴</button>
+            </form>
            </div>
         `;
       });
@@ -99,7 +103,7 @@
               <div class="section-box mb-4 card w-80">
                 <div class="card-body rounded text-center" style="background-color: #F3F2EC">
                   <img src="https://via.placeholder.com/80" alt="User Profile" class="rounded-circle my-2"><br>
-                  <span class="fw-bold fs-5">오유민님</span>
+                  <span id="user-id" class="fw-bold fs-5" th:text="${userId}"></span><span>님</span>
                   <span class="badge bg-success">일반</span>
                   <div class="d-flex justify-content-center mt-3">
                     <div class="me-3">
