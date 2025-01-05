@@ -16,7 +16,7 @@ public class CategoryResponseDTO {
     private Long id;
     private String name;
     private Long parentId;
-    private Integer depth;
-    private Integer displayOrder;
+    private String parentName;
+    private int depth;
     private List<CategoryResponseDTO> children = new ArrayList<>();
 }

@@ -80,7 +80,7 @@ public class Page<T> {
 
     @Override
     public String toString() {
-        return "CustomPage{" +
+        return "Page{" +
                 "content=" + content +
                 ", pageNumber=" + pageNumber +
                 ", pageSize=" + pageSize +
