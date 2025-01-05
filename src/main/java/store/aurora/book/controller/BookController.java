@@ -36,7 +36,7 @@ public class BookController {
 
     @GetMapping("search-books")
     public String searchForm() {
-        return "/admin/book/api/search";
+        return "admin/book/api/search";
     }
 
     @GetMapping("/api/search-books")
@@ -52,7 +52,7 @@ public class BookController {
         model.addAttribute("query", query); // 검색어
         model.addAttribute("queryType", queryType); // 검색 유형
         model.addAttribute("searchTarget", searchTarget); // 검색 대상
-        return "/admin/book/api/search";
+        return "admin/book/api/search";
     }
 
     // API 도서 등록 폼 렌더링
@@ -65,7 +65,7 @@ public class BookController {
         ResponseEntity<List<CategoryResponseDTO>> categoriesResponse = categoryClient.getCategoryHierarchy();
         model.addAttribute("categories", categoriesResponse.getBody());
 
-        return "/admin/book/api/register";
+        return "admin/book/api/register";
     }
 
     // API 도서 등록 처리
@@ -83,7 +83,7 @@ public class BookController {
         ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategoryHierarchy();
         model.addAttribute("categories", responseCategory.getBody());
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
-        return "/admin/book/direct-register"; // 직접 등록 페이지 템플릿 경로
+        return "admin/book/direct-register"; // 직접 등록 페이지 템플릿 경로
     }
 
     // 직접 도서 등록 처리
@@ -116,7 +116,7 @@ public class BookController {
             model.addAttribute("currentPage", 0);
             model.addAttribute("totalPages", 0);
         }
-        return "/admin/book/book-list"; // 도서 목록 페이지 템플릿
+        return "admin/book/book-list"; // 도서 목록 페이지 템플릿
     }
 
     // 도서 수정 폼 렌더링
@@ -134,7 +134,7 @@ public class BookController {
         model.addAttribute("categories", categoryResponse.getBody());
         model.addAttribute("tags", tagResponse.getBody());
 
-        return "/admin/book/book-edit"; // 수정 페이지 템플릿 경로
+        return "admin/book/book-edit"; // 수정 페이지 템플릿 경로
     }
 
 

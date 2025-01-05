@@ -74,7 +74,7 @@
                         <td th:text="${category.id}"></td>
                         <td th:text="${category.parentName != null ? category.parentName : '없음'}"></td>
                         <td>
-                            <a th:if="${category.depth < 2}" th:href="@{/categories/{id}/children/paged(id=${category.id})}"
+                            <a th:if="${category.depth < 2}" th:href="@{/categories/{id}/children(id=${category.id})}"
                                th:text="${category.name}" class="text-decoration-none text-primary"></a>
                             <span th:if="${category.depth >= 2}" th:text="${category.name}" class="text-muted"></span>
                         </td>

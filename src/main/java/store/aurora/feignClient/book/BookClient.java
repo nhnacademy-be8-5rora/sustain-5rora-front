@@ -11,7 +11,6 @@ import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.search.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.List;
