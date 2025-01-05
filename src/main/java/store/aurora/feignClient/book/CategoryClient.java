@@ -59,8 +59,8 @@ public interface CategoryClient {
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "2") int size);
 
-    @GetMapping("/root")
-    ResponseEntity<List<CategoryResponseDTO>> getRootCategories();
+//    @GetMapping("/root")
+//    ResponseEntity<List<CategoryResponseDTO>> getRootCategories();
 
     /**
      * 특정 카테고리의 직속 하위 카테고리 가져오기
@@ -69,7 +69,7 @@ public interface CategoryClient {
     ResponseEntity<List<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId);
 
     //최상위 카테고리 가져오기
-    @GetMapping("/root/all")
+    @GetMapping("/root")
     ResponseEntity<List<CategoryResponseDTO>> getCategories();
 }
 

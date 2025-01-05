@@ -62,7 +62,7 @@ public class BookController {
         ResponseEntity<BookRequestDto> response = bookClient.getBookById(bookId);
         model.addAttribute("book", response.getBody());
 
-        ResponseEntity<List<CategoryResponseDTO>> categoriesResponse = categoryClient.getCategoryHierarchy();
+        ResponseEntity<List<CategoryResponseDTO>> categoriesResponse = categoryClient.getCategories();
         model.addAttribute("categories", categoriesResponse.getBody());
 
         return "admin/book/api/register";
@@ -80,7 +80,7 @@ public class BookController {
     // 직접 등록 폼 렌더링
     @GetMapping("/direct/register")
     public String showDirectRegisterForm(Model model) {
-        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategoryHierarchy();
+        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategories();
         model.addAttribute("categories", responseCategory.getBody());
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
         return "admin/book/direct-register"; // 직접 등록 페이지 템플릿 경로
