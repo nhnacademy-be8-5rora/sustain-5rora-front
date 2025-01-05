@@ -2,9 +2,9 @@ package store.aurora.feignClient.book.tag;
 
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.book.dto.tag.BookTagRequestDto;
 import store.aurora.book.dto.tag.TagRequestDto;
 import store.aurora.book.dto.tag.TagResponseDto;
 
@@ -14,8 +14,14 @@ import java.util.List;
 public interface TagClient {
 
     // 모든 태그 조회
-    @GetMapping
+    @GetMapping("/paged")
+    ResponseEntity<Page<TagResponseDto>> getAllTags(@RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "2") int size);
+    @GetMapping("/all")
     ResponseEntity<List<TagResponseDto>> getAllTags();
+
+    @GetMapping("/search")
+    ResponseEntity<List<TagResponseDto>> searchTags(@RequestParam String keyword);
 
     // 태그 생성
     @PostMapping

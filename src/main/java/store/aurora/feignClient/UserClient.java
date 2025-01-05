@@ -34,4 +34,13 @@ public interface UserClient {
     // 회원가입 > 인증코드 검증
     @PostMapping("/verify-code")
     ResponseEntity<Map<String, String>> verifyCode(@RequestBody SignUpRequest request);
+
+
+    // 회원탈퇴
+    @DeleteMapping("/{userId}")
+    ResponseEntity<Map<String, String>> deleteUser(@PathVariable String userId);
+
+    // 휴면해제처리
+    @PostMapping("/reactivate")
+    ResponseEntity<Map<String, String>> reactivateUser(@RequestParam String userId);
 }

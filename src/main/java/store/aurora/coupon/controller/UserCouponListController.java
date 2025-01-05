@@ -39,7 +39,7 @@ public class UserCouponListController {
 
         model.addAttribute("userCouponList", userCouponList);
 
-        return "/coupon/couponList";
+        return "coupon/couponList";
     }
 
     //결제창에서 상품마다 사용가능 쿠폰 리스트 확인(매 상품마다 사용 가능한 쿠폰이 뜨게 해야 됨.

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>포인트 정책 추가</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div layout:fragment="content">
+  <section id="featured-books" class="py-5 my-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="section-header align-center">
+
+            <div class="title">
+              <span>Some quality items</span>
+            </div>
+            <h2 class="section-title">포인트 정책 추가</h2>
+          </div>
+
+          <div class="product-list col-md-4 align-center" data-aos="fade-up">
+            <div class="row">
+
+              <form th:action="@{/admin/point-policies/add}" method="post">
+                <div class="mb-3">
+                  <label for="pointPolicyName" class="form-label align-left">포인트 정책 이름</label>
+                  <input type="text" id="pointPolicyName" name="pointPolicyName" class="form-control" placeholder="예: 회원가입 보너스" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="pointPolicyType" class="form-label align-left">포인트 정책 타입</label>
+                  <select id="pointPolicyType" name="pointPolicyType" class="form-select" required>
+                    <option value="AMOUNT">금액</option>
+                    <option value="PERCENTAGE">퍼센트</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="pointPolicyValue" class="form-label align-left">포인트 값</label>
+                  <input type="number" id="pointPolicyValue" name="pointPolicyValue" class="form-control" placeholder="예: 100" min="0" step="0.1" required>
+                </div>
+
+                <button type="submit" class="btn btn-outline-accent btn-accent-arrow w-100" style="height: 40px;">추가</button>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+
+</html>

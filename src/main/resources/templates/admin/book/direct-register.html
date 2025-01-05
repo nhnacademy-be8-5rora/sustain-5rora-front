@@ -2,11 +2,47 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+      layout:decorate="~{layout/admin-layout}">
 
 <head>
     <meta charset="UTF-8">
     <title>직접 도서 등록</title>
+    <style>
+        .form-label {
+            margin-bottom: 0.2rem; /* 레이블 아래 간격 줄이기 */
+        }
+
+        .form-control,
+        .form-select {
+            margin-bottom: 0.5rem; /* 필드 간격 조정 */
+        }
+
+        .row.g-3 {
+            row-gap: 1rem; /* 전체 행 간격 줄이기 */
+        }
+
+        .btn-group-inline {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-inline {
+            margin-left: 0.5rem; /* 버튼과 필드 간격 조정 */
+        }
+
+        .accordion .accordion-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .accordion .form-check-inline {
+            margin-right: 0.5rem; /* 체크박스와 텍스트 간격 */
+        }
+
+        .accordion .accordion-button {
+            flex-grow: 1;
+        }
+    </style>
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
@@ -78,37 +114,63 @@
                 <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
             </div>
             <!-- 카테고리 선택 -->
-            <div class="col-md-12">
-                <h5>카테고리</h5>
-                <ul th:each="category : ${categories}">
-                    <li>
-                        <input type="checkbox" th:name="categoryIds" th:value="${category.id}">
-                        <span th:text="${category.name}"></span>
-                        <ul th:each="child : ${category.children}">
-                            <li>
-                                <input type="checkbox" th:name="categoryIds" th:value="${child.id}">
-                                <span th:text="${child.name}"></span>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+            <div class="accordion" id="categoryAccordion">
+                <div th:each="category : ${categories}" class="accordion-item">
+                    <!-- 최상위 카테고리 -->
+                    <h2 class="accordion-header" th:attr="id='heading-' + ${category.id}">
+                        <input type="checkbox" th:id="'category-' + ${category.id}" th:name="categoryIds" th:value="${category.id}">
+                        <label th:for="'category-' + ${category.id}" class="accordion-button collapsed"
+                               type="button" data-bs-toggle="collapse"
+                               th:data-bs-target="'#collapse-' + ${category.id}" aria-expanded="false"
+                               th:aria-controls="'collapse-' + ${category.id}" th:text="${category.name}">
+                        </label>
+                    </h2>
+                    <div th:attr="id='collapse-' + ${category.id}" class="accordion-collapse collapse"
+                         th:aria-labelledby="'heading-' + ${category.id}">
+                        <div class="accordion-body">
+                            <!-- 2계층 카테고리 -->
+                            <div class="accordion" th:attr="id='childAccordion-' + ${category.id}">
+                                <div th:each="child : ${category.children}" class="accordion-item">
+                                    <h2 class="accordion-header" th:attr="id='heading-child-' + ${child.id}">
+                                        <input type="checkbox" th:id="'child-' + ${child.id}" th:name="categoryIds" th:value="${child.id}">
+                                        <label th:for="'child-' + ${child.id}" class="accordion-button collapsed"
+                                               type="button" data-bs-toggle="collapse"
+                                               th:data-bs-target="'#collapse-child-' + ${child.id}" aria-expanded="false"
+                                               th:aria-controls="'collapse-child-' + ${child.id}" th:text="${child.name}">
+                                        </label>
+                                    </h2>
+                                    <div th:attr="id='collapse-child-' + ${child.id}" class="accordion-collapse collapse"
+                                         th:aria-labelledby="'heading-child-' + ${child.id}">
+                                        <div class="accordion-body">
+                                            <!-- 3계층 카테고리 -->
+                                            <ul>
+                                                <li th:each="subChild : ${child.children}">
+                                                    <input type="checkbox" th:id="'subChild-' + ${subChild.id}" th:name="categoryIds" th:value="${subChild.id}">
+                                                    <label th:for="'subChild-' + ${subChild.id}" th:text="${subChild.name}"></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-12">
-                <h5>태그</h5>
-                <ul th:each="tag : ${tags}">
-                    <li>
-                        <input type="checkbox" th:name="tagIds" th:value="${tag.id}">
-                        <span th:text="${tag.name}"></span>
-                    </li>
-                </ul>
+                <div class="col-md-12">
+                <label for="tags" class="form-label">태그</label>
+                <textarea id="tags" name="tags" class="form-control" rows="2"
+                          placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
             </div>
+
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-success">등록</button>
             </div>
         </form>
     </section>
 </div>
+
 </body>
 
 </html>

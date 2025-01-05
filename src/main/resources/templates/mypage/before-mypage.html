@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <meta charset="utf-8">
+  <title>마이페이지</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+
+<div layout:fragment="content">
+
+  <section id="client-holder" data-aos="fade-up">
+    <div class="container">
+      <div class="row">
+        <div class="inner-content">
+          <div class="logo-wrap">
+            <div class="grid d-flex gap-3">
+              <a href="/mypage/points"><span>포인트 내역</span></a>
+              <a href="/mypage/addresses"><span>배송지 관리</span></a>
+              <a href="/coupon/list"><span>쿠폰 목록 보기</span></a>
+              <a href="/books/likes"><span>내 찜 리스트 보기</span></a>
+            </div>
+          </div><!--image-holder-->
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+
+</html>

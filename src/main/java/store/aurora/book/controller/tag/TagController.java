@@ -1,18 +1,17 @@
 package store.aurora.book.controller.tag;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.book.dto.tag.BookTagRequestDto;
 import store.aurora.book.dto.tag.TagRequestDto;
 import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.feignClient.book.tag.TagClient;
 
-import java.util.List;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/tags")
@@ -23,9 +22,22 @@ public class TagController {
 
     // 태그 관리 페이지 렌더링
     @GetMapping
-    public String showTagManagementPage(Model model) {
-        ResponseEntity<List<TagResponseDto>> response = tagClient.getAllTags();
-        model.addAttribute("tags", response.getBody());
+    public String showTagManagementPage(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "2") int size,
+                                        Model model) {
+        ResponseEntity<Page<TagResponseDto>> response = tagClient.getAllTags(page,size);
+        Page<TagResponseDto> tagPage = response.getBody();
+
+
+        if (tagPage != null) {
+            model.addAttribute("tags", tagPage.getContent());
+            model.addAttribute("currentPage", tagPage.getNumber());
+            model.addAttribute("totalPages", tagPage.getTotalPages());
+        } else {
+            model.addAttribute("tags", Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+        }
         return "admin/tag/tags"; // 태그 관리 페이지 템플릿 경로
     }
 
@@ -49,4 +61,5 @@ public class TagController {
         tagClient.deleteTag(id);
         return "redirect:/tags"; // 태그 삭제 후 태그 관리 페이지로 리다이렉트
     }
+
 }
