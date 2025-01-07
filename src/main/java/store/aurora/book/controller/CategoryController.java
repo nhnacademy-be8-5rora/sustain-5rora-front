@@ -34,25 +34,19 @@ public class CategoryController {
         return ResponseEntity.ok(categoryClient.getCategories().getBody());
     }
 
-
-//    @GetMapping
-//    public String showCategoryPage(@RequestParam(defaultValue = "0") int page,
-//                                   @RequestParam(defaultValue = "2") int size,
-//                                   Model model) {
-//        ResponseEntity<Page<CategoryResponseDTO>> response = categoryClient.getPagedCategories(page, size);
-//        Page<CategoryResponseDTO> categoryPage = response.getBody();
-//
-//        if (categoryPage != null) {
-//            model.addAttribute("categories", categoryPage.getContent());
-//            model.addAttribute("currentPage", categoryPage.getNumber());
-//            model.addAttribute("totalPages", categoryPage.getTotalPages());
-//        }else {
-//            model.addAttribute("categories", Collections.emptyList());
-//            model.addAttribute("currentPage", 0);
-//            model.addAttribute("totalPages", 0);
-//        }
-//        return "admin/category/categories";
-//    }
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<List<CategoryDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
+        if (categoryId == null) {
+            categoryId = 0L;
+        }
+        ResponseEntity<CategoryDTO> categories = categoryClient.findById(categoryId);
+        if (categories.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)  // JSON 형식으로 설정
+                    .body(Objects.requireNonNull(categories.getBody()).getChildren());
+        }
+        return ResponseEntity.badRequest().build();
+    }
 
     @GetMapping
     public String showRootCategories(@RequestParam(defaultValue = "0") int page,
@@ -91,26 +85,10 @@ public class CategoryController {
         return "admin/category/categories";
     }
 
-
     @PostMapping("/create")
     public String createCategory(CategoryRequestDTO categoryRequestDTO) {
         categoryClient.createCategory(categoryRequestDTO);
         return "redirect:/categories";
-    }
-
-
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<List<CategoryDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
-        if (categoryId == null) {
-            categoryId = 0L;
-        }
-        ResponseEntity<CategoryDTO> categories = categoryClient.findById(categoryId);
-        if (categories.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)  // JSON 형식으로 설정
-                    .body(Objects.requireNonNull(categories.getBody()).getChildren());
-        }
-        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/update")

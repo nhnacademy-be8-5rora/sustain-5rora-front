@@ -1,0 +1,34 @@
+.form-label {
+    margin-bottom: 0.2rem; /* 레이블 아래 간격 줄이기 */
+}
+
+.form-control,
+.form-select {
+    margin-bottom: 0.5rem; /* 필드 간격 조정 */
+}
+
+.row.g-3 {
+    row-gap: 1rem; /* 전체 행 간격 줄이기 */
+}
+
+.btn-group-inline {
+    display: flex;
+    align-items: center;
+}
+
+.btn-inline {
+    margin-left: 0.5rem; /* 버튼과 필드 간격 조정 */
+}
+
+.accordion .accordion-header {
+    display: flex;
+    align-items: center;
+}
+
+.accordion .form-check-inline {
+    margin-right: 0.5rem; /* 체크박스와 텍스트 간격 */
+}
+
+.accordion .accordion-button {
+    flex-grow: 1;
+}
