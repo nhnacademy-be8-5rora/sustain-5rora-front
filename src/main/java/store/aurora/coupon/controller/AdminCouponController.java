@@ -27,6 +27,7 @@ public class AdminCouponController {
     @PostMapping(value = "/policy/create")
     public String couponPolicyCreate(@RequestBody @Validated
                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
+
         couponClient.couponPolicyCreate(requestCouponPolicyDTO);
 
         return COUPON_ADMIN_URL;
