@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.feignClient.UserClient;
+import store.aurora.feign_client.UserClient;
 import store.aurora.user.dto.request.SignUpRequest;
 
 import java.util.Map;

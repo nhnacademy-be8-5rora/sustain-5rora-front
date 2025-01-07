@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import store.aurora.common.JwtUtil;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
-import store.aurora.feignClient.coupon.CouponClient;
+import store.aurora.feign_client.coupon.CouponClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

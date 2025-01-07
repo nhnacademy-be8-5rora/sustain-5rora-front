@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.book.dto.tag.TagRequestDto;
 import store.aurora.book.dto.tag.TagResponseDto;
-import store.aurora.feignClient.book.tag.TagClient;
+import store.aurora.feign_client.book.tag.TagClient;
 
 import java.util.Collections;
 

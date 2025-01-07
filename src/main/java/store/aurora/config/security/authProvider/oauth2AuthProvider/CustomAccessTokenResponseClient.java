@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.stereotype.Component;
 import store.aurora.auth.dto.response.PaycoAccessTokenResponse;
-import store.aurora.feignClient.payco.PaycoTokenClient;
+import store.aurora.feign_client.payco.PaycoTokenClient;
 
 
 //액세스토큰 발급하는 놈

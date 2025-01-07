@@ -9,4 +9,5 @@ public class PointPolicy {
     private String pointPolicyName;
     private String pointPolicyType;
     private BigDecimal pointPolicyValue;
+    private Boolean isActive;
 }

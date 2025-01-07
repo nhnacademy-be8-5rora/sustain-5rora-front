@@ -1,4 +1,4 @@
-package store.aurora.feignClient.coupon;
+package store.aurora.feign_client.coupon;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

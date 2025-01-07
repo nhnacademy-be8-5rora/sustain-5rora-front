@@ -18,8 +18,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import store.aurora.book.dto.AuthorDTO;
 import store.aurora.book.dto.category.CategoryDTO;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.BookSearchClient;
-import store.aurora.feignClient.UserClient;  // UserClient 임포트 추가
+import store.aurora.feign_client.BookSearchClient;
+import store.aurora.feign_client.UserClient;  // UserClient 임포트 추가
 import store.aurora.book.CategoryService;
 import store.aurora.search.dto.BookSearchResponseDTO;
 import org.springframework.data.domain.Page;
