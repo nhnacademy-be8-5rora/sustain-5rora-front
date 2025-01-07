@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.coupon.CouponClient;
+import store.aurora.feign_client.coupon.CouponClient;
 
 @Controller
 @RequestMapping

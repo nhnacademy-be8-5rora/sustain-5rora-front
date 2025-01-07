@@ -1,4 +1,4 @@
-package store.aurora.feignClient;
+package store.aurora.feign_client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.search.dto.BookSearchResponseDTO;
-import store.aurora.search.Page;
+import org.springframework.data.domain.Page;
 
 @FeignClient(name = "bookSearchClient", url = "${api.gateway.base-url}/api/books")
 public interface BookSearchClient {

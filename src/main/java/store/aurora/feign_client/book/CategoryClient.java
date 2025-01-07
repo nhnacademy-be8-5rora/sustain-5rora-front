@@ -1,12 +1,10 @@
-package store.aurora.feignClient.book;
+package store.aurora.feign_client.book;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.book.dto.category.CategoryDTO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;

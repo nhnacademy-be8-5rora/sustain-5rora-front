@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import store.aurora.address.dto.UserAddressDTO;
 import store.aurora.address.dto.UserAddressRequest;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.AddressClient;
+import store.aurora.feign_client.AddressClient;
 
 import java.util.List;
 

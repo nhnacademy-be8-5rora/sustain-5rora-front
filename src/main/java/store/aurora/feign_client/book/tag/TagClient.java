@@ -1,4 +1,4 @@
-package store.aurora.feignClient.book.tag;
+package store.aurora.feign_client.book.tag;
 
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;

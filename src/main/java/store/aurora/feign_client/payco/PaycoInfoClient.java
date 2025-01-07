@@ -1,4 +1,4 @@
-package store.aurora.feignClient.payco;
+package store.aurora.feign_client.payco;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
