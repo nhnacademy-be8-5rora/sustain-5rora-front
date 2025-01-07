@@ -206,13 +206,13 @@
             <div class="action-buttons">
               <div class="quantity-and-buttons">
                 <!-- 숫자 선택 바 -->
-                <input type="number" name="quantity" value="1" min="1" required>
 
                 <!-- 장바구니와 바로구매 버튼 -->
                 <form method="post" action="/cart" class="action-form">
                   <input type="hidden" name="bookId" th:value="${book.id}">
                   <!-- quantity 값을 input 태그로 전송 -->
-                  <input type="hidden" name="quantity" value="1" id="cartQuantity">
+<!--                  <input type="hidden" name="quantity" value="1" id="cartQuantity">-->
+                  <input type="number" name="quantity" value="1" min="1" required>
                   <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">장바구니에 추가</button>
                 </form>
 
