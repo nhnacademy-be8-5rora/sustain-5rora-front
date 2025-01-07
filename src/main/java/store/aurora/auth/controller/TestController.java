@@ -11,7 +11,7 @@ import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.common.annotation.Auth;
 import store.aurora.feignClient.BookSearchClient;
 import store.aurora.feignClient.book.BookClient;
-import store.aurora.search.Page;
+import org.springframework.data.domain.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 @Controller
