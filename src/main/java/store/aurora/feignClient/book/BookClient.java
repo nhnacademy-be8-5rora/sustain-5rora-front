@@ -1,17 +1,16 @@
 package store.aurora.feignClient.book;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import store.aurora.book.CustomPage;
 import store.aurora.book.dto.*;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.search.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.List;
@@ -44,8 +43,8 @@ public interface BookClient {
     );
 
     @GetMapping
-    ResponseEntity<CustomPage<BookResponseDto>> getAllBooks(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "2") int size);
+    ResponseEntity<Page<BookResponseDto>> getAllBooks(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "2") int size);
 
     @PutMapping(value = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void editBook(@PathVariable Long bookId,

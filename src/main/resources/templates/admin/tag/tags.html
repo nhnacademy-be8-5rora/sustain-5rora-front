@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+      layout:decorate="~{layout/admin-layout}">
 
 <head>
     <meta charset="UTF-8">
@@ -54,6 +54,27 @@
                 </ul>
             </div>
         </div>
+
+        <!-- 페이지네이션 -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- 이전 버튼 -->
+                <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/tags(page=${currentPage - 1}, size=2)}" class="page-link">이전</a>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
+                    <a th:href="@{/tags(page=${i}, size=2)}" th:text="${i + 1}" class="page-link"></a>
+                </li>
+
+                <!-- 다음 버튼 -->
+                <li th:class="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/tags(page=${currentPage + 1}, size=2)}" class="page-link">다음</a>
+                </li>
+            </ul>
+        </nav>
 
         <!-- 태그 수정 모달 -->
         <div th:each="tag : ${tags}" class="modal fade" th:id="'editTagModal-' + ${tag.id}" tabindex="-1" aria-labelledby="editTagModalLabel" aria-hidden="true">
