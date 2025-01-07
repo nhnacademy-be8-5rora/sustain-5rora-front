@@ -36,6 +36,7 @@ public class AdminCouponController {
     @PostMapping("/coupon/distribution")
     public String userCouponCreate(@RequestBody @Validated
                                                    RequestUserCouponDTO requestUserCouponDTO) {
+
         couponClient.userCouponCreate(requestUserCouponDTO);
 
         return COUPON_ADMIN_URL;
