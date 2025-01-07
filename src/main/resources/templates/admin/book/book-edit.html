@@ -182,13 +182,13 @@
             height: '400px',
             initialEditType: 'wysiwyg',
             previewStyle: 'vertical',
-            initialValue: document.querySelector('#description').value || '', // 수정 폼에서 초기값으로 설정
+            initialValue: document.querySelector('#description').innerHTML || '', // 초기 데이터 설정
         });
 
         const form = document.querySelector('form');
         form.addEventListener('submit', function() {
             const descriptionTextarea = form.querySelector('#description');
-            descriptionTextarea.value = editor.getHTML(); // 에디터 내용을 textarea에 동기화
+            descriptionTextarea.innerHTML = editor.getHTML(); // 에디터 내용을 textarea에 동기화
         });
     });
 </script>
