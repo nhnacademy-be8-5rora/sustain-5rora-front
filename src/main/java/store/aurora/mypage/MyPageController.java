@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.feignClient.UserClient;
+import store.aurora.feign_client.UserClient;
 
 import java.util.Map;
 

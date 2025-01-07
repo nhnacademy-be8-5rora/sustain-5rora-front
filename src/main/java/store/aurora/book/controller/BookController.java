@@ -16,10 +16,9 @@ import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.BookSearchClient;
-import store.aurora.feignClient.book.BookClient;
-import store.aurora.feignClient.book.CategoryClient;
-import store.aurora.feignClient.book.tag.TagClient;
+import store.aurora.feign_client.book.BookClient;
+import store.aurora.feign_client.book.CategoryClient;
+import store.aurora.feign_client.book.tag.TagClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.Collections;

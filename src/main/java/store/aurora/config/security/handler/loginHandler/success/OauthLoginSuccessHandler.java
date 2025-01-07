@@ -1,6 +1,5 @@
 package store.aurora.config.security.handler.loginHandler.success;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,8 +15,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import store.aurora.auth.dto.request.JwtRequestDto;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.feignClient.AuthClient;
-import store.aurora.feignClient.UserClient;
+import store.aurora.feign_client.AuthClient;
+import store.aurora.feign_client.UserClient;
 import store.aurora.user.dto.request.SignUpRequest;
 import store.aurora.user.exception.UserSignUpFailException;
 

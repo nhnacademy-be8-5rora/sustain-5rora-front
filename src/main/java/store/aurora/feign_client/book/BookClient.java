@@ -1,4 +1,4 @@
-package store.aurora.feignClient.book;
+package store.aurora.feign_client.book;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
