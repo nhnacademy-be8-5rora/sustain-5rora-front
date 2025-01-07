@@ -29,9 +29,11 @@ public interface CouponClient {
     @PutMapping("/admin/update")
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponDto updateUserCouponDto);
 
+    //환불시에 refund controller 작동(if문으로 해당 refund 상품하는 결제 내역에 쿠폰이 있다면 작동하게끔)
     @PostMapping("/refund")
     void refund(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
+    //쿠폰 사용시 결제 버튼에서 이것도 결제 내역에 쿠폰이 있다면 발동하게끔.
     @PostMapping("/using")
     void used(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 

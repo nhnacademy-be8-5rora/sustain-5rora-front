@@ -9,7 +9,6 @@ import java.util.List;
 //사용자에게 필요한 쿠폰 정보
 @Data
 public class UserCouponDTO {
-
     private String couponName;       // 쿠폰 ID
     private Integer needCost;
     private Integer maxSale;
