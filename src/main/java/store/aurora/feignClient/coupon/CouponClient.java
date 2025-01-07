@@ -37,12 +37,15 @@ public interface CouponClient {
     @PostMapping("/using")
     void used(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
+    //사용가능한 쿠폰 리스트 출력
     @GetMapping("/usable")
     Map<Long, List<String>> getCouponListByCategory(@RequestBody List<ProductInfoDTO> productInfoDTO,
                                                     @RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
+    //해당 유저의 쿠폰 리스트 출력
     @GetMapping("/list")
     List<UserCouponDTO> getCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
+    //회원가입 시에 welcome 쿠폰 증정 및 재발급
     @PostMapping("/welcome")
     String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
                               @RequestBody Long couponPolicyId);

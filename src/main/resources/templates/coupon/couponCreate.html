@@ -7,44 +7,44 @@
     <meta charset="utf-8">
     <title>AdminCouponRequester</title>
 
-    <style>
-        .container {
-            max-width: 900px;
-            margin-top: 50px;
-        }
-        .section-title {
-            font-size: 30px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-size: 18px;
-        }
-        .form-control {
-            font-size: 16px;
-        }
-        .btn {
-            font-size: 18px;
-            padding: 10px 20px;
-        }
-        .form-text {
-            font-size: 14px;
-        }
-        .section {
-            display: none;
-        }
-    </style>
+<!--    <style>-->
+<!--        .container {-->
+<!--            max-width: 900px;-->
+<!--            margin-top: 50px;-->
+<!--        }-->
+<!--        .section-title {-->
+<!--            font-size: 30px;-->
+<!--            font-weight: bold;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--        .form-group label {-->
+<!--            font-size: 18px;-->
+<!--        }-->
+<!--        .form-control {-->
+<!--            font-size: 16px;-->
+<!--        }-->
+<!--        .btn {-->
+<!--            font-size: 18px;-->
+<!--            padding: 10px 20px;-->
+<!--        }-->
+<!--        .form-text {-->
+<!--            font-size: 14px;-->
+<!--        }-->
+<!--        .section {-->
+<!--            display: none;-->
+<!--        }-->
+<!--    </style>-->
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 
 <div class="container">
-    <!-- 버튼들 -->
-    <div class="text-center mb-4">
-        <button class="btn btn-primary" onclick="showSection('coupon-policy-create')">쿠폰 정책 생성</button>
-        <button class="btn btn-primary" onclick="showSection('user-coupon-create')">사용자 쿠폰 생성</button>
-        <button class="btn btn-primary" onclick="showSection('user-coupon-update')">사용자 쿠폰 수정</button>
-    </div>
+<!--    &lt;!&ndash; 버튼들 &ndash;&gt;-->
+<!--    <div class="text-center mb-4">-->
+<!--        <button class="btn btn-primary" onclick="showSection('coupon-policy-create')">쿠폰 정책 생성</button>-->
+<!--        <button class="btn btn-primary" onclick="showSection('user-coupon-create')">사용자 쿠폰 생성</button>-->
+<!--        <button class="btn btn-primary" onclick="showSection('user-coupon-update')">사용자 쿠폰 수정</button>-->
+<!--    </div>-->
 
     <!-- 쿠폰 정책 생성 섹션 -->
     <section id="coupon-policy-create" class="section">
@@ -167,22 +167,22 @@
 <!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
 <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>-->
 
-<script>
-    // 섹션을 표시하는 함수
-    function showSection(sectionId) {
-        // 모든 섹션을 숨깁니다.
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(function(section) {
-            section.style.display = 'none';
-        });
+<!--<script>-->
+<!--    // 섹션을 표시하는 함수-->
+<!--    function showSection(sectionId) {-->
+<!--        // 모든 섹션을 숨깁니다.-->
+<!--        const sections = document.querySelectorAll('.section');-->
+<!--        sections.forEach(function(section) {-->
+<!--            section.style.display = 'none';-->
+<!--        });-->
 
-        // 클릭한 섹션만 표시합니다.
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = 'block';
-        }
-    }
-</script>
+<!--        // 클릭한 섹션만 표시합니다.-->
+<!--        const section = document.getElementById(sectionId);-->
+<!--        if (section) {-->
+<!--            section.style.display = 'block';-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
 
 </body>
 </html>
