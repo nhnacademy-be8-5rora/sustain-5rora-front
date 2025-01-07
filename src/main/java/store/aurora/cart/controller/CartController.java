@@ -2,14 +2,12 @@ package store.aurora.cart.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.cart.dto.CartItemDTO;
-import store.aurora.common.CookieUtil;
 import store.aurora.feignClient.CartClient;
 
 import java.util.Map;
@@ -37,7 +35,7 @@ public class CartController {
     }
 
     @DeleteMapping("/{bookId}")
-    public String deleteItemToCart(@PathVariable(value = "bookId", required = false) Long bookId,
+    public String deleteItemToCart(@PathVariable(value = "bookId") Long bookId,
                                    HttpServletResponse response) {
 
         ResponseEntity<String> clientResponse = cartClient.deleteCartItem(bookId);
