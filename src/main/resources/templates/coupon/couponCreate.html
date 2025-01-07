@@ -7,7 +7,6 @@
 <head>
     <meta charset="utf-8">
     <title>CouponRequester</title>
-
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
@@ -29,29 +28,32 @@
                     <option value="AMOUNT">금액 할인</option>
                 </select>
             </div>
-            <!-- AddPolicyDTO -->
+
             <div class="form-group">
                 <label for="categoryId">카테고리 ID</label>
                 <input type="text" class="form-control" id="categoryId" name="addPolicyDTO.categoryId" placeholder="(예: 1,2,3)">
             </div>
+
             <div class="form-group">
                 <label for="bookId">책 ID</label>
                 <input type="text" class="form-control" id="bookId" name="addPolicyDTO.bookId" placeholder="(예: 101,102)">
             </div>
 
-            <!-- DiscountRuleDTO -->
             <div class="form-group">
                 <label for="needCost">필요 금액</label>
                 <input type="number" class="form-control" id="needCost" name="discountRuleDTO.needCost" required placeholder="예: 10000">
             </div>
+
             <div class="form-group">
                 <label for="maxSale">최대 할인 금액</label>
                 <input type="number" class="form-control" id="maxSale" name="discountRuleDTO.maxSale" placeholder="예: 5000">
             </div>
+
             <div class="form-group">
                 <label for="salePercent">할인율 (%)</label>
                 <input type="number" class="form-control" id="salePercent" name="discountRuleDTO.salePercent" placeholder="예: 10">
             </div>
+
             <div class="form-group">
                 <label for="saleAmount">할인 금액</label>
                 <input type="number" class="form-control" id="saleAmount" name="discountRuleDTO.saleAmount" placeholder="예: 2000">
@@ -115,8 +117,9 @@
             <div class="form-group">
                 <label for="newState">새 상태</label>
                 <select class="form-control" id="newState" name="newState">
-                    <option value="ACTIVE">활성화</option>
-                    <option value="INACTIVE">비활성화</option>
+                    <option value="ACTIVE">USED</option>
+                    <option value="INACTIVE">LIVE</option>
+                    <option value="INACTIVE">TIMEOUT</option>
                 </select>
             </div>
 
