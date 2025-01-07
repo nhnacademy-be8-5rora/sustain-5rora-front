@@ -6,17 +6,17 @@
 
 <head>
     <meta charset="utf-8">
-    <title>CouponList</title>
+    <title>CouponRequester</title>
 
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 
-<div class="container">
+<div th:fragment="content">
     <!-- 쿠폰 정책 생성 섹션 -->
     <section id="coupon-policy-create" class="section">
         <h2 class="section-title text-center">쿠폰 정책 생성</h2>
-        <form method="POST" action="/admin/policy/create">
+        <form th:action="@{/admin/policy/create}" method="POST">
             <div class="form-group">
                 <label for="policyName">정책명</label>
                 <input type="text" class="form-control" id="policyName" name="policyName" required>
@@ -66,7 +66,7 @@
     <!-- 사용자 쿠폰 생성 섹션 -->
     <section id="user-coupon-create" class="section">
         <h2 class="section-title text-center">사용자 쿠폰 생성</h2>
-        <form method="POST" action="/admin/coupon/distribution">
+        <form th:action="@{/admin/coupon/distribution}" method="POST">
             <div class="form-group">
                 <label for="userId">유저 ID</label>
                 <input type="text" class="form-control" id="userId" name="userId" required>
@@ -105,7 +105,7 @@
     <!-- 사용자 쿠폰 수정 섹션 -->
     <section id="user-coupon-update" class="section">
         <h2 class="section-title text-center">사용자 쿠폰 수정</h2>
-        <form method="POST" action="/admin/coupon/update">
+        <form th:action="@{/admin/coupon/update}" method="POST">
             <div class="form-group">
                 <label for="couponId">쿠폰 ID</label>
                 <input type="text" class="form-control" id="couponId" name="couponId" required>
@@ -129,6 +129,5 @@
         </form>
     </section>
 </div>
-
 </body>
 </html>
