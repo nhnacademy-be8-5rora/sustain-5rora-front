@@ -103,8 +103,8 @@
               <div class="section-box mb-4 card w-80">
                 <div class="card-body rounded text-center" style="background-color: #F3F2EC">
                   <img src="https://via.placeholder.com/80" alt="User Profile" class="rounded-circle my-2"><br>
-                  <span id="user-id" class="fw-bold fs-5" th:text="${userId}"></span><span>님</span>
-                  <span class="badge bg-success">일반</span>
+                  <span id="user-id" class="fw-bold fs-5" th:text="${user.getName()}">이름</span><span>님</span>
+                  <span class="badge bg-success" th:text="${user.getRankName()}">등급</span>
                   <div class="d-flex justify-content-center mt-3">
                     <div class="me-3">
                       <span>찜</span><br>
@@ -124,7 +124,7 @@
                   <a class="nav-link py-0" href="#" id="menu-orders"><span>주문/배송 조회</span></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link py-0" href="#" id="menu-modifications"><span>취소/반품/교환 내역</span></a>
+                  <a class="nav-link py-0" href="#" id="menu-modifications"><span>취소/반품/교환</span></a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link py-0" href="/books/likes" id="menu-likes"><span>좋아요</span></a>

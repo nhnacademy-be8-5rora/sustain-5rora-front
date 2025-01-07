@@ -7,6 +7,7 @@ import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
 import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.user.dto.request.SignUpRequest;
+import store.aurora.user.dto.response.UserInfoResponseDto;
 
 import java.util.Map;
 
@@ -43,4 +44,9 @@ public interface UserClient {
     // 휴면해제처리
     @PostMapping("/reactivate")
     ResponseEntity<Map<String, String>> reactivateUser(@RequestParam String userId);
+
+    // 회원정보 조회
+    @GetMapping("/info")
+    ResponseEntity<UserInfoResponseDto> getUserInfo(@RequestHeader("userId") String userId);
+
 }
