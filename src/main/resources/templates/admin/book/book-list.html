@@ -56,7 +56,7 @@
         </table>
 
         <!-- 페이지네이션 -->
-        <nav class="mt-4">
+        <nav class="mt-4" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
                 <!-- 이전 버튼 -->
                 <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">

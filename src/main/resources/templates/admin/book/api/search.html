@@ -18,7 +18,9 @@
             <!-- 직접 등록 버튼 -->
             <a th:href="@{/books/direct/register}" class="btn btn-success">직접 등록</a>
         </div>
-
+        <div class="text-center mt-4">
+            <p>도서 DB 제공 : 알라딘 인터넷서점 (<a href="https://www.aladin.co.kr" target="_blank">www.aladin.co.kr</a>)</p>
+        </div>
         <!-- 검색 폼 -->
         <form th:action="@{/books/api/search-books}" method="get" class="row g-3">
             <input type="hidden" name="start" value="1" />
@@ -72,7 +74,7 @@
                             <strong>판매가:</strong> <span th:text="${book.priceSales} + ' 원'"></span>
                         </p>
                         <!-- 등록하기 버튼 -->
-                        <a th:href="@{/books/api/register(bookId=${book.isbn13})}" class="btn btn-primary">등록하기</a>
+                        <a th:href="@{/books/api/register(isbn13=${book.isbn13})}" class="btn btn-primary">등록하기</a>
                     </div>
                 </li>
             </ul>

@@ -26,8 +26,8 @@ public interface BookClient {
                                               @RequestParam(value = "start", defaultValue = "1") int start);
 
     // 특정 도서 정보 가져오기
-    @GetMapping("/aladin/{bookId}")
-    ResponseEntity<BookRequestDto> getBookById(@PathVariable("bookId") String bookId);
+    @GetMapping("/aladin/{isbn13}")
+    public ResponseEntity<BookRequestDto> getBookDetailsByIsbn(@PathVariable String isbn13);
 
     // API 도서 등록
     @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -51,7 +51,7 @@ public interface BookClient {
                   @RequestPart("book") BookRequestDto bookDto,
                   @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
-                  @RequestPart(value = "deleteImages", required = false) List<Long> deleteImageIds);
+                  @RequestParam(value = "deleteImages", required = false) List<Long> deleteImageIds);
 
     @GetMapping("/{bookId}/edit")
     ResponseEntity<BookDetailDto> getBookDetailsForAdmin(@PathVariable Long bookId);

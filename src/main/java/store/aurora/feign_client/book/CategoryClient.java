@@ -16,6 +16,16 @@ import java.util.List;
 @FeignClient(name = "categoryClient", url = "${api.gateway.base-url}" + "/api/categories")
 public interface CategoryClient {
 
+    @GetMapping("/root")
+    ResponseEntity<Page<CategoryResponseDTO>> getRootCategories(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "2") int size);
+
+
+    @GetMapping("/{parentId}/children")
+    ResponseEntity<Page<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId,
+                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "2") int size);
+
     @PostMapping
     ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO requestDTO);
 
@@ -26,48 +36,12 @@ public interface CategoryClient {
     @DeleteMapping("/{categoryId}")
     ResponseEntity<Void> deleteCategory(@PathVariable("categoryId") Long categoryId);
 
-    @GetMapping("all")
-    ResponseEntity<List<CategoryResponseDTO>> getAllCategories();
-
-    @GetMapping("paged")
-    ResponseEntity<Page<CategoryResponseDTO>> getPagedCategories(@RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "2") int size);
-    // 카테고리 계층형 데이터 가져오기
-    @GetMapping("/hierarchy")
-    ResponseEntity<List<CategoryResponseDTO>> getCategoryHierarchy();
-
-    // 특정 카테고리 가져오기
-//    @GetMapping("/{categoryId}")
-//    ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable("categoryId") Long categoryId);
-
-
     //search용 카테고리 기본값만 가져오기
     @GetMapping("/{categoryId}")
     ResponseEntity<CategoryDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
 
-    @GetMapping("/root/paged")
-    ResponseEntity<Page<CategoryResponseDTO>> getRootCategories(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "2") int size);
-
-    /**
-     * 특정 카테고리의 직속 하위 카테고리 가져오기
-     */
-    @GetMapping("/{parentId}/children/paged")
-    ResponseEntity<Page<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId,
-                                                                    @RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "2") int size);
-
-//    @GetMapping("/root")
-//    ResponseEntity<List<CategoryResponseDTO>> getRootCategories();
-
-    /**
-     * 특정 카테고리의 직속 하위 카테고리 가져오기
-     */
-    @GetMapping("/{parentId}/children")
-    ResponseEntity<List<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId);
-
-    //최상위 카테고리 가져오기
-    @GetMapping("/root")
+    // 모든 카테고리 계층적으로 가져오기
+    @GetMapping
     ResponseEntity<List<CategoryResponseDTO>> getCategories();
 }
 

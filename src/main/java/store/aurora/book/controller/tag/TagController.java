@@ -25,7 +25,7 @@ public class TagController {
     public String showTagManagementPage(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "2") int size,
                                         Model model) {
-        ResponseEntity<Page<TagResponseDto>> response = tagClient.getAllTags(page,size);
+        ResponseEntity<Page<TagResponseDto>> response = tagClient.getTags(page,size);
         Page<TagResponseDto> tagPage = response.getBody();
 
 
@@ -38,28 +38,28 @@ public class TagController {
             model.addAttribute("currentPage", 0);
             model.addAttribute("totalPages", 0);
         }
-        return "admin/tag/tags"; // 태그 관리 페이지 템플릿 경로
+        return "admin/tag/tags";
     }
 
     // 태그 추가 처리
     @PostMapping("/create")
     public String addTag(@ModelAttribute TagRequestDto tagRequestDto) {
         tagClient.createTag(tagRequestDto);
-        return "redirect:/tags"; // 태그 추가 후 태그 관리 페이지로 리다이렉트
+        return "redirect:/tags";
     }
 
     // 태그 수정 처리
     @PostMapping("/update/{id}")
     public String updateTag(@PathVariable("id") Long id, @ModelAttribute TagRequestDto tagRequestDto) {
         tagClient.updateTag(id, tagRequestDto);
-        return "redirect:/tags"; // 태그 수정 후 태그 관리 페이지로 리다이렉트
+        return "redirect:/tags";
     }
 
     // 태그 삭제 처리
     @PostMapping("/delete/{id}")
     public String deleteTag(@PathVariable("id") Long id) {
         tagClient.deleteTag(id);
-        return "redirect:/tags"; // 태그 삭제 후 태그 관리 페이지로 리다이렉트
+        return "redirect:/tags";
     }
 
 }
