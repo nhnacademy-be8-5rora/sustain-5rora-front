@@ -84,8 +84,9 @@
             <div class="form-group">
                 <label for="state">쿠폰 상태</label>
                 <select class="form-control" id="state" name="state">
-                    <option value="ACTIVE">활성화</option>
-                    <option value="INACTIVE">비활성화</option>
+                    <option value="LIVE">사용가능</option>
+                    <option value="USED">사용됨</option>
+                    <option value="TIMEOUT">기간초과</option>
                 </select>
             </div>
 
@@ -125,7 +126,12 @@
             </div>
 
             <div class="form-group">
-                <label for="newEndDate">새 종료일</label>
+                <label for="policyId">새 종료일</label>
+                <input type="number" class="form-control" id="policyId" name="policyId">
+            </div>
+
+            <div class="form-group">
+                <label for="endDate">새 쿠폰정책</label>
                 <input type="date" class="form-control" id="newEndDate" name="newEndDate">
             </div>
 
