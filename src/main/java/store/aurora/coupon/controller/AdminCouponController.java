@@ -1,5 +1,8 @@
 package store.aurora.coupon.controller;
 
+import groovy.util.logging.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -12,21 +15,26 @@ import store.aurora.feign_client.coupon.CouponClient;
 @Controller
 @RequestMapping("admin")
 @RequiredArgsConstructor
+@Slf4j
 public class AdminCouponController {
 
     private final CouponClient couponClient;
     private static final String COUPON_ADMIN_URL = "admin/coupon/coupon-create";
+    private static final Logger USER_LOG = LoggerFactory.getLogger("user-logger");
 
-    // 쿠폰정책 생성 (관리자) -> 쿠폰 정책은 생성밖에 안됨(정책 수정, 삭제시 -> 이전에 해당 쿠폰을 가진 유저들이 피해를 볼 수 있기에)
+    // 쿠폰 생성 (관리자 창)으로 이동 -> 쿠폰 정책은 생성밖에 안됨(정책 수정, 삭제시 -> 이전에 해당 쿠폰을 가진 유저들이 피해를 볼 수 있기에)
     @GetMapping(value = "/coupon/create")
     public String goAdminCoupon() {
 
         return COUPON_ADMIN_URL;
     }
 
+    //쿠폰 정책 생성
     @PostMapping(value = "/policy/create")
     public String couponPolicyCreate(@ModelAttribute @Validated
                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
+
+        USER_LOG.info("{}", requestCouponPolicyDTO);
 
         couponClient.couponPolicyCreate(requestCouponPolicyDTO);
 
