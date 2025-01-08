@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class UserAddressRequest {
     @NotBlank
+    private String nickname;
+    @NotBlank
     private String receiver;
     @NotBlank
     private String roadAddress;
