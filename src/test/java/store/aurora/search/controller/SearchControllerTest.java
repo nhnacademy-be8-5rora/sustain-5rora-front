@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import store.aurora.book.dto.AuthorDTO;
 import store.aurora.book.dto.category.CategoryDTO;
+import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.common.JwtUtil;
 import store.aurora.feign_client.BookSearchClient;
 import store.aurora.feign_client.UserClient;  // UserClient 임포트 추가
@@ -26,6 +27,7 @@ import store.aurora.search.dto.BookSearchResponseDTO;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -166,10 +168,13 @@ class SearchControllerTest {
         String type = "category";
         String pageNum = "1";
 
-        CategoryDTO categoryDTO = new CategoryDTO();
+        CategoryResponseDTO categoryDTO = new CategoryResponseDTO();
         categoryDTO.setId(1L);
         categoryDTO.setName("소설");
-
+        categoryDTO.setDepth(0);
+        categoryDTO.setParentId(null);
+        categoryDTO.setParentName(null);
+        categoryDTO.setChildren(new ArrayList<>());
         BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
         bookSearchResponseDTO.setId(1L);
         bookSearchResponseDTO.setTitle("소설책");
