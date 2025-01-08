@@ -15,8 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.cart.dto.CartItemDTO;
-import store.aurora.feignClient.book.BookClient;
-import store.aurora.feignClient.order.OrderTemporaryStorageClient;
+
+import store.aurora.feign_client.book.BookClient;
+import store.aurora.feign_client.order.OrderTemporaryStorageClient;
 import store.aurora.order.dto.CheckoutBookDTO;
 import store.aurora.order.dto.OrderRequestDto;
 import store.aurora.order.dto.OrderResponseDto;
@@ -30,7 +31,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor

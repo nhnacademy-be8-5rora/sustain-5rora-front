@@ -1,4 +1,4 @@
-package store.aurora.feignClient.order;
+package store.aurora.feign_client.order;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
