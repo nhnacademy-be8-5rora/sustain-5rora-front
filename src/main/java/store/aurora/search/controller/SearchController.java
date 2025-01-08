@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.aurora.book.CategoryService;
 import store.aurora.book.dto.category.CategoryDTO;
+import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.common.JwtUtil;
 import store.aurora.feign_client.BookSearchClient;
 import org.springframework.data.domain.Page;
@@ -79,7 +80,7 @@ public class SearchController {
             List<BookSearchResponseDTO> books = bookSearchResponseDTOPage.getContent();
 
             if ("category".equals(type)) {
-                CategoryDTO categories = categoryService.findById(Long.parseLong(keyword)); // 카테고리 하위 목록 조회
+                CategoryResponseDTO categories = categoryService.findById(Long.parseLong(keyword)); // 카테고리 하위 목록 조회
                 model.addAttribute("categories", categories);
             }
             // 검색 결과와 페이징 정보를 모델에 추가
