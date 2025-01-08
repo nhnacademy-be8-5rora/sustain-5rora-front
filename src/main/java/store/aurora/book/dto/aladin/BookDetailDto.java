@@ -1,15 +1,15 @@
 package store.aurora.book.dto.aladin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookDetailDto {
     private Long id;
     private String title;
@@ -24,7 +24,8 @@ public class BookDetailDto {
     private ImageDetail cover;
     private List<ImageDetail> additionalImages; // 부가 이미지 URL 리스트
 
-    @Data
+    @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ImageDetail {
@@ -37,7 +38,8 @@ public class BookDetailDto {
     // SeriesInfo를 별도의 클래스에 매핑
     private SeriesInfo seriesInfo;
 
-    @Data
+    @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)

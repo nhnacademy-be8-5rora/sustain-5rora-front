@@ -1,6 +1,7 @@
 package store.aurora.book.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -66,7 +67,7 @@ public class BookController {
 
     // API 도서 등록 처리
     @PostMapping(value = "/api/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String registerApiBook(@ModelAttribute BookRequestDto bookDto,
+    public String registerApiBook(@Valid @ModelAttribute BookRequestDto bookDto,
                                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
     ) {
         bookClient.registerApiBook(bookDto,additionalImages);
@@ -85,7 +86,7 @@ public class BookController {
     // 직접 도서 등록 처리
     @PostMapping(value = "/direct/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String registerDirectBook(
-            @ModelAttribute BookRequestDto bookDto,
+            @Valid @ModelAttribute BookRequestDto bookDto,
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
             @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages) {
         // Feign 클라이언트를 통해 데이터 전달
