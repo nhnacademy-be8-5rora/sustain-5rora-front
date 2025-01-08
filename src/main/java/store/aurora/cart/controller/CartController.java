@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.cart.dto.CartItemDTO;
-import store.aurora.feignClient.CartClient;
+import store.aurora.feign_client.CartClient;
 
 import java.util.Map;
 

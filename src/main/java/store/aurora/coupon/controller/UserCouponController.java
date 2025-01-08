@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.coupon.CouponClient;
+import store.aurora.feign_client.coupon.CouponClient;
 
 @RestController
 @RequiredArgsConstructor

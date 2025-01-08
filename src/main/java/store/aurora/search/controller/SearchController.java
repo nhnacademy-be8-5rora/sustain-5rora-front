@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import store.aurora.book.CategoryService;
 import store.aurora.book.dto.category.CategoryDTO;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.BookSearchClient;
+import store.aurora.feign_client.BookSearchClient;
 import org.springframework.data.domain.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 

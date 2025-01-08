@@ -7,42 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <title>도서 수정</title>
-    <style>
-        .form-label {
-            margin-bottom: 0.2rem; /* 레이블 아래 간격 줄이기 */
-        }
-
-        .form-control,
-        .form-select {
-            margin-bottom: 0.5rem; /* 필드 간격 조정 */
-        }
-
-        .row.g-3 {
-            row-gap: 1rem; /* 전체 행 간격 줄이기 */
-        }
-
-        .btn-group-inline {
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-inline {
-            margin-left: 0.5rem; /* 버튼과 필드 간격 조정 */
-        }
-
-        .accordion .accordion-header {
-            display: flex;
-            align-items: center;
-        }
-
-        .accordion .form-check-inline {
-            margin-right: 0.5rem; /* 체크박스와 텍스트 간격 */
-        }
-
-        .accordion .accordion-button {
-            flex-grow: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <link rel="stylesheet" href="/static/css/book-category.css">
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
@@ -56,9 +22,11 @@
             <!-- 기존 커버 이미지 -->
             <div class="col-md-12 text-center">
                 <h5>기존 커버 이미지</h5>
-                <img th:src="${book.cover}" alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
+                <img th:src="${book.cover != null ? book.cover.url : null}"
+                     alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
                 <label>
-                    <input type="checkbox" name="deleteImages" th:value="${book.cover}"> 삭제
+                    <input type="checkbox" name="deleteImages" th:value="${book.cover != null ? book.cover.id : ''}"
+                           th:disabled="${book.cover == null}"> 삭제
                 </label>
                 <label for="coverImage" class="form-label mt-2">새 커버 이미지 업로드</label>
                 <input type="file" id="coverImage" name="coverImage" class="form-control">
@@ -67,11 +35,11 @@
             <!-- 부가 이미지 -->
             <div class="col-md-12">
                 <h5>부가 이미지</h5>
-                <div class="row g-3">
-                    <div class="col-md-3" th:each="image : ${book.additionalImages}">
-                        <img th:src="${image}" alt="부가 이미지" class="img-thumbnail" style="max-width: 100px;">
-                        <label>
-                            <input type="checkbox" name="deleteImages" th:value="${image}"> 삭제
+                <div class="row row-cols-2 row-cols-md-4 g-3">
+                    <div class="col" th:each="imageDetail : ${book.additionalImages}">
+                        <img th:src="${imageDetail.url}" alt="부가 이미지" class="img-thumbnail w-100">
+                        <label class="form-check-label d-block text-center mt-2">
+                            <input type="checkbox" name="deleteImages" th:value="${imageDetail.id}"> 삭제
                         </label>
                     </div>
                 </div>
@@ -110,7 +78,8 @@
             </div>
             <div class="col-md-12">
                 <label for="description" class="form-label">책 설명</label>
-                <textarea id="description" name="description" class="form-control" rows="3" th:text="${book.description}"></textarea>
+                <div id="toast-editor"></div>
+                <textarea id="description" name="description" hidden th:text="${book.description}"></textarea>
             </div>
             <div class="col-md-12">
                 <label for="contents" class="form-label">목차</label>
@@ -204,3 +173,22 @@
 </body>
 
 </html>
+
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editor = new toastui.Editor({
+            el: document.querySelector('#toast-editor'),
+            height: '400px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.querySelector('#description').value || '', // 수정 폼에서 초기값으로 설정
+        });
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function() {
+            const descriptionTextarea = form.querySelector('#description');
+            descriptionTextarea.value = editor.getHTML(); // 에디터 내용을 textarea에 동기화
+        });
+    });
+</script>

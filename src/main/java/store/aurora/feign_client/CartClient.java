@@ -1,15 +1,10 @@
-package store.aurora.feignClient;
+package store.aurora.feign_client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.auth.dto.request.JwtRequestDto;
 import store.aurora.cart.dto.CartItemDTO;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @FeignClient(name = "cartClient", url = "${api.gateway.base-url}" + "/api/cart")

@@ -2,13 +2,15 @@ package store.aurora.mypage;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.feignClient.UserClient;
+import store.aurora.feign_client.UserClient;
+import store.aurora.user.dto.response.UserInfoResponseDto;
 
 import java.util.Map;
 
@@ -22,7 +24,8 @@ public class MyPageController {
     @GetMapping
     public String mypage(Authentication authentication,
                          Model model) {
-        model.addAttribute("userId", authentication.getPrincipal().toString());
+        ResponseEntity<UserInfoResponseDto> user = userClient.getUserInfo(authentication.getPrincipal().toString());
+        model.addAttribute("user", user.getBody());
         return "mypage/mypage";
     }
 
@@ -33,6 +36,9 @@ public class MyPageController {
         ResponseEntity<Map<String, String>> clientResponse = userClient.deleteUser(userId);
         return processClientRes(response, clientResponse);
     }
+
+    // 회원정보 조회
+
 
     private String processClientRes(HttpServletResponse response, ResponseEntity<Map<String, String>> clientResponse) {
         HttpHeaders headers = clientResponse.getHeaders();

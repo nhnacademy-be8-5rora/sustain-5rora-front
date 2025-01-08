@@ -7,10 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.common.annotation.Auth;
-import store.aurora.feignClient.BookSearchClient;
-import store.aurora.feignClient.book.BookClient;
+import store.aurora.feign_client.BookSearchClient;
+import store.aurora.feign_client.book.BookClient;
 import org.springframework.data.domain.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 

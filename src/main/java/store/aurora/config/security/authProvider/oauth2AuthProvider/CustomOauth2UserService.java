@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import store.aurora.auth.dto.request.PaycoInfoMember;
 import store.aurora.auth.dto.request.PaycoInfoResponse;
 import store.aurora.config.security.exception.userInfoNotFound.PaycoUserInfoNotFound;
-import store.aurora.feignClient.payco.PaycoInfoClient;
+import store.aurora.feign_client.payco.PaycoInfoClient;
 
 import java.util.HashMap;
 import java.util.List;

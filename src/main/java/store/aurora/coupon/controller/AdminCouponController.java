@@ -5,12 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.coupon.dto.request.*;
-import store.aurora.feignClient.coupon.CouponClient;
+import store.aurora.feign_client.coupon.CouponClient;
 
 //관리자용 쿠폰 생성 및 배포용
 //관리자를 통해서 새 쿠폰을 데이터베이스에 저장하기 때문에 유효성, 무결성 중요(@Validated 사용)
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("admin")
 @RequiredArgsConstructor
 public class AdminCouponController {
 
@@ -25,8 +25,9 @@ public class AdminCouponController {
     }
 
     @PostMapping(value = "/policy/create")
-    public String couponPolicyCreate(@RequestBody @Validated
+    public String couponPolicyCreate(@ModelAttribute @Validated
                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
+
         couponClient.couponPolicyCreate(requestCouponPolicyDTO);
 
         return COUPON_ADMIN_URL;
@@ -34,7 +35,7 @@ public class AdminCouponController {
 
     //사용자 쿠폰 생성(특정 한명에게 줄 수 있으며, 특정 조건을 충족한 유저들에게 쿠폰을 뿌릴 수 있도록 함)
     @PostMapping("/coupon/distribution")
-    public String userCouponCreate(@RequestBody @Validated
+    public String userCouponCreate(@ModelAttribute @Validated
                                                    RequestUserCouponDTO requestUserCouponDTO) {
 
         couponClient.userCouponCreate(requestUserCouponDTO);
@@ -44,7 +45,7 @@ public class AdminCouponController {
 
     // 사용자쿠폰 수정 (관리자)
     @PutMapping(value = "/coupon/update/")
-    public String userCouponUpdate(@RequestBody @Validated
+    public String userCouponUpdate(@ModelAttribute @Validated
                                                    UpdateUserCouponDto updateUserCouponDto) {
         couponClient.couponUpdate(updateUserCouponDto);  // 실제 쿠폰 수정 처리
         return COUPON_ADMIN_URL;
