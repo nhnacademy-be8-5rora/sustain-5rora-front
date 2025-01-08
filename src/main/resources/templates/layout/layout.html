@@ -356,7 +356,7 @@
     // 카테고리 데이터를 API에서 가져와 업데이트
     function loadCategoryData() {
         console.log('Fetching Root categories');
-        fetch(`/categories/root`)
+        fetch(`/categories`)
             .then(response => {
                 console.log('Response status:', response.status); // 상태 코드 확인
                 if (!response.ok) { // 응답이 정상적이지 않으면 에러 처리
