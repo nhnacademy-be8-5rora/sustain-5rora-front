@@ -59,7 +59,7 @@ public interface BookClient {
     @GetMapping("/{bookId}")
     ResponseEntity<BookDetailsDto> getBookDetails(@PathVariable Long bookId);
 
-        // 도서 상세 정보 조회
+    // 도서 상세 정보 조회
     @GetMapping("/aladin/{bookId}")
     ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("bookId") Long bookId);
 

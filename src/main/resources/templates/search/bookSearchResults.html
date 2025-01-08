@@ -166,7 +166,7 @@
         </div>
       </div>
 
-      <div class="book-container" th:if="${books != null}">
+      <div class="book-container" th:if="${books.size()>=1}">
         <h2>책 목록</h2>
         <div class="book-card" th:each="book : ${books}">
           <div class="book-image-container">
@@ -227,29 +227,31 @@
 
         </div>
       </div>
-
+      <!-- 책이 없을 경우 메시지를 표시 -->
+      <div class="no-books-message" th:if="${books == null or books.size() == 0}">
+        <p th:text="${message}"></p>
+      </div>
         </div>
 
     </section>
   <div class="pagination">
     <!-- 이전 페이지 링크 -->
     <a href="#"
-       th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage > 1 ? currentPage - 1 : 1)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
-       th:class="${currentPage > 1 ? '' : 'disabled'}">이전</a>
+       th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${currentPage != null && currentPage > 1 ? currentPage - 1 : 1}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+       th:class="${currentPage != null && currentPage > 1 ? '' : 'disabled'}">이전</a>
 
     <!-- 페이지 번호들 -->
-    <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+    <span th:each="i : ${#numbers.sequence(1, totalPages != null ? totalPages : 1)}">
         <a href="#" th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${i}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
            th:text="${i}" th:class="${i == currentPage ? 'active' : ''}"></a>
-      </span>
+    </span>
 
     <!-- 다음 페이지 링크 -->
     <a href="#"
-       th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${(currentPage < totalPages ? currentPage + 1 : totalPages)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
-       th:class="${currentPage < totalPages ? '' : 'disabled'}">다음</a>
+       th:href="@{/books/search(type=${type}, keyword=${keyword}, pageNum=${currentPage != null && currentPage < (totalPages != null ? totalPages : 1) ? currentPage + 1 : (totalPages != null ? totalPages : 1)}, orderBy=${orderBy}, orderDirection=${orderDirection})}"
+       th:class="${currentPage != null && currentPage < (totalPages != null ? totalPages : 1) ? '' : 'disabled'}">다음</a>
   </div>
-    </div>
-
+</div>
 
 </body>
 </html>
