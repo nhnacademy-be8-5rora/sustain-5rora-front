@@ -12,7 +12,8 @@
     function execDaumPostcode() {
       new daum.Postcode({
         oncomplete: function(data) {
-          document.getElementById("roadAddress").value = data.roadAddress;
+          document.getElementById("roadAddress").value = `${data.roadAddress} (${data.zonecode})`;
+
         }
       }).open();
     }
