@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AddressController {
     private final AddressClient addressFeignClient;
+    private static final String REDIRECT_ADDRESS = "redirect:/mypage/addresses";
 
     @GetMapping
     public String showAddresses(HttpServletRequest request,
@@ -38,9 +39,7 @@ public class AddressController {
                              @ModelAttribute UserAddressRequest userAddressRequest) {
         String jwt = JwtUtil.getJwtFromCookie(request);
         addressFeignClient.addUserAddress(jwt, userAddressRequest);
-//        model.addAttribute("success", "배송지가 성공적으로 추가되었습니다.");
-//        } catch (Exception e) {model.addAttribute("error", "배송지 추가에 실패했습니다.");}
-        return "redirect:/mypage/addresses";
+        return REDIRECT_ADDRESS;
     }
 
     @GetMapping("/{id}")
@@ -49,7 +48,6 @@ public class AddressController {
                                Model model) {
         String jwt = JwtUtil.getJwtFromCookie(request);
         UserAddressDTO address = addressFeignClient.getAddressById(jwt, id);
-//        model.addAttribute("id", id);
         model.addAttribute("address", address);
         return "mypage/address-form";
     }
@@ -58,7 +56,7 @@ public class AddressController {
     public String deleteAddress(HttpServletRequest request, @RequestParam("id") Long id) {
         String jwt = JwtUtil.getJwtFromCookie(request);
         addressFeignClient.deleteUserAddress(id, jwt);
-        return "redirect:/mypage/addresses";
+        return REDIRECT_ADDRESS;
     }
 
     @PostMapping("/{id}")
@@ -67,6 +65,6 @@ public class AddressController {
                                 @ModelAttribute UserAddressRequest userAddressDTO) {
         String jwt = JwtUtil.getJwtFromCookie(request);
         addressFeignClient.updateAddress(id, jwt, userAddressDTO);
-        return "redirect:/mypage/addresses";
+        return REDIRECT_ADDRESS;
     }
 }
