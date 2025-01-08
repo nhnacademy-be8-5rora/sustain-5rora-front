@@ -20,7 +20,14 @@ public class CategoryService {
 
     public CategoryDTO findById(Long id) {
         id = id == null ? 0 : id;
-        ResponseEntity<CategoryDTO> response = categoryClient.findById(id);
-        return response.getBody();
+        try {
+            ResponseEntity<CategoryDTO> response = categoryClient.findById(id);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("Category service responded with an error: " + response.getStatusCode());
+            }
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve category with id: " + id, e);
+        }
     }
 }

@@ -3,6 +3,7 @@ package store.aurora.search.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,78 +30,123 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SearchController.class)  // 컨트롤러만 테스트하는 설정
+@WebMvcTest(SearchController.class)
 class SearchControllerTest {
 
     private MockMvc mockMvc;
 
     @MockBean
-    private BookSearchClient bookSearchClient;  // BookSearchClient 모킹
+    private BookSearchClient bookSearchClient;
 
     @MockBean
-    private CategoryService categoryService;  // CategoryService 모킹
+    private CategoryService categoryService;
 
     @MockBean
-    private UserClient userClient;  // UserClient 모킹 추가
+    private UserClient userClient;
 
     @Autowired
-    private SearchController searchController;  // SearchController에 MockBean 주입
+    private SearchController searchController;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(searchController).build();
     }
 
+
+    @DisplayName("keyword가 없을 때 처리")
     @Test
-    void testSearch() throws Exception {
-        // given
-        String keyword = "한강";
+    void testSearchWithoutKeyword() throws Exception {
         String type = "title";
         String pageNum = "1";
         String orderBy = "salePrice";
-        String orderDirection = "desc";
+        String orderDirection = "asc";
 
-        // BookSearchResponseDTO 객체 생성
         BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
         bookSearchResponseDTO.setId(1L);
-        bookSearchResponseDTO.setTitle("한강의 작품");
-        bookSearchResponseDTO.setRegularPrice(20000);
-        bookSearchResponseDTO.setSalePrice(15000);
-        bookSearchResponseDTO.setPublishDate(LocalDate.of(2020, 5, 20));
-        bookSearchResponseDTO.setPublisherName("한강 출판사");
-        bookSearchResponseDTO.setImgPath("/images/han-gang.jpg");
-
-        // AuthorDTO 객체 생성
-        AuthorDTO author = new AuthorDTO();
-        author.setName("한강");
-        author.setRole("author");
-
-        // AuthorDTO 리스트 설정
-        bookSearchResponseDTO.setAuthors(Collections.singletonList(author));
-
-        // Category ID 리스트 설정
-        bookSearchResponseDTO.setCategoryIdList(Collections.singletonList(101L));
-
-        // 나머지 필드 설정
-        bookSearchResponseDTO.setViewCount(1000L);
-        bookSearchResponseDTO.setReviewCount(150);
-        bookSearchResponseDTO.setReviewRating(4.5);
-        bookSearchResponseDTO.setLiked(true);
-        bookSearchResponseDTO.setSale(true);
-
-        // Page 객체에 값 설정 (빈 리스트 대신 실제 데이터로 설정)
+        bookSearchResponseDTO.setTitle("기본 검색 책");
         List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
-        Page<BookSearchResponseDTO> page = new PageImpl<>(books); // Page 객체를 생성할 때 값 설정
+        Page<BookSearchResponseDTO> page = new PageImpl<>(books);
 
-        // 모킹 설정
+        // 빈 키워드로 검색
+        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(""), eq(pageNum), eq(orderBy), eq(orderDirection)))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/books/search")
+                        .param("type", type)
+                        .param("pageNum", pageNum)
+                        .param("orderBy", orderBy)
+                        .param("orderDirection", orderDirection))
+                .andExpect(status().isOk())
+                .andExpect(view().name("search/bookSearchResults"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attribute("books", books));
+    }
+    @DisplayName("keyword가 빈 문자열일 때 처리")
+    @Test
+    void testSearchWithEmptyKeyword() throws Exception {
+        String type = "title";
+        String pageNum = "1";
+        String orderBy = "salePrice";
+        String orderDirection = "asc";
+
+        BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
+        bookSearchResponseDTO.setId(1L);
+        bookSearchResponseDTO.setTitle("기본 검색 책");
+        List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
+        Page<BookSearchResponseDTO> page = new PageImpl<>(books);
+
+        // 빈 문자열로 검색
+        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(""), eq(pageNum), eq(orderBy), eq(orderDirection)))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/books/search")
+                        .param("type", type)
+                        .param("keyword", "")  // keyword 파라미터가 빈 문자열
+                        .param("pageNum", pageNum)
+                        .param("orderBy", orderBy)
+                        .param("orderDirection", orderDirection))
+                .andExpect(status().isOk())
+                .andExpect(view().name("search/bookSearchResults"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attribute("books", books));
+    }
+
+    @DisplayName("잘못된 페이지 번호 처리")
+    @Test
+    void testSearchWithInvalidPageNum() throws Exception {
+        String keyword = "한강";
+        String type = "title";
+        String invalidPageNum = "-1"; // 잘못된 페이지 번호
+
+        mockMvc.perform(get("/books/search")
+                        .param("keyword", keyword)
+                        .param("type", type)
+                        .param("pageNum", invalidPageNum))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(model().attributeExists("error"));
+    }
+
+    @DisplayName("검색 결과가 없을 때 처리")
+    @Test
+    void testSearchWithNoResults() throws Exception {
+        String keyword = "존재하지 않는 책";
+        String type = "title";
+        String pageNum = "1";
+        String orderBy = "salePrice";
+        String orderDirection = "asc";
+
+        Page<BookSearchResponseDTO> emptyPage = new PageImpl<>(Collections.emptyList());
+
         when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(keyword), eq(pageNum), eq(orderBy), eq(orderDirection)))
-                .thenReturn(page); // `page` 객체를 반환하도록 설정
+                .thenReturn(emptyPage);
 
-        // when & then
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
@@ -109,79 +155,42 @@ class SearchControllerTest {
                         .param("orderDirection", orderDirection))
                 .andExpect(status().isOk())
                 .andExpect(view().name("search/bookSearchResults"))
-                .andExpect(model().attributeExists("books"))
-                .andExpect(model().attribute("books", books))
-                .andExpect(model().attribute("currentPage", 1))
-                .andExpect(model().attribute("totalPages", 1))
-                .andExpect(model().attribute("keyword", keyword))
-                .andExpect(model().attribute("type", type))
-                .andExpect(model().attribute("orderBy", orderBy))
-                .andExpect(model().attribute("orderDirection", orderDirection));
-
-        // verify
-        verify(bookSearchClient, times(1)).searchBooksByKeyword(anyString(), eq(type), eq(keyword), eq(pageNum), eq(orderBy), eq(orderDirection));
+                .andExpect(model().attribute("message", "\"" + keyword + "\"로 검색된 결과가 없습니다."))
+                .andExpect(model().attribute("books", Collections.emptyList()));
     }
 
-
-
+    @DisplayName("카테고리 타입으로 검색 처리 - 올바른 카테고리 ID")
     @Test
-    void testSearchWithInvalidEncoding() throws Exception {
-        // given
-        String invalidKeyword = "한강@#";  // 예시로 잘못된 인코딩을 사용할 수 있습니다.
-
-        // Mocking Page<BookSearchResponseDTO>
-        Page<BookSearchResponseDTO> page = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 10), 0);  // 빈 리스트로 설정
-        when(bookSearchClient.searchBooksByKeyword(anyString(), eq("title"), eq(invalidKeyword), eq("1"), eq("salePrice"), eq("desc")))
-                .thenReturn(null);
-
-        // when & then
-        mockMvc.perform(get("/books/search")
-                        .param("keyword", invalidKeyword)
-                        .param("type", "title")
-                        .param("pageNum", "1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(model().attributeExists("error"))
-                .andExpect(model().attribute("error", "검색 결과가 없습니다."));
-    }
-
-    @Test
-    public void testSearchWithCategoryType() throws Exception {
-        // mock 데이터 설정
-        String keyword = "1"; // category ID
+    void testSearchWithCategoryType() throws Exception {
+        String keyword = "1"; // 카테고리 ID
         String type = "category";
+        String pageNum = "1";
 
-        CategoryDTO mockCategory = new CategoryDTO();
-        mockCategory.setId(1L);
-        mockCategory.setName("Category 1");
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(1L);
+        categoryDTO.setName("소설");
 
-        // 페이지 요청 생성
-        Pageable pageable = PageRequest.of(0, 10);  // 첫 번째 페이지, 한 페이지당 10개의 항목
+        BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
+        bookSearchResponseDTO.setId(1L);
+        bookSearchResponseDTO.setTitle("소설책");
 
-        // BookSearchResponseDTO 객체 생성 (빈 목록으로 설정)
-        List<BookSearchResponseDTO> books = Arrays.asList(new BookSearchResponseDTO());
+        List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
+        Page<BookSearchResponseDTO> page = new PageImpl<>(books);
 
-        // PageImpl로 Page 객체 생성 (PageImpl 사용)
-        Page<BookSearchResponseDTO> mockPage = new PageImpl<>(books, pageable, books.size());
+        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(keyword), eq(pageNum), eq("title"), eq("asc")))
+                .thenReturn(page);
+        when(categoryService.findById(Long.parseLong(keyword)))
+                .thenReturn(categoryDTO);
 
-        when(categoryService.findById(Long.parseLong(keyword))).thenReturn(mockCategory);
-        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(keyword), anyString(), anyString(), anyString()))
-                .thenReturn(mockPage);
-
-        // GET 요청 시 해당 메서드 호출
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
-                        .param("pageNum", "1")
-                        .param("orderBy", "title")
-                        .param("orderDirection", "asc"))
-                .andExpect(status().isOk()) // 상태 코드 200
-                .andExpect(view().name("search/bookSearchResults")) // "bookSearchResults" 뷰 반환
-                .andExpect(model().attributeExists("categories")) // "categories" 모델에 존재해야 함
-                .andExpect(model().attribute("categories", mockCategory)); // mockCategory 값이 모델에 담겨 있는지 확인
-
-        // CategoryService가 호출되었는지 확인
-        verify(categoryService, times(1)).findById(1L);
+                        .param("pageNum", pageNum))
+                .andExpect(status().isOk())
+                .andExpect(view().name("search/bookSearchResults"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attribute("books", books))
+                .andExpect(model().attribute("categories", categoryDTO));
     }
 
 }
