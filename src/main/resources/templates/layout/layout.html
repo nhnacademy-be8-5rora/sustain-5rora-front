@@ -342,20 +342,14 @@
                 if (!response.ok) { // 응답이 정상적이지 않으면 에러 처리
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.text(); // 응답을 텍스트로 읽음
+                return response.json(); // 응답을 JSON으로 읽음
             })
-            .then(text => {
-                console.log('Raw response text:', text); // 받은 응답 텍스트 확인
-                try {
-                    const data = JSON.parse(text); // 응답을 JSON으로 파싱
-                    console.log('Category data received:', data);
-                    if (Array.isArray(data)) {
-                        updateCategoryList(data); // 받은 데이터를 카테고리 리스트에 추가
-                    } else {
-                        console.error('Invalid category data:', data);
-                    }
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
+            .then(data => {
+                console.log('Category data received:', data); // 받은 데이터 확인
+                if (Array.isArray(data)) {
+                    updateCategoryList(data); // 받은 데이터를 카테고리 리스트에 추가
+                } else {
+                    console.error('Invalid category data:', data);
                 }
             })
             .catch(error => {

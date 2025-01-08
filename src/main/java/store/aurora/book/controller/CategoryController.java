@@ -33,11 +33,11 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<List<CategoryDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
+    public ResponseEntity<List<CategoryResponseDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
         if (categoryId == null) {
             categoryId = 0L;
         }
-        ResponseEntity<CategoryDTO> categories = categoryClient.findById(categoryId);
+        ResponseEntity<CategoryResponseDTO> categories = categoryClient.findById(categoryId);
         if (categories.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)  // JSON 형식으로 설정
