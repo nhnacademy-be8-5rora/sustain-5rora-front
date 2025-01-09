@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import store.aurora.common.JwtUtil;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
-import store.aurora.feignClient.coupon.CouponClient;
+import store.aurora.feign_client.coupon.CouponClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class UserCouponListController {
 
         model.addAttribute("userCouponList", userCouponList);
 
-        return "/coupon/couponList";
+        return "coupon/couponList";
     }
 
     //결제창에서 상품마다 사용가능 쿠폰 리스트 확인(매 상품마다 사용 가능한 쿠폰이 뜨게 해야 됨.

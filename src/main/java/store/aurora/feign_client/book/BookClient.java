@@ -1,17 +1,16 @@
-package store.aurora.feignClient.book;
+package store.aurora.feign_client.book;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import store.aurora.book.CustomPage;
 import store.aurora.book.dto.*;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.search.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.List;
@@ -27,8 +26,8 @@ public interface BookClient {
                                               @RequestParam(value = "start", defaultValue = "1") int start);
 
     // 특정 도서 정보 가져오기
-    @GetMapping("/aladin/{bookId}")
-    ResponseEntity<BookRequestDto> getBookById(@PathVariable("bookId") String bookId);
+    @GetMapping("/aladin/{isbn13}")
+    public ResponseEntity<BookRequestDto> getBookDetailsByIsbn(@PathVariable String isbn13);
 
     // API 도서 등록
     @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -44,15 +43,15 @@ public interface BookClient {
     );
 
     @GetMapping
-    ResponseEntity<CustomPage<BookResponseDto>> getAllBooks(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "2") int size);
+    ResponseEntity<Page<BookResponseDto>> getAllBooks(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "2") int size);
 
     @PutMapping(value = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void editBook(@PathVariable Long bookId,
                   @RequestPart("book") BookRequestDto bookDto,
                   @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
-                  @RequestPart(value = "deleteImages", required = false) List<Long> deleteImageIds);
+                  @RequestParam(value = "deleteImages", required = false) List<Long> deleteImageIds);
 
     @GetMapping("/{bookId}/edit")
     ResponseEntity<BookDetailDto> getBookDetailsForAdmin(@PathVariable Long bookId);

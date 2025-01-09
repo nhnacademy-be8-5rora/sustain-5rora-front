@@ -2,11 +2,13 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+      layout:decorate="~{layout/admin-layout}">
 
 <head>
     <meta charset="UTF-8">
     <title>도서 수정</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <link rel="stylesheet" href="/static/css/book-category.css">
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
@@ -20,9 +22,11 @@
             <!-- 기존 커버 이미지 -->
             <div class="col-md-12 text-center">
                 <h5>기존 커버 이미지</h5>
-                <img th:src="${book.cover}" alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
+                <img th:src="${book.cover != null ? book.cover.url : null}"
+                     alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
                 <label>
-                    <input type="checkbox" name="deleteImages" th:value="${book.cover}"> 삭제
+                    <input type="checkbox" name="deleteImages" th:value="${book.cover != null ? book.cover.id : ''}"
+                           th:disabled="${book.cover == null}"> 삭제
                 </label>
                 <label for="coverImage" class="form-label mt-2">새 커버 이미지 업로드</label>
                 <input type="file" id="coverImage" name="coverImage" class="form-control">
@@ -31,11 +35,11 @@
             <!-- 부가 이미지 -->
             <div class="col-md-12">
                 <h5>부가 이미지</h5>
-                <div class="row g-3">
-                    <div class="col-md-3" th:each="image : ${book.additionalImages}">
-                        <img th:src="${image}" alt="부가 이미지" class="img-thumbnail" style="max-width: 100px;">
-                        <label>
-                            <input type="checkbox" name="deleteImages" th:value="${image}"> 삭제
+                <div class="row row-cols-2 row-cols-md-4 g-3">
+                    <div class="col" th:each="imageDetail : ${book.additionalImages}">
+                        <img th:src="${imageDetail.url}" alt="부가 이미지" class="img-thumbnail w-100">
+                        <label class="form-check-label d-block text-center mt-2">
+                            <input type="checkbox" name="deleteImages" th:value="${imageDetail.id}"> 삭제
                         </label>
                     </div>
                 </div>
@@ -74,7 +78,8 @@
             </div>
             <div class="col-md-12">
                 <label for="description" class="form-label">책 설명</label>
-                <textarea id="description" name="description" class="form-control" rows="3" th:text="${book.description}"></textarea>
+                <div id="toast-editor"></div>
+                <textarea id="description" name="description" hidden th:text="${book.description}"></textarea>
             </div>
             <div class="col-md-12">
                 <label for="contents" class="form-label">목차</label>
@@ -107,46 +112,54 @@
                 </select>
             </div>
 
-            <!-- 카테고리 선택 -->
+            <!-- 카테고리 선택 (Accordion 스타일) -->
             <div class="col-md-12">
-                <h5>카테고리</h5>
-                <ul>
-                    <li th:each="category : ${categories}">
-                        <div>
+                <h5>카테고리 선택</h5>
+                <div class="accordion" id="categoryAccordion">
+                    <div th:each="category : ${categories}" class="accordion-item">
+                        <!-- 최상위 카테고리 -->
+                        <h2 class="accordion-header" th:attr="id='heading-' + ${category.id}">
                             <input type="checkbox" th:name="categoryIds" th:value="${category.id}" th:checked="${book.categoryIds.contains(category.id)}">
-                            <span th:text="${category.name}"></span>
-                        </div>
-                        <!-- 하위 카테고리 재귀 호출 -->
-                        <ul th:if="${category.children != null and #lists.size(category.children) > 0}">
-                            <li th:each="child : ${category.children}">
-                                <div>
-                                    <input type="checkbox" th:name="categoryIds" th:value="${child.id}" th:checked="${book.categoryIds.contains(child.id)}">
-                                    <span th:text="${child.name}"></span>
-                                </div>
-                                <!-- 재귀 호출 -->
-                                <ul th:if="${child.children != null and #lists.size(child.children) > 0}">
-                                    <li th:each="subChild : ${child.children}">
-                                        <div>
-                                            <input type="checkbox" th:name="categoryIds" th:value="${subChild.id}" th:checked="${book.categoryIds.contains(subChild.id)}">
-                                            <span th:text="${subChild.name}"></span>
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    th:data-bs-target="'#collapse-' + ${category.id}" aria-expanded="false"
+                                    th:aria-controls="'collapse-' + ${category.id}" th:text="${category.name}">
+                            </button>
+                        </h2>
+                        <div th:attr="id='collapse-' + ${category.id}" class="accordion-collapse collapse"
+                             th:aria-labelledby="'heading-' + ${category.id}">
+                            <div class="accordion-body">
+                                <!-- 2계층 카테고리 -->
+                                <div class="accordion" th:attr="id='childAccordion-' + ${category.id}">
+                                    <div th:each="child : ${category.children}" class="accordion-item">
+                                        <h2 class="accordion-header" th:attr="id='heading-child-' + ${child.id}">
+                                            <input type="checkbox" th:name="categoryIds" th:value="${child.id}" th:checked="${book.categoryIds.contains(child.id)}">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                    th:data-bs-target="'#collapse-child-' + ${child.id}" aria-expanded="false"
+                                                    th:aria-controls="'collapse-child-' + ${child.id}" th:text="${child.name}">
+                                            </button>
+                                        </h2>
+                                        <div th:attr="id='collapse-child-' + ${child.id}" class="accordion-collapse collapse"
+                                             th:aria-labelledby="'heading-child-' + ${child.id}" th:data-bs-parent="'#childAccordion-' + ${category.id}">
+                                            <div class="accordion-body">
+                                                <!-- 3계층 카테고리 -->
+                                                <div th:each="subChild : ${child.children}">
+                                                    <input type="checkbox" th:name="categoryIds" th:value="${subChild.id}" th:checked="${book.categoryIds.contains(subChild.id)}">
+                                                    <label th:for="'subChild-' + ${subChild.id}" th:text="${subChild.name}"></label>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- 태그 선택 -->
+            <!-- 태그 수정 -->
             <div class="col-md-12">
-                <h5>태그</h5>
-                <ul th:each="tag : ${tags}">
-                    <li>
-                        <input type="checkbox" th:name="tagIds" th:value="${tag.id}" th:checked="${book.tagIds.contains(tag.id)}">
-                        <span th:text="${tag.name}"></span>
-                    </li>
-                </ul>
+                <label for="tags" class="form-label">태그</label>
+                <textarea id="tags" name="tags" class="form-control" rows="2"
+                          th:text="${book.tags}" placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
             </div>
 
             <!-- 제출 버튼 -->
@@ -156,6 +169,26 @@
         </form>
     </section>
 </div>
+
 </body>
 
 </html>
+
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editor = new toastui.Editor({
+            el: document.querySelector('#toast-editor'),
+            height: '400px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.querySelector('#description').value || '', // 수정 폼에서 초기값으로 설정
+        });
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function() {
+            const descriptionTextarea = form.querySelector('#description');
+            descriptionTextarea.value = editor.getHTML(); // 에디터 내용을 textarea에 동기화
+        });
+    });
+</script>

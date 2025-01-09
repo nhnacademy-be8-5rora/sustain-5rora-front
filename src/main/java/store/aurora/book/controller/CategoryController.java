@@ -1,22 +1,22 @@
 package store.aurora.book.controller;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import store.aurora.book.dto.category.CategoryDTO;
 import store.aurora.book.dto.category.CategoryRequestDTO;
 import store.aurora.book.dto.category.CategoryResponseDTO;
-import store.aurora.feignClient.book.CategoryClient;
+import store.aurora.feign_client.book.CategoryClient;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,25 +28,9 @@ public class CategoryController {
     private final CategoryClient categoryClient;
 
     @GetMapping("/root")
-    public ResponseEntity<List<CategoryResponseDTO>> getRootCategories() {
-        return ResponseEntity.ok(categoryClient.getRootCategories().getBody());
+    public ResponseEntity<List<CategoryResponseDTO>> getCategories() {
+        return ResponseEntity.ok(categoryClient.getCategories().getBody());
     }
-
-
-    @GetMapping
-    public String showCategoryPage(Model model) {
-        ResponseEntity<List<CategoryResponseDTO>> response = categoryClient.getCategoryHierarchy();
-        model.addAttribute("categories", response.getBody());
-        return "admin/category/categories";
-    }
-
-
-    @PostMapping("/create")
-    public String createCategory(CategoryRequestDTO categoryRequestDTO) {
-        categoryClient.createCategory(categoryRequestDTO);
-        return "redirect:/categories";
-    }
-
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<List<CategoryDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
@@ -60,6 +44,49 @@ public class CategoryController {
                     .body(Objects.requireNonNull(categories.getBody()).getChildren());
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping
+    public String showRootCategories(@RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "2") int size,
+                                     Model model) {
+        ResponseEntity<Page<CategoryResponseDTO>> response = categoryClient.getRootCategories(page,size);
+        Page<CategoryResponseDTO> categoryPage = response.getBody();
+        if (categoryPage != null) {
+            model.addAttribute("categories", categoryPage.getContent());
+            model.addAttribute("currentPage", categoryPage.getNumber());
+            model.addAttribute("totalPages", categoryPage.getTotalPages());
+        } else {
+            model.addAttribute("categories", Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+        }
+        return "admin/category/categories";
+    }
+
+    @GetMapping("/{parentId}/children")
+    public String showChildCategories(@PathVariable Long parentId,
+                                      @RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "2") int size,
+                                      Model model) {
+        ResponseEntity<Page<CategoryResponseDTO>> response = categoryClient.getChildrenCategories(parentId,page,size);
+        Page<CategoryResponseDTO> categoryPage = response.getBody();
+        if (categoryPage != null) {
+            model.addAttribute("categories", categoryPage.getContent());
+            model.addAttribute("currentPage", categoryPage.getNumber());
+            model.addAttribute("totalPages", categoryPage.getTotalPages());
+        } else {
+            model.addAttribute("categories", Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+        }
+        return "admin/category/categories";
+    }
+
+    @PostMapping("/create")
+    public String createCategory(CategoryRequestDTO categoryRequestDTO) {
+        categoryClient.createCategory(categoryRequestDTO);
+        return "redirect:/categories";
     }
 
     @PostMapping("/update")

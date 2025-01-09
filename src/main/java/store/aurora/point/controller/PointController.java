@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.aurora.common.JwtUtil;
-import store.aurora.feignClient.point.PointHistoryClient;
+import store.aurora.feign_client.point.PointHistoryClient;
 import store.aurora.point.dto.PointHistoryResponse;
 
 @Controller

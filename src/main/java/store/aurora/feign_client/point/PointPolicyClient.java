@@ -1,9 +1,10 @@
-package store.aurora.feignClient.point;
+package store.aurora.feign_client.point;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.config.FeignConfig;
 import store.aurora.point.dto.PointPolicy;
+import store.aurora.point.dto.PointPolicyRequest;
 import store.aurora.point.dto.PointPolicyUpdateRequest;
 
 import java.util.List;
@@ -16,4 +17,10 @@ public interface PointPolicyClient {
 
     @PatchMapping("/{id}")
     void updatePointPolicy(@PathVariable("id") Integer id, @RequestBody PointPolicyUpdateRequest request);
+
+    @PatchMapping("/{id}/toggle-status")
+    void updatePointPolicyActive(@PathVariable("id") Integer id);
+
+    @PostMapping
+    void addPointPolicy(@RequestBody PointPolicyRequest request);
 }

@@ -1,4 +1,4 @@
-package store.aurora.feignClient;
+package store.aurora.feign_client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +7,7 @@ import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
 import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.user.dto.request.SignUpRequest;
+import store.aurora.user.dto.response.UserInfoResponseDto;
 
 import java.util.Map;
 
@@ -34,4 +35,18 @@ public interface UserClient {
     // 회원가입 > 인증코드 검증
     @PostMapping("/verify-code")
     ResponseEntity<Map<String, String>> verifyCode(@RequestBody SignUpRequest request);
+
+
+    // 회원탈퇴
+    @DeleteMapping("/{userId}")
+    ResponseEntity<Map<String, String>> deleteUser(@PathVariable String userId);
+
+    // 휴면해제처리
+    @PostMapping("/reactivate")
+    ResponseEntity<Map<String, String>> reactivateUser(@RequestParam String userId);
+
+    // 회원정보 조회
+    @GetMapping("/info")
+    ResponseEntity<UserInfoResponseDto> getUserInfo(@RequestHeader("userId") String userId);
+
 }

@@ -21,8 +21,16 @@ public class BookDetailDto {
     private String isbn13;
     private int priceSales;
     private int priceStandard;
-    private String cover;
-    private List<String> additionalImages; // 부가 이미지 URL 리스트
+    private ImageDetail cover;
+    private List<ImageDetail> additionalImages; // 부가 이미지 URL 리스트
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImageDetail {
+        private Long id;
+        private String url;
+    }
     private int stock;
     private Boolean isForSale = false;  // 기본값 설정
     private Boolean isPackaged = false; // 기본값 설정
@@ -37,5 +45,5 @@ public class BookDetailDto {
         private String seriesName; // 시리즈 이름
     }
     private List<Long> categoryIds; // 선택된 카테고리 ID 리스트
-    private List<Long> tagIds; // 선택된 태그 ID 리스트
+    private String tags; // 선택된 태그 ID 리스트
 }

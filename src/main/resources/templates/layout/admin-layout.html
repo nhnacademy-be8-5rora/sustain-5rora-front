@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+  <title>BookSaw - Free Book Store HTML CSS Template</title>
+  <meta charset="utf-8">
+  <title>layout1</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="author" content="">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" type="text/css" href="/static/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="/static/icomoon/icomoon.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/vendor.css">
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div id="header-wrap">
+
+  <div class="top-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="social-links">
+            <ul>
+              <li>
+                <a href="#"><i class="icon icon-facebook"></i></a>
+              </li>
+              <li>
+                <a href="#"><i class="icon icon-twitter"></i></a>
+              </li>
+              <li>
+                <a href="#"><i class="icon icon-youtube-play"></i></a>
+              </li>
+              <li>
+                <a href="#"><i class="icon icon-behance-square"></i></a>
+              </li>
+            </ul>
+          </div><!--social-links-->
+        </div>
+        <div class="col-md-6">
+          <div class="right-element">
+            <a href="/admin" class="user-account for-buy"><i
+                    class="icon icon-user"></i><span>관리자페이지</span></a>
+            <a href="/login" class="user-account for-buy"><i
+                    class="icon icon-user"></i><span>Account</span></a>
+            <a href="/mypage" class="user-account for-buy"><i
+                    class="icon icon-user"></i><span>마이페이지</span></a>
+            <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
+
+            <div class="action-menu">
+
+              <div class="search-bar">
+                <!-- 검색 아이콘 -->
+                <a href="#" class="search-button search-toggle" data-selector="#header-wrap">
+                  <i class="icon icon-search"></i>
+                </a>
+                <!-- 검색 폼 -->
+                <form role="search" method="get" class="search-box" action="/books/search">
+                  <input class="search-field text search-input" placeholder="Search" type="search" name="keyword">
+                  <input type="hidden" name="type" value="title">
+                  <input type="hidden" name="pageNum" value="1">
+                </form>
+              </div>
+
+            </div>
+
+          </div><!--top-right-->
+        </div>
+
+      </div>
+    </div>
+  </div><!--top-content-->
+
+  <header id="header">
+    <div class="container-fluid">
+      <div class="row">
+
+        <div class="col-md-2">
+          <div class="main-logo">
+            <a href="index.html"><img src="/static/images/main-logo.png" alt="logo"></a>
+          </div>
+
+        </div>
+
+        <div class="col-md-10">
+
+          <nav id="navbar">
+            <div class="main-menu stellarnav">
+              <ul class="menu-list">
+                <li class="menu-item active"><a href="/">Home</a></li>
+                <!-- 국내 도서 메뉴 -->
+                <li class="menu-item has-sub" id="domesticBooksMenu">
+                  <a href="#" class="nav-link">국내 도서</a>
+                  <ul class="category-container" id="domesticCategoryList" style="display: none;"></ul>
+                </li>
+
+                <!-- 해외 도서 메뉴 -->
+                <li class="menu-item has-sub" id="foreignBooksMenu">
+                  <a href="#" class="nav-link">해외 도서</a>
+                  <ul class="category-container" id="foreignCategoryList" style="display: none;"></ul>
+                </li>
+
+                <li class="menu-item">
+                  <a class="nav-link" href="/books">도서 관리</a>
+                </li>
+                <li class="menu-item">
+                  <a class="nav-link" href="/categories">카테고리 관리</a>
+                </li>
+                <li class="menu-item">
+                  <a class="nav-link" href="/tags">태그 관리</a>
+                </li>
+                <li class="menu-item">
+                  <a class="nav-link" href="/admin/point-policies">포인트 정책</a>
+                </li>
+
+
+                <li class="menu-item has-sub">
+                  <a href="#pages" class="nav-link">Pages</a>
+                  <ul>
+                    <li class="active"><a href="index.html">Home</a></li>
+                    <li><a href="index.html">About</a></li>
+                    <li><a href="index.html">Styles</a></li>
+                    <li><a href="index.html">Blog</a></li>
+                    <li><a href="index.html">Post Single</a></li>
+                    <li><a href="index.html">Our Store</a></li>
+                    <li><a href="index.html">Product Single</a></li>
+                    <li><a href="index.html">Contact</a></li>
+                    <li><a href="index.html">Thank You</a></li>
+                  </ul>
+                </li>
+              </ul>
+
+              <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+              </div>
+            </div>
+          </nav>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+</div><!--header-wrap-->
+
+<!-- content 를 출력한다 -->
+<th:block layout:fragment="content"></th:block>
+
+<footer id="footer">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-4">
+
+        <div class="footer-item">
+          <div class="company-brand">
+            <img src="/static/images/main-logo.png" alt="logo" class="footer-logo">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus
+              nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames
+              semper erat ac in suspendisse iaculis.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-md-2">
+
+        <div class="footer-menu">
+          <h5>About Us</h5>
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="#">vision</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">articles </a>
+            </li>
+            <li class="menu-item">
+              <a href="#">careers</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">service terms</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">donate</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="col-md-2">
+
+        <div class="footer-menu">
+          <h5>Discover</h5>
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="#">Home</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Books</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Authors</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Subjects</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Advanced Search</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="col-md-2">
+
+        <div class="footer-menu">
+          <h5>My account</h5>
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="#">Sign In</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">View Cart</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">My Wishtlist</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Track My Order</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="col-md-2">
+
+        <div class="footer-menu">
+          <h5>Help</h5>
+          <ul class="menu-list">
+            <li class="menu-item">
+              <a href="#">Help center</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Report a problem</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Suggesting edits</a>
+            </li>
+            <li class="menu-item">
+              <a href="#">Contact us</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- / row -->
+
+  </div>
+</footer>
+
+<div id="footer-bottom">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="copyright">
+          <div class="row">
+
+            <div class="col-md-6">
+              <p>© 2022 All rights reserved. Free HTML Template by <a
+                      href="https://www.templatesjungle.com/" target="_blank">TemplatesJungle</a></p>
+            </div>
+
+            <div class="col-md-6">
+              <div class="social-links align-right">
+                <ul>
+                  <li>
+                    <a href="#"><i class="icon icon-facebook"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="icon icon-twitter"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="icon icon-youtube-play"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="icon icon-behance-square"></i></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div><!--grid-->
+
+      </div><!--footer-bottom-content-->
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/jquery-1.11.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+<script src="/static/js/plugins.js"></script>
+<script src="/static/js/script.js"></script>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+  function sample4_execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        document.getElementById("roadAddress").value = data.roadAddress;
+      }
+    }).open();
+  }
+
+  function validateForm() {
+    const roadAddress = document.getElementById("roadAddress").value;
+    if (!roadAddress.trim()) {
+      alert("도로명 주소를 입력해주세요.");
+      return false; // 폼 제출 방지
+    }
+    return true; // 폼 제출 허용
+  }
+</script>
+
+<script>
+  // 국내 도서 마우스 오버 이벤트
+  document.getElementById("domesticBooksMenu").addEventListener("mouseenter", function () {
+    const categoryList = document.getElementById("domesticCategoryList");
+    if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
+      loadCategoryData(1, "domesticCategoryList"); // 국내 도서 데이터 로드
+    }
+    categoryList.style.display = 'block'; // 하위 카테고리 표시
+  });
+
+  // 해외 도서 마우스 오버 이벤트
+  document.getElementById("foreignBooksMenu").addEventListener("mouseenter", function () {
+    const categoryList = document.getElementById("foreignCategoryList");
+    if (categoryList && categoryList.childElementCount === 0) { // 이미 로드된 경우 중복 로드 방지
+      loadCategoryData(2, "foreignCategoryList"); // 해외 도서 데이터 로드
+    }
+    categoryList.style.display = 'block'; // 하위 카테고리 표시
+  });
+
+  // 하위 카테고리가 사라지지 않도록 유지 (마우스가 벗어날 때 숨김 방지)
+  document.querySelectorAll('.menu-item.has-sub').forEach(menuItem => {
+    menuItem.addEventListener("mouseleave", function () {
+      const categoryList = menuItem.querySelector(".category-container");
+      if (categoryList) {
+        categoryList.style.display = 'none'; // 마우스가 벗어나면 숨김
+      }
+    });
+  });
+
+  // 카테고리 데이터를 API에서 가져와 업데이트
+  function loadCategoryData(categoryId, categoryListId) {
+    fetch(`/categories/${categoryId}`)
+            .then(response => response.json())
+            .then(data => {
+              if (Array.isArray(data)) {
+                updateCategoryList(categoryId, data, categoryListId);
+              } else {
+                console.error('Invalid category data:', data);
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching category data:', error);
+            });
+  }
+
+  function updateCategoryList(categoryId, categories, categoryListId) {
+    const categoryList = document.getElementById(categoryListId);
+    if (!categoryList) return;
+
+    categories.forEach(category => {
+      const li = document.createElement('li');
+      li.dataset.id = category.id;
+      const a = document.createElement('a');
+      a.href = `/books/search?type=category&keyword=${category.id}`;
+      a.textContent = category.name;
+      li.appendChild(a);
+      categoryList.appendChild(li);
+    });
+
+    // 하위 카테고리 클릭 시 이벤트 전파 방지
+    categoryList.addEventListener('click', function (event) {
+      event.stopPropagation(); // 상위로 이벤트 전파 방지
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 국내 도서 클릭 이벤트
+    document.getElementById('domesticBooksMenu').addEventListener('click', function (event) {
+      event.preventDefault(); // 기본 클릭 동작 방지
+      window.location.href = '/books/search?type=category&keyword=1'; // 국내 도서로 이동
+    });
+
+    // 해외 도서 클릭 이벤트
+    document.getElementById('foreignBooksMenu').addEventListener('click', function (event) {
+      event.preventDefault(); // 기본 클릭 동작 방지
+      window.location.href = '/books/search?type=category&keyword=2'; // 해외 도서로 이동
+    });
+  });
+</script>
+
+
+</body>
+
+</html>

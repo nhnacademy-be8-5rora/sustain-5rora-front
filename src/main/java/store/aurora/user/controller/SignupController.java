@@ -6,38 +6,39 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import store.aurora.feignClient.UserClient;
+import store.aurora.feign_client.UserClient;
 import store.aurora.user.dto.request.SignUpRequest;
 
 import java.util.Map;
 
 @Controller
+@RequestMapping("/signup")
 @AllArgsConstructor
 public class SignupController {
+
     private final UserClient userClient;
 
 
-
-    @GetMapping("/signup")
+    @GetMapping
     public String signUp() {
         return "signup";
     }
 
-    @PostMapping("/signup")
+    @PostMapping
     public String signUp(@ModelAttribute SignUpRequest signUpRequest,
                          HttpServletResponse response) {
         ResponseEntity<Map<String, String>> clientResponse = userClient.signUp(signUpRequest, false);
         return processClientRes(response, clientResponse);
     }
 
-    @PostMapping("/signup/send-code")
+    @PostMapping("/send-code")
     public String sendVerificationCode(@ModelAttribute SignUpRequest signUpRequest,
                                        HttpServletResponse response) {
         ResponseEntity<Map<String, String>> clientResponse = userClient.sendCode(signUpRequest);
         return processClientRes(response, clientResponse);
     }
 
-    @PostMapping("/signup/verify-code")
+    @PostMapping("/verify-code")
     public String verifyCode(@ModelAttribute SignUpRequest signUpRequest,
                              HttpServletResponse response) {
         ResponseEntity<Map<String, String>> clientResponse = userClient.verifyCode(signUpRequest);
