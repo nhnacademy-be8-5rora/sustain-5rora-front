@@ -11,14 +11,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.aurora.book.dto.BookDetailsDto;
+import store.aurora.book.dto.aladin.AladinBookDto;
 import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.common.JwtUtil;
+import store.aurora.feign_client.book.AladinBookClient;
 import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.book.CategoryClient;
-import store.aurora.feign_client.book.tag.TagClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.Collections;
@@ -30,61 +31,61 @@ import java.util.List;
 public class BookController {
 
     private final BookClient bookClient;
+    private final AladinBookClient aladinBookClient;
     private final CategoryClient categoryClient;
-    private final TagClient tagClient;
 
-    @GetMapping("search-books")
+    @GetMapping("/aladin/search/form")
     public String searchForm() {
-        return "admin/book/api/search";
+        return "admin/book/aladin/search";
     }
 
-    @GetMapping("/api/search-books")
+    @GetMapping("/aladin/search")
     public String searchBooks(@RequestParam String query,
-                              @RequestParam String queryType,
-                              @RequestParam String searchTarget,
-                              @RequestParam(defaultValue = "1") int start,
+                              @RequestParam(defaultValue = "Keyword") String queryType,
+                              @RequestParam(defaultValue = "Book") String searchTarget,
+                              @RequestParam(defaultValue = "1", required = false) int start,
                               Model model) {
-        ResponseEntity<List<BookRequestDto>> response = bookClient.searchBooks(query, queryType, searchTarget, start);
-        List<BookRequestDto> books = response.getBody(); // ResponseEntity에서 Body 추출
+        ResponseEntity<List<AladinBookDto>> response = aladinBookClient.searchBooks(query, queryType, searchTarget, start);
+        List<AladinBookDto> books = response.getBody(); // ResponseEntity에서 Body 추출
         model.addAttribute("books", books); // 검색 결과
         model.addAttribute("currentPage", start); // 현재 페이지
         model.addAttribute("query", query); // 검색어
         model.addAttribute("queryType", queryType); // 검색 유형
         model.addAttribute("searchTarget", searchTarget); // 검색 대상
-        return "admin/book/api/search";
+        return "admin/book/aladin/search";
     }
 
     // API 도서 등록 폼 렌더링
-    @GetMapping("/api/register")
+    @GetMapping("/aladin/register")
     public String showRegisterForm(@RequestParam String isbn13, Model model) {
 
-        ResponseEntity<BookRequestDto> response = bookClient.getBookDetailsByIsbn(isbn13);
+        ResponseEntity<AladinBookDto> response = aladinBookClient.getBookDetailsByIsbn(isbn13);
         ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategories();
         model.addAttribute("book", response.getBody());
         model.addAttribute("categories", responseCategory.getBody());
-        return "admin/book/api/register";
+        return "admin/book/aladin/aladin-register";
     }
 
     // API 도서 등록 처리
-    @PostMapping(value = "/api/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String registerApiBook(@Valid @ModelAttribute BookRequestDto bookDto,
                                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
     ) {
-        bookClient.registerApiBook(bookDto,additionalImages);
+        aladinBookClient.registerApiBook(bookDto,additionalImages);
         return "redirect:/books";
     }
 
     // 직접 등록 폼 렌더링
-    @GetMapping("/direct/register")
+    @GetMapping("/register")
     public String showDirectRegisterForm(Model model) {
         ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategories();
         model.addAttribute("categories", responseCategory.getBody());
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
-        return "admin/book/direct-register";
+        return "admin/book/register";
     }
 
     // 직접 도서 등록 처리
-    @PostMapping(value = "/direct/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String registerDirectBook(
             @Valid @ModelAttribute BookRequestDto bookDto,
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
