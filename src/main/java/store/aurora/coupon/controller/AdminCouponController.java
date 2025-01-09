@@ -26,7 +26,7 @@ public class AdminCouponController {
     @GetMapping(value = "/coupon/create")
     public String goAdminCoupon() {
 
-        return COUPON_ADMIN_URL;
+        return "/admin/coupon/coupon-create";
     }
 
     //쿠폰 정책 생성
