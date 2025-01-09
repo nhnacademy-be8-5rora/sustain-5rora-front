@@ -27,14 +27,23 @@ public class TestController {
         return "login-test";
     }
 
+    private static final String SEARCH_FIELD = "title";
+    private static final String ASCENDING_ORDER = "asc";
+    private static final String PAGE_SIZE = "1";
+
+
     @GetMapping("/")
     public String indexTest(Model model){
+        //좋아요가 많은 책
         Page<BookSearchResponseDTO> likeBooks =
-                bookSearchClient.searchBooksByKeyword("","title","","1","like","asc");
+                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", PAGE_SIZE, "like", ASCENDING_ORDER);
+        //조회수가 많은 책
         Page<BookSearchResponseDTO> viewBooks =
-                bookSearchClient.searchBooksByKeyword("","title","","1","view","asc");
-        Page<BookSearchResponseDTO> bestSellBook=bookSearchClient.searchBooksByKeyword("","title","","1","bestsell","asc");
-        ResponseEntity<BookSearchResponseDTO> mostSellerBookResponse= bookClient.getMostBook();
+                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", PAGE_SIZE, "view", ASCENDING_ORDER);
+
+        //저번달 기준 가장 많이 팔린 책
+        ResponseEntity<BookSearchResponseDTO> mostSellerBookResponse = bookClient.getMostBook();
+
         model.addAttribute("mostSellerBook", mostSellerBookResponse.getBody());
         model.addAttribute("likeBooks", likeBooks.getContent());
         model.addAttribute("viewBooks", viewBooks.getContent());
