@@ -184,8 +184,9 @@
                         <!-- 이미지 영역 -->
                         <div class="col-md-6">
                             <figure class="products-thumb">
-                                <img th:src="${mostSellerBook != null && mostSellerBook.imgPath != null ? mostSellerBook.imgPath : '/static/images/default.jpg'}" alt="book" class="single-image">
-                                     alt="book" class="single-image">
+                                <div th:if="${mostSellerBook != null && mostSellerBook.imgPath != null}">
+                                    <img th:src="${mostSellerBook.imgPath}" alt="book" class="single-image">
+                                </div>
                             </figure>
                         </div>
 

@@ -7,15 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.aurora.book.CategoryService;
-import store.aurora.book.dto.category.CategoryDTO;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.common.JwtUtil;
 import store.aurora.feign_client.BookSearchClient;
 import org.springframework.data.domain.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 

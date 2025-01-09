@@ -93,7 +93,7 @@
 
                 <div class="col-md-2">
                     <div class="main-logo">
-                        <a href="index.html"><img src="/static/images/main-logo.png" alt="logo"></a>
+                        <a href="/"><img src="/static/images/main-logo.png" alt="logo"></a>
                     </div>
 
                 </div>
@@ -314,26 +314,79 @@
 <script src="/static/js/plugins.js"></script>
 <script src="/static/js/script.js"></script>
 
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    function sample4_execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                document.getElementById("roadAddress").value = data.roadAddress;
-            }
-        }).open();
-    }
+    function submitOrder() {
+        const form = document.getElementById('orderForm');
+        const formData = new FormData(form);
 
-    function validateForm() {
-        const roadAddress = document.getElementById("roadAddress").value;
-        if (!roadAddress.trim()) {
-            alert("도로명 주소를 입력해주세요.");
-            return false; // 폼 제출 방지
+        try {
+            // Convert form data to JSON
+            const jsonPayload = {
+                username: formData.get('username') || null, // username이 있으면 값 사용, 없으면 null
+                nonMemberPassword: formData.get('nonMemberPassword') || null, // 비회원 비밀번호
+                ordererName: formData.get('ordererName'),
+                ordererPhone: formData.get('ordererPhone'),
+                ordererEmail: formData.get('ordererEmail'),
+                receiverName: formData.get('receiverName'),
+                receiverPhone: formData.get('receiverPhone'),
+                receiverEmail: formData.get('receiverEmail'),
+                receiverAddress: formData.get('receiverAddress'),
+                receiverMessage: formData.get('receiverMessage'),
+                orderDetailDTOList: Array.from(document.querySelectorAll('tbody tr')).map(row => ({
+                    bookId: parseInt(row.querySelector('input[name="itemId"]').value, 10),
+                    quantity: parseInt(row.querySelector('input[name="quantity"]').value, 10),
+                    wrapId: row.querySelector('input[name="wrapId"]').value
+                        ? parseInt(row.querySelector('input[name="wrapId"]').value, 10)
+                        : null, // 입력이 없으면 null
+                    couponId: row.querySelector('input[name="couponId"]').value
+                        ? parseInt(row.querySelector('input[name="couponId"]').value, 10)
+                        : null // 입력이 없으면 null
+                }))
+            };
+
+            // Validate payload
+            if (!jsonPayload.username && !jsonPayload.nonMemberPassword) {
+                alert('회원 주문 또는 비회원 비밀번호를 입력해주세요.');
+                return;
+            }
+            if (jsonPayload.orderDetailDTOList.length === 0) {
+                alert('주문할 상품이 없습니다.');
+                return;
+            }
+
+            // Send JSON to the server
+            fetch('/order/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonPayload),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('주문 제출에 실패했습니다.');
+                    }
+                    return response.json(); // Expect JSON response
+                })
+                .then(data => {
+                    if (data.redirectUrl) {
+                        // Redirect to the provided URL
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        alert('리다이렉트 URL이 없습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('오류가 발생했습니다. 다시 시도해주세요.');
+                });
+        } catch (error) {
+            console.error('Error during form submission:', error);
+            alert('폼 제출 중 오류가 발생했습니다.');
         }
-        return true; // 폼 제출 허용
     }
 </script>
-
+  
 <script>
     // 카테고리 마우스 오버 이벤트
     document.getElementById("categories").addEventListener("mouseenter", function () {

@@ -1,0 +1,37 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+POST http://localhost:8180/api/order/save-order-info
+Content-Type: application/json
+
+{
+  "username": "john_doe",
+  "nonMemberPassword": null,
+  "ordererName": "John Doe",
+  "ordererPhone": "01012345678",
+  "ordererEmail": "john.doe@example.com",
+  "receiverName": "Jane Doe",
+  "receiverPhone": "01098765432",
+  "receiverEmail": "jane.doe@example.com",
+  "receiverAddress": "123 Main Street, Seoul",
+  "receiverMessage": "문 앞에 놓아주세요",
+  "orderDetailDTOList": [
+    {
+      "bookId": 1,
+      "quantity": 2,
+      "wrapId": 1,
+      "couponId": null
+    },
+    {
+      "bookId": 2,
+      "quantity": 1,
+      "wrapId": null,
+      "couponId": null
+    }
+  ]
+}
+
+###
+GET http://localhost:8180/api/order/a6499987-4095-43c6-93bc-917e88d45126/get-order-info

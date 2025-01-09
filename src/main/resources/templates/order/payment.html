@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- SDK 추가 -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <title>주문서</title>
+</head>
+<body>
+
+<button class="button" onclick="requestPayment()"> 토스</button>
+
+<script th:inline="javascript">
+    // 서버에서 전달된 값을 JavaScript로 변환
+    const paymentDetails = {
+        amount: /*[[${amount}]]*/ null,
+        orderId: /*[[${orderId}]]*/ 'defaultId',
+        orderName: /*[[${orderName}]]*/ 'default item',
+    };
+
+    const clientKey = /*[[${clientKey}]]*/ 'defaultClientKey';
+    const customerKey = /*[[${customerKey}]]*/ 'defaultCustomerKey';
+    const tossPayments = TossPayments(clientKey);
+    const payment = tossPayments.payment({ customerKey });
+
+    async function requestPayment() {
+        await payment.requestPayment({
+            method: "CARD",
+            amount: paymentDetails.amount,
+            orderId: paymentDetails.orderId,
+            orderName: paymentDetails.orderName,
+            successUrl: window.location.origin + "/order/payment/success",
+            failUrl: window.location.origin + "/order/payment/fail",
+            customerEmail: paymentDetails.customerEmail,
+            customerName: paymentDetails.customerName,
+            card: {
+                useEscrow: false,
+                flowMode: "DEFAULT",
+                useCardPoint: false,
+                useAppCardOnly: false,
+            },
+        });
+    }
+</script>
+
+</body>
+</html>
