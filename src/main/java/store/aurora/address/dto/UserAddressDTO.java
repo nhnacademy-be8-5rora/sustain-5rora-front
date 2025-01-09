@@ -9,6 +9,8 @@ public class UserAddressDTO {
     @NotNull
     private Long id;
     @NotBlank
+    private String nickname;
+    @NotBlank
     private String receiver;
     @NotBlank
     private String roadAddress;

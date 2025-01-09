@@ -33,6 +33,6 @@ public class PointController {
         model.addAttribute("totalPages", historyResponse.getTotalPages());
         model.addAttribute("isFirst", historyResponse.isFirst());
         model.addAttribute("isLast", historyResponse.isLast());
-        return "point-history";
+        return "mypage/point-history";
     }
 }
