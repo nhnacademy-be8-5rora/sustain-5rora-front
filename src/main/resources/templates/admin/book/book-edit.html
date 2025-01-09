@@ -73,8 +73,8 @@
                 <input type="date" id="pubDate" name="pubDate" th:value="${book.pubDate}" class="form-control" required>
             </div>
             <div class="col-md-6">
-                <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
-                <input type="text" id="seriesInfo.seriesName" name="seriesInfo.seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}">
+                <label for="seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesName" name="seriesName" class="form-control" th:value="${book.seriesName}">
             </div>
             <div class="col-md-12">
                 <label for="description" class="form-label">책 설명</label>
