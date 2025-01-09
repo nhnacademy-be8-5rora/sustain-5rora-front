@@ -314,25 +314,6 @@
 <script src="/static/js/plugins.js"></script>
 <script src="/static/js/script.js"></script>
 
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script>
-    function sample4_execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                document.getElementById("roadAddress").value = data.roadAddress;
-            }
-        }).open();
-    }
-
-    function validateForm() {
-        const roadAddress = document.getElementById("roadAddress").value;
-        if (!roadAddress.trim()) {
-            alert("도로명 주소를 입력해주세요.");
-            return false; // 폼 제출 방지
-        }
-        return true; // 폼 제출 허용
-    }
-</script>
 <script>
     function submitOrder() {
         const form = document.getElementById('orderForm');
@@ -405,6 +386,7 @@
         }
     }
 </script>
+  
 <script>
     // 카테고리 마우스 오버 이벤트
     document.getElementById("categories").addEventListener("mouseenter", function () {
