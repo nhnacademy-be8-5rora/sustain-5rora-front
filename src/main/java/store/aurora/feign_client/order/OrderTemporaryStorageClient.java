@@ -2,10 +2,8 @@ package store.aurora.feign_client.order;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+import store.aurora.order.dto.OrderCompleteRequestDto;
 import store.aurora.order.dto.OrderRequestDto;
 import store.aurora.order.dto.OrderResponseDto;
 import store.aurora.order.dto.SubmitResponse;
@@ -18,4 +16,7 @@ public interface OrderTemporaryStorageClient {
 
     @GetMapping("/{order-id}/get-order-info")
     ResponseEntity<OrderResponseDto> getOrderInfo(@PathVariable(name="order-id") String orderId);
+
+//    @PostMapping("/order-complete")
+//    ResponseEntity<Void> orderComplete(@RequestBody OrderCompleteRequestDto orderCompleteRequestDto);
 }
