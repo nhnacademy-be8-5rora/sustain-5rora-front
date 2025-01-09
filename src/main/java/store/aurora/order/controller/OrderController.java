@@ -1,13 +1,13 @@
 package store.aurora.order.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,21 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.cart.dto.CartItemDTO;
 
+import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.order.OrderTemporaryStorageClient;
-import store.aurora.order.dto.CheckoutBookDTO;
-import store.aurora.order.dto.OrderRequestDto;
-import store.aurora.order.dto.OrderResponseDto;
-import store.aurora.order.dto.SubmitResponse;
+import store.aurora.feign_client.order.TossClient;
+import store.aurora.feign_client.point.PointHistoryClient;
+import store.aurora.order.dto.*;
 import store.aurora.order.exception.BookClientResolveFailException;
-import store.aurora.order.exception.CartEmptyException;
 import store.aurora.order.exception.OrderTemporaryStorageClientResolverFailException;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,32 +35,43 @@ public class OrderController {
     private static final Logger log = LoggerFactory.getLogger("user-logger");
     private static final String BOOK_LIST = "bookList";
     private static final String TOTAL_PRICE = "totalPrice";
+    private static final String AVAILABLE_POINTS = "availablePoints";
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Value("${toss.client-key}")
+    private String tossClientKey;
+    @Value("${toss.secret-key}")
+    private String secretKey;
+
     private final BookClient bookClient;
     private final OrderTemporaryStorageClient orderTemporaryStorageClient;
+    private final TossClient tossClient;
+    private final PointHistoryClient pointHistoryClient;
 
     //장바구니 구매
     @GetMapping("/order/cart/checkout")
-    public String cartCheckoutForm(Principal principal){
+    public String cartCheckoutForm(Principal principal,HttpServletRequest request){
+
+        String queryString = request.getQueryString();
+        log.info("query={}", queryString);
+
         if(principal == null){
-            return "redirect:/order/cart/checkout/non-member";
+            return "redirect:/order/cart/checkout/non-member?" + queryString;
         }
 
-        return "redirect:/order/cart/checkout/member";
+        return "redirect:/order/cart/checkout/member?" + queryString;
     }
 
     //회원의 장바구니 구매
     @GetMapping("/order/cart/checkout/member")
-    public String memberCartCheckoutForm(@CookieValue(value = "CART", required = false) String cartValueAsString, Model model){
+    public String memberCartCheckoutForm(@RequestParam("selected-items") List<Long> selectedItems,
+                                         @RequestParam("quantities") List<Integer> quantities,
+                                         @CookieValue(SecurityConstants.TOKEN_COOKIE_NAME) String jwtCookie,
+                                         Model model){
 
-        //1. 쿠키에서 상품꺼내기
-        if(cartValueAsString == null){
-            throw new CartEmptyException();
-        }
-        List<CartItemDTO> cartItemDTOS = stringToCartItemDto(cartValueAsString);
-        if(cartItemDTOS.isEmpty()){
-            throw new CartEmptyException(); //todo 바꾸기
+        //1. 카트에서 상품꺼내기
+        List<CartItemDTO> cartItemDTOS = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++) {
+            cartItemDTOS.add(new CartItemDTO(selectedItems.get(i), quantities.get(i)));
         }
 
         //2.책정보 가져오기
@@ -79,21 +86,21 @@ public class OrderController {
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
+        model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
 
         return "/order/order-form-member";
     }
 
     //비회원의 장바구니 구매
     @GetMapping("/order/cart/checkout/non-member")
-    public String nonMemberCartCheckoutForm(@CookieValue(value = "CART", required = false) String cartValueAsString, Model model){
+    public String nonMemberCartCheckoutForm(@RequestParam("selected-items") List<Long> selectedItems,
+                                            @RequestParam("quantities") List<Integer> quantities,
+                                            Model model){
 
-        //1. 쿠키에서 상품꺼내기
-        if(cartValueAsString == null){
-            throw new CartEmptyException();
-        }
-        List<CartItemDTO> cartItemDTOS = stringToCartItemDto(cartValueAsString);
-        if(cartItemDTOS.isEmpty()){
-            throw new CartEmptyException(); //todo 바꾸기
+        //1. 카트에서 상품꺼내기
+        List<CartItemDTO> cartItemDTOS = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++) {
+            cartItemDTOS.add(new CartItemDTO(selectedItems.get(i), quantities.get(i)));
         }
 
         //2.책정보 가져오기
@@ -114,7 +121,9 @@ public class OrderController {
 
     //즉시구매
     @GetMapping("/order/direct/checkout")
-    public String directCheckoutForm(@RequestParam("item-id")Long itemId, @RequestParam("quantity")Integer quantity, Principal principal){
+    public String directCheckoutForm(@RequestParam("item-id")Long itemId,
+                                     @RequestParam("quantity")Integer quantity,
+                                     Principal principal){
         if(principal == null){
             return "redirect:/order/direct/checkout/non-member?item-id=" + itemId + "&quantity=" + quantity;
         }
@@ -123,7 +132,10 @@ public class OrderController {
 
     //회원의 즉시구매
     @GetMapping("/order/direct/checkout/member")
-    public String memberDirectCheckoutForm(@RequestParam("item-id")Long itemId, @RequestParam("quantity")Integer quantity, Model model){
+    public String memberDirectCheckoutForm(@RequestParam("item-id")Long itemId,
+                                           @RequestParam("quantity")Integer quantity,
+                                           @CookieValue(SecurityConstants.TOKEN_COOKIE_NAME) String jwtCookie,
+                                           Model model){
 
         List<CheckoutBookDTO> bookList = null;
         try{
@@ -136,6 +148,7 @@ public class OrderController {
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
+        model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
 
         return "/order/order-form-member";
     }
@@ -208,7 +221,7 @@ public class OrderController {
         log.info("paymentInfo={}", orderResponseDto);
 
         //결제 관련 키
-        model.addAttribute("clientKey", "test_ck_Z61JOxRQVEY4gEJjlQd0VW0X9bAq");
+        model.addAttribute("clientKey", tossClientKey);
         model.addAttribute("customerKey", orderResponseDto.getCustomerKey());
 
         // 상품 정보
@@ -221,14 +234,34 @@ public class OrderController {
     //결제처리 페이지
     @GetMapping("/order/payment/success")
     public String paymentSuccess(@RequestParam("orderId") String orderId,
-                      @RequestParam("paymentKey") String paymentKey,
-                      @RequestParam("amount") Integer amount){
+                                 @RequestParam("paymentKey") String paymentKey,
+                                 @RequestParam("amount") Integer amount,
+                                 HttpServletResponse response,
+                                 Principal principal){
 
         log.info("orderId={}, paymentKey={}, amount={}", orderId, paymentKey, amount);
-        //todo: db에 값을 넣는 api 호출
-        log.info("결제처리 로직이 들어가야함");
+        //1. toss 결제 확정 api 호출 todo 결제 확정 api어디서 호출할지 논의
+        ResponseEntity<String> stringResponseEntity = tossClient.confirmCheck(makeAuthorization(secretKey), new PaymentRequest(paymentKey, amount, orderId));
+        log.info("토스 결제 내역: {}", stringResponseEntity.getBody());
 
-        return "redirect:/";
+        //2. db에 저장 //todo 저장 로직
+//        ResponseEntity<Void> voidResponseEntity;
+//        try {
+//            voidResponseEntity = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
+//        }catch (FeignException e){
+//            throw new OrderTemporaryStorageClientResolverFailException(e);
+//        }
+//
+//        //db 저장 실패
+//        HttpStatusCode statusCode = voidResponseEntity.getStatusCode();
+//        if(statusCode.is4xxClientError() || statusCode.is5xxServerError()){
+//            return "redirect:/";
+//        }
+
+        //3. 비회원의 카트 비우기
+        removeNonMemberCart(response);
+
+        return "redirect:/"; //todo 주문 완료 페이지 만들기
     }
 
     @GetMapping("/order/payment/fail")
@@ -239,21 +272,6 @@ public class OrderController {
         return "redirect:/";
     }
 
-    private List<CartItemDTO> stringToCartItemDto(String encodedValue){
-
-        String decodedValue = URLDecoder.decode(encodedValue, StandardCharsets.UTF_8);
-
-        try{
-            return objectMapper.readValue(decodedValue, new TypeReference<List<CartItemDTO>>() {});
-        } catch (JsonMappingException e) {
-            log.info("데이터 형식이 잘못되었습니다. value={}", decodedValue);
-            throw new RuntimeException(e); //todo 예외 바꾸기
-        } catch (JsonProcessingException e) {
-            log.info("JSON 처리 중 문제가 발생했습니다. value={}", decodedValue);
-            throw new RuntimeException(e);
-        }
-    }
-
     private List<CheckoutBookDTO> cartItemToCheckoutBook(List<CartItemDTO> cartItems) throws FeignException{
         return cartItems.stream().map(ci -> {
             BookDetailsDto bookDetailsDto = bookClient.getBookDetails(ci.getBookId()).getBody();
@@ -262,6 +280,17 @@ public class OrderController {
     }
 
     private int calculateTotalPrice(List<CheckoutBookDTO> checkoutBookList){
-        return checkoutBookList.stream().mapToInt(CheckoutBookDTO::price).sum();
+        return checkoutBookList.stream().mapToInt( b -> b.price() * b.quantity()).sum();
+    }
+
+    private String makeAuthorization(String secretKey){
+        return "Basic " + Base64.getEncoder().encodeToString((secretKey + ":").getBytes());
+    }
+
+    private void removeNonMemberCart(HttpServletResponse response){
+        Cookie cookie = new Cookie("CART", "");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }

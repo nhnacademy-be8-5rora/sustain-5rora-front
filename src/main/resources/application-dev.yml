@@ -38,3 +38,7 @@ spring:
 api:
   gateway:
     base-url: localhost:8180
+
+toss:
+  client-key: test_ck_Z61JOxRQVEY4gEJjlQd0VW0X9bAq
+  secret-key: na

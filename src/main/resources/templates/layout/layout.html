@@ -351,6 +351,7 @@
                 receiverEmail: formData.get('receiverEmail'),
                 receiverAddress: formData.get('receiverAddress'),
                 receiverMessage: formData.get('receiverMessage'),
+                usedPoint: parseInt(formData.get('usedPoint'), 10) || 0,
                 orderDetailDTOList: Array.from(document.querySelectorAll('tbody tr')).map(row => ({
                     bookId: parseInt(row.querySelector('input[name="itemId"]').value, 10),
                     quantity: parseInt(row.querySelector('input[name="quantity"]').value, 10),
