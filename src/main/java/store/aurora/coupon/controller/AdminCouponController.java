@@ -15,7 +15,7 @@ import store.aurora.feign_client.coupon.CouponClient;
 public class AdminCouponController {
 
     private final CouponClient couponClient;
-    private static final String COUPON_ADMIN_URL = "coupon/couponCreate";
+    private static final String COUPON_ADMIN_URL = "admin/coupon/coupon-create";
 
     // 쿠폰정책 생성 (관리자) -> 쿠폰 정책은 생성밖에 안됨(정책 수정, 삭제시 -> 이전에 해당 쿠폰을 가진 유저들이 피해를 볼 수 있기에)
     @GetMapping(value = "/coupon/create")

@@ -30,6 +30,8 @@
                 </select>
             </div>
 
+<!--            addPolicyDTO 부분-->
+
             <div class="form-group">
                 <label for="categoryId">카테고리 ID</label>
                 <input type="text" class="form-control" id="categoryId" name="addPolicyDTO.categoryId" placeholder="(예: 1,2,3)">
@@ -71,8 +73,8 @@
         <h2 class="section-title text-center">사용자 쿠폰 생성</h2>
         <form th:action="@{/admin/coupon/distribution}" method="POST">
             <div class="form-group">
-                <label for="userId">유저 ID</label>
-                <input type="text" class="form-control" id="userId" name="userId" required>
+                <label for="userIds">유저 ID</label>
+                <input type="text" class="form-control" id="userIds" name="userIds" required>
                 <small id="userIdHelp" class="form-text text-muted">여러 유저 ID를 콤마로 구분하여 입력하세요.</small>
             </div>
 
@@ -84,8 +86,9 @@
             <div class="form-group">
                 <label for="state">쿠폰 상태</label>
                 <select class="form-control" id="state" name="state">
-                    <option value="ACTIVE">활성화</option>
-                    <option value="INACTIVE">비활성화</option>
+                    <option value="LIVE">사용가능</option>
+                    <option value="USED">사용됨</option>
+                    <option value="TIMEOUT">기간초과</option>
                 </select>
             </div>
 
@@ -110,23 +113,28 @@
         <h2 class="section-title text-center">사용자 쿠폰 수정</h2>
         <form th:action="@{/admin/coupon/update}" method="POST">
             <div class="form-group">
-                <label for="couponId">쿠폰 ID</label>
-                <input type="text" class="form-control" id="couponId" name="couponId" required>
-                <small id="couponIdHelp" class="form-text text-muted">수정할 쿠폰 ID를 입력하세요.</small>
+                <!-- 유저 IDs (여러 개 선택 가능) -->
+                <label for="userIds2">유저 ID들:</label>
+                <input type="text" id="userIds2" name="userIds" placeholder="유저 ID를 콤마로 구분하세요" required>
             </div>
 
             <div class="form-group">
-                <label for="newState">새 상태</label>
-                <select class="form-control" id="newState" name="newState">
-                    <option value="ACTIVE">USED</option>
-                    <option value="INACTIVE">LIVE</option>
-                    <option value="INACTIVE">TIMEOUT</option>
+                <label for="policyId">새 종료일</label>
+                <input type="number" class="form-control" id="policyId" name="policyId">
+            </div>
+
+            <div class="form-group">
+                <label for="state2">새 상태</label>
+                <select id="state2" name="state" required>
+                    <option value="LIVE">활성</option>
+                    <option value="TIMEOUT">만료</option>
+                    <option value="USED">사용됨</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="newEndDate">새 종료일</label>
-                <input type="date" class="form-control" id="newEndDate" name="newEndDate">
+                <label for="endDate2">새 쿠폰정책</label>
+                <input type="date" class="form-control" id="endDate2" name="endDate">
             </div>
 
             <button type="submit" class="btn btn-primary btn-block">쿠폰 수정</button>
