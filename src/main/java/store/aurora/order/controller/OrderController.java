@@ -245,7 +245,7 @@ public class OrderController {
         ResponseEntity<String> stringResponseEntity = tossClient.confirmCheck(makeAuthorization(secretKey), new PaymentRequest(paymentKey, amount, orderId));
         log.info("토스 결제 내역: {}", stringResponseEntity.getBody());
 
-        //2. db에 저장 //todo 저장 로직
+        //2. db에 저장
         ResponseEntity<Void> voidResponseEntity;
         try {
             voidResponseEntity = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
