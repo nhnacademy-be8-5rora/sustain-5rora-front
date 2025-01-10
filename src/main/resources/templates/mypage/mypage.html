@@ -32,7 +32,7 @@
       // 콘텐츠 변경 스크립트
       const contentArea = document.getElementById('content-area');
 
-      const userId = document.getElementById('user-id').innerText;
+      const userId = document.getElementById('user-id').getAttribute('data-user-id');
 
       // document.getElementById('menu-personal-info').addEventListener('click', () => {
       //   contentArea.innerHTML = `
@@ -63,6 +63,19 @@
       //     </ul>
       //   `;
       // });
+
+        // document.getElementById('menu-reviews').addEventListener('click', () => {
+        //     document.getElementById('content-frame').src = './review/review-list.html';
+        // });
+        // document.getElementById('menu-reviews').addEventListener('click', () => {
+        //     fetch('./reviews.html')
+        //         .then(response => response.text())
+        //         .then(data => {
+        //             contentArea.innerHTML = data;
+        //         })
+        //         .catch(error => console.error('Error loading the reviews page:', error));
+        // });
+
 
       document.getElementById('menu-settings').addEventListener('click', () => {
         contentArea.innerHTML = `
@@ -103,7 +116,8 @@
               <div class="section-box mb-4 card w-80">
                 <div class="card-body rounded text-center" style="background-color: #F3F2EC">
                   <img src="https://via.placeholder.com/80" alt="User Profile" class="rounded-circle my-2"><br>
-                  <span id="user-id" class="fw-bold fs-5" th:text="${user.getName()}">이름</span><span>님</span>
+                  <span id="user-id" hidden="hidden" th:attr="data-user-id=${user.id}"></span>
+                  <span id="user-name" class="fw-bold fs-5" th:text="${user.getName()}">이름</span><span>님</span>
                   <span class="badge bg-success" th:text="${user.getRankName()}">등급</span>
                   <div class="d-flex justify-content-center mt-3">
                     <div class="me-3">

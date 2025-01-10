@@ -30,7 +30,7 @@ public class MyPageController {
     }
 
     // 회원탈퇴
-    @PostMapping("delete/{userId}")
+    @PostMapping("/delete/{userId}")
     public String deleteUser(@PathVariable(value = "userId") String userId,
                              HttpServletResponse response) {
         ResponseEntity<Map<String, String>> clientResponse = userClient.deleteUser(userId);
