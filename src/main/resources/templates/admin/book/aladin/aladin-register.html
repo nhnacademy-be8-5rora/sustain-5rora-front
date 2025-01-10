@@ -15,7 +15,7 @@
 <div layout:fragment="content">
     <section class="container mt-5">
         <h1 class="text-center mb-4">알라딘 도서 등록</h1>
-        <form th:action="@{/books/api/register}" method="post" enctype="multipart/form-data" class="row g-3">
+        <form th:action="@{/books/aladin/register}" method="post" enctype="multipart/form-data" class="row g-3">
             <div class="col-md-12 text-center">
                 <img th:src="${#strings.replace(book.cover, 'coversum', 'cover500')}"
                      alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
@@ -42,13 +42,13 @@
                 <input type="text" id="pubDate" name="pubDate" th:value="${book.pubDate}" class="form-control" readonly>
             </div>
             <div class="col-md-6">
-                <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
-                <input type="text" id="seriesInfo.seriesName" name="seriesInfo.seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}" readonly>
+                <label for="seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesName" name="seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}" readonly>
             </div>
             <div class="col-md-12">
                 <label for="description" class="form-label">책 설명</label>
                 <div id="toast-editor"></div>
-                <textarea id="description" name="description" hidden th:text="${book.description}"></textarea>
+                <textarea id="description" name="description" style="display: none;" th:text="${book.description}"></textarea>
             </div>
             <div class="col-md-12">
                 <label for="contents" class="form-label">목차</label>
@@ -70,15 +70,15 @@
             <div class="col-md-4">
                 <label for="isForSale" class="form-label">판매 여부</label>
                 <select id="isForSale" name="isForSale" class="form-select" required>
-                    <option value="true" th:selected="${book.isForSale}">판매</option>
-                    <option value="false" th:selected="${!book.isForSale}">미판매</option>
+                    <option value="true">판매</option>
+                    <option value="false" selected>미판매</option>
                 </select>
             </div>
             <div class="col-md-4">
                 <label for="isPackaged" class="form-label">포장 여부</label>
                 <select id="isPackaged" name="isPackaged" class="form-select" required>
-                    <option value="true" th:selected="${book.isPackaged}">포장</option>
-                    <option value="false" th:selected="${!book.isPackaged}">비포장</option>
+                    <option value="true">포장</option>
+                    <option value="false" selected>비포장</option>
                 </select>
             </div>
             <div class="col-md-12">
@@ -147,19 +147,17 @@
 </html>
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const editor = new toastui.Editor({
             el: document.querySelector('#toast-editor'),
             height: '400px',
-            initialEditType: 'wysiwyg', // 'wysiwyg' 또는 'markdown'
-            previewStyle: 'vertical',  // 미리보기 스타일
-            initialValue: document.querySelector('#description').value || '', // 초기 데이터
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.querySelector('#description').value || '',
         });
 
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function() {
-            const descriptionTextarea = form.querySelector('#description');
-            descriptionTextarea.value = editor.getHTML(); // 에디터 내용을 HTML로 저장
+        editor.on('change', function () {
+            document.querySelector('#description').value = editor.getMarkdown();
         });
     });
 </script>
