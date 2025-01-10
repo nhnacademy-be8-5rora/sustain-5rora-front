@@ -63,15 +63,15 @@ public class OrderController {
 
     //회원의 장바구니 구매
     @GetMapping("/order/cart/checkout/member")
-    public String memberCartCheckoutForm(@RequestParam("selected-items") List<Long> selectedItems,
-                                         @RequestParam("quantities") List<Integer> quantities,
+    public String memberCartCheckoutForm(@RequestParam("book-id") List<Long> bookIds,
+                                         @RequestParam("quantity") List<Integer> quantities,
                                          @CookieValue(SecurityConstants.TOKEN_COOKIE_NAME) String jwtCookie,
                                          Model model){
 
         //1. 카트에서 상품꺼내기
         List<CartItemDTO> cartItemDTOS = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            cartItemDTOS.add(new CartItemDTO(selectedItems.get(i), quantities.get(i)));
+        for (int i = 0; i < bookIds.size(); i++) {
+            cartItemDTOS.add(new CartItemDTO(bookIds.get(i), quantities.get(i)));
         }
 
         //2.책정보 가져오기
@@ -93,14 +93,14 @@ public class OrderController {
 
     //비회원의 장바구니 구매
     @GetMapping("/order/cart/checkout/non-member")
-    public String nonMemberCartCheckoutForm(@RequestParam("selected-items") List<Long> selectedItems,
-                                            @RequestParam("quantities") List<Integer> quantities,
+    public String nonMemberCartCheckoutForm(@RequestParam("book-id") List<Long> bookIds,
+                                            @RequestParam("quantity") List<Integer> quantities,
                                             Model model){
 
         //1. 카트에서 상품꺼내기
         List<CartItemDTO> cartItemDTOS = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            cartItemDTOS.add(new CartItemDTO(selectedItems.get(i), quantities.get(i)));
+        for (int i = 0; i < bookIds.size(); i++) {
+            cartItemDTOS.add(new CartItemDTO(bookIds.get(i), quantities.get(i)));
         }
 
         //2.책정보 가져오기
@@ -121,25 +121,25 @@ public class OrderController {
 
     //즉시구매
     @GetMapping("/order/direct/checkout")
-    public String directCheckoutForm(@RequestParam("item-id")Long itemId,
+    public String directCheckoutForm(@RequestParam("book-id")Long bookId,
                                      @RequestParam("quantity")Integer quantity,
                                      Principal principal){
         if(principal == null){
-            return "redirect:/order/direct/checkout/non-member?item-id=" + itemId + "&quantity=" + quantity;
+            return "redirect:/order/direct/checkout/non-member?book-id=" + bookId + "&quantity=" + quantity;
         }
-        return "redirect:/order/direct/checkout/member?item-id=" + itemId + "&quantity=" + quantity;
+        return "redirect:/order/direct/checkout/member?book-id=" + bookId + "&quantity=" + quantity;
     }
 
     //회원의 즉시구매
     @GetMapping("/order/direct/checkout/member")
-    public String memberDirectCheckoutForm(@RequestParam("item-id")Long itemId,
+    public String memberDirectCheckoutForm(@RequestParam("book-id")Long bookId,
                                            @RequestParam("quantity")Integer quantity,
                                            @CookieValue(SecurityConstants.TOKEN_COOKIE_NAME) String jwtCookie,
                                            Model model){
 
         List<CheckoutBookDTO> bookList = null;
         try{
-            bookList = cartItemToCheckoutBook(List.of(new CartItemDTO(itemId, quantity)));
+            bookList = cartItemToCheckoutBook(List.of(new CartItemDTO(bookId, quantity)));
         }catch (FeignException e){
             throw new BookClientResolveFailException(e);
         }
@@ -155,11 +155,12 @@ public class OrderController {
 
     //비회원의 즉시구매
     @GetMapping("/order/direct/checkout/non-member")
-    public String nonMemberDirectCheckoutForm(@RequestParam("item-id")Long itemId, @RequestParam("quantity")Integer quantity, Model model){
+    public String nonMemberDirectCheckoutForm(@RequestParam("book-id")Long bookId,
+                                              @RequestParam("quantity")Integer quantity, Model model){
 
         List<CheckoutBookDTO> bookList = null;
         try{
-             bookList = cartItemToCheckoutBook(List.of(new CartItemDTO(itemId, quantity)));
+             bookList = cartItemToCheckoutBook(List.of(new CartItemDTO(bookId, quantity)));
         }catch (FeignException e){
             throw new BookClientResolveFailException(e);
         }
