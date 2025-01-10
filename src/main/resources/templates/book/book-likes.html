@@ -92,7 +92,7 @@
                 <h2>책 목록</h2>
                 <div class="book-card" th:each="book : ${books}">
                     <div class="book-image-container">
-                        <img th:src="${book.imgPath}" alt="Book Image" class="book-image">
+                        <img th:src="${book != null && book.imgPath != null ? book.imgPath : '/static/images/default.png'}" alt="Book Image" class="book-image">
 
                         <!-- 하트 버튼을 클릭하여 AJAX 요청을 보내는 방식으로 변경 -->
                         <button type="button" class="heart-button"
@@ -146,6 +146,7 @@
                 </div>
             </div>
 
+        </div>
         </div>
 
     </section>
