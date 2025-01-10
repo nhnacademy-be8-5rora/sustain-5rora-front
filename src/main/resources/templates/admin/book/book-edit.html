@@ -73,8 +73,8 @@
                 <input type="date" id="pubDate" name="pubDate" th:value="${book.pubDate}" class="form-control" required>
             </div>
             <div class="col-md-6">
-                <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
-                <input type="text" id="seriesInfo.seriesName" name="seriesInfo.seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}">
+                <label for="seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesName" name="seriesName" class="form-control" th:value="${book.seriesName}">
             </div>
             <div class="col-md-12">
                 <label for="description" class="form-label">책 설명</label>
@@ -173,7 +173,6 @@
 </body>
 
 </html>
-
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -182,13 +181,11 @@
             height: '400px',
             initialEditType: 'wysiwyg',
             previewStyle: 'vertical',
-            initialValue: document.querySelector('#description').value || '', // 수정 폼에서 초기값으로 설정
+            initialValue: document.querySelector('#description').value || '', // 초기 데이터 설정
         });
 
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function() {
-            const descriptionTextarea = form.querySelector('#description');
-            descriptionTextarea.value = editor.getHTML(); // 에디터 내용을 textarea에 동기화
+        editor.on('change', function () {
+            document.querySelector('#description').value = editor.getMarkdown();
         });
     });
 </script>
