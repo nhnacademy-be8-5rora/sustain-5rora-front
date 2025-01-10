@@ -4,85 +4,317 @@
       layout:decorate="~{layout/layout}">
 <head>
     <title>Book Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EDEBE4; /* 공통 배경색 */
+            margin: 0;
+            padding: 0;
+            background-size: cover; /* 배경 이미지가 화면을 덮도록 */
+            background-position: center; /* 이미지 중앙 정렬 */
+            background-attachment: fixed; /* 스크롤 시 배경이 고정되도록 */
+        }
+
+        .container {
+            width: 85%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.8); /* 배경을 살짝 투명하게 하여 책 정보와 배경이 섞이도록 */
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .book-image-slider {
+            position: relative;
+        }
+
+        .image-container {
+            display: flex;
+            overflow: hidden;
+        }
+
+        .slider-image {
+            display: none;
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .slider-image.active {
+            display: block;
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+        /* 책 이미지 및 내용의 좌우 분할 */
+        .book-info-wrapper {
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .book-image {
+            max-width: 250px;
+            margin-right: 30px;
+        }
+
+        .book-details {
+            flex: 1;
+        }
+
+        .price {
+            font-size: 18px;
+            color: #e60012;
+            font-weight: bold;
+        }
+
+        .regular-price {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        /* 기본 정보 스타일 */
+        section {
+            margin-bottom: 30px;
+        }
+
+        h2, h3 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* 카테고리 및 태그 */
+        .category-list, .tags-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .category-list li, .tags-list li {
+            display: inline;
+            margin-right: 10px;
+            background-color: #f1f1f1;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .category-list li::after {
+            content: '>';
+            margin-left: 5px;
+        }
+
+        .category-list li:last-child::after {
+            content: '';
+        }
+
+        .review {
+            background-color: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .review h4 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .review p {
+            margin: 10px 0;
+        }
+
+        .likes, .rating {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .likes {
+            color: #4CAF50;
+        }
+
+        .rating {
+            color: #FFD700;
+        }
+
+        .publisher {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .review-images {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .review-images img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
-<div layout:fragment="content">
+<div layout:fragment="content" class="container">
     <h1>Book Details</h1>
 
-    <!-- 기본 정보 -->
-    <section>
-        <h2 th:text="'Title: ' + ${bookInfo.title}"></h2>
-        <p><strong>ISBN:</strong> <span th:text="${bookInfo.isbn}"></span></p>
-        <p><strong>Regular Price:</strong> <span th:text="${bookInfo.regularPrice}"></span> KRW</p>
-        <p><strong>Sale Price:</strong> <span th:text="${bookInfo.salePrice}"></span> KRW</p>
-        <p><strong>Explanation:</strong> <span th:text="${bookInfo.explanation}"></span></p>
-        <p><strong>Contents:</strong> <span th:text="${bookInfo.contents}"></span></p>
-        <p><strong>Publish Date:</strong> <span th:text="${bookInfo.publishDate}"></span></p>
-    </section>
+    <!-- 책 이미지 및 기본 정보 -->
+    <div class="book-info-wrapper">
+        <!-- 책 이미지 -->
+        <div class="book-image-slider">
+            <div class="image-container">
+                <!-- 이미지 목록 반복 -->
+                <img th:each="image, iterStat : ${bookInfo.bookImages}"
+                     th:src="${image.bookImagePath != null ? image.bookImagePath : '/static/images/default.png'}"
+                     th:alt="'Book Image'"
+                     class="slider-image"
+                     th:classappend="${iterStat.index == 0 ? ' active' : ''}" />
+            </div>
+            <button class="slider-button prev" onclick="changeImage(-1)">&#10094;</button>
+            <button class="slider-button next" onclick="changeImage(1)">&#10095;</button>
+        </div>
 
-    <!-- 출판사 정보 -->
+
+
+        <!-- 책 상세 정보 -->
+        <div class="book-details">
+            <section>
+                <h2>Basic Information</h2>
+                <p><strong>Title:</strong> <span th:text="${bookInfo.title}"></span></p>
+                <p><strong>ISBN:</strong> <span th:text="${bookInfo.isbn}"></span></p>
+                <p><strong>Explanation:</strong> <span th:text="${bookInfo.explanation}"></span></p>
+                <p><strong>Contents:</strong> <span th:text="${bookInfo.contents}"></span></p>
+                <p><strong>Publish Date:</strong> <span th:text="${bookInfo.publishDate}"></span></p>
+                <p>
+                    <strong>Regular Price:</strong>
+                    <span class="regular-price" th:text="${bookInfo.regularPrice}"></span> KRW
+                </p>
+                <p>
+                    <strong>Sale Price:</strong>
+                    <span class="price" th:text="${bookInfo.salePrice}"></span> KRW
+                </p>
+            </section>
+
+            <!-- 출판사 정보 -->
+            <section>
+                <h3>Publisher</h3>
+                <p class="publisher" th:text="${bookInfo.publisher.name}"></p>
+            </section>
+        </div>
+    </div>
+
+    <!-- 리뷰, 카테고리, 태그 -->
     <section>
-        <h3>Publisher</h3>
-        <p th:text="${bookInfo.publisher.name}"></p>
+        <h3>Reviews</h3>
+        <div th:each="review : ${bookInfo.reviews}" class="review">
+            <h4>Review by: <span th:text="${review.userName}"></span></h4>
+            <p><strong>Rating:</strong> <span th:text="${review.reviewRating}"></span>/5</p>
+            <p><strong>Content:</strong> <span th:text="${review.reviewContent}"></span></p>
+            <p><strong>Created At:</strong> <span th:text="${review.reviewCreatedAt}"></span></p>
+            <div class="review-images" th:each="image : ${review.reviewImages}">
+                <img th:src="@{${image}}" alt="Review Image"/>
+            </div>
+        </div>
     </section>
 
     <!-- 카테고리 경로 -->
     <section>
         <h3>Category Path</h3>
-        <ul>
-            <li th:each="category : ${bookInfo.categoryPath}">
-                <span th:text="${category.name}"></span>
-                <ul>
-                    <li th:each="child : ${category.children}">
-                        <span th:text="${category.name + ' > ' + child.name}"></span>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+        <div class="category-list">
+        <span th:each="category : ${bookInfo.categoryPath}" th:if="${category.id != null}" style="display: inline;">
+            <a th:href="@{/books/search(type='category', keyword=${category.id})}" th:text="${category.name}"></a>
+            <span th:if="${category.children != null and category.children.size() > 0}"> &gt; </span>
+
+            <!-- 2단계 자식 카테고리 -->
+            <span th:each="child : ${category.children}" th:if="${child.id != null}" style="display: inline;">
+                <a th:href="@{/books/search(type='category', keyword=${child.id})}" th:text="${child.name}"></a>
+                <span th:if="${child.children != null and child.children.size() > 0}"> &gt; </span>
+
+                <!-- 3단계 자식 카테고리 -->
+                <span th:each="grandChild : ${child.children}" th:if="${grandChild.id != null}" style="display: inline;">
+                    <a th:href="@{/books/search(type='category', keyword=${grandChild.id})}" th:text="${grandChild.name}"></a>
+                </span>
+            </span>
+        </span>
+        </div>
+
+
+
     </section>
 
     <!-- 태그 목록 -->
     <section>
         <h3>Tags</h3>
-        <ul>
+        <ul class="tags-list">
             <li th:each="tag : ${bookInfo.tagNames}" th:text="${tag}"></li>
         </ul>
-    </section>
-
-    <!-- 이미지 갤러리 -->
-    <section>
-        <h3>Book Images</h3>
-        <div th:each="image : ${bookInfo.bookImages}">
-            <img th:src="@{${image.bookImagePath}}" alt="Book Image" style="max-width: 200px;"/>
-        </div>
-    </section>
-
-    <!-- 리뷰 섹션 -->
-    <section>
-        <h3>Reviews</h3>
-        <div th:each="review : ${bookInfo.reviews}">
-            <p><strong>Reviewer:</strong> <span th:text="${review.userName}"></span></p>
-            <p><strong>Rating:</strong> <span th:text="${review.reviewRating}"></span>/5</p>
-            <p><strong>Content:</strong> <span th:text="${review.reviewContent}"></span></p>
-            <p><strong>Created At:</strong> <span th:text="${review.reviewCreatedAt}"></span></p>
-            <div th:each="image : ${review.reviewImages}">
-                <img th:src="@{${image}}" alt="Review Image" style="max-width: 100px;"/>
-            </div>
-        </div>
     </section>
 
     <!-- 좋아요 개수 -->
     <section>
         <h3>Likes</h3>
-        <p th:text="'Like Count: ' + ${bookInfo.likeCount}"></p>
+        <p class="likes" th:text="'Like Count: ' + ${bookInfo.likeCount}"></p>
     </section>
 
     <!-- 평점 -->
     <section>
         <h3>Average Rating</h3>
-        <p th:text="${bookInfo.rating} + '/5'"></p>
+        <p class="rating" th:text="${bookInfo.rating} + '/5'"></p>
     </section>
 </div>
+
+<script>
+    let currentImageIndex = 0;
+
+    function changeImage(direction) {
+        const images = document.querySelectorAll('.slider-image');
+        const totalImages = images.length;
+
+        // 현재 이미지를 비활성화
+        images[currentImageIndex].classList.remove('active');
+
+        // 인덱스를 이동
+        currentImageIndex = (currentImageIndex + direction + totalImages) % totalImages;
+
+        // 새 이미지를 활성화
+        images[currentImageIndex].classList.add('active');
+    }
+</script>
+
+
 </body>
 </html>
