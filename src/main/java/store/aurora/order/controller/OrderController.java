@@ -88,7 +88,7 @@ public class OrderController {
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
 
-        return "/order/order-form-member";
+        return "order/order-form-member";
     }
 
     //비회원의 장바구니 구매
@@ -116,7 +116,7 @@ public class OrderController {
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
 
-        return "/order/order-form-non-member";
+        return "order/order-form-non-member";
     }
 
     //즉시구매
@@ -150,7 +150,7 @@ public class OrderController {
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
 
-        return "/order/order-form-member";
+        return "order/order-form-member";
     }
 
     //비회원의 즉시구매
@@ -170,7 +170,7 @@ public class OrderController {
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
 
-        return "/order/order-form-non-member";
+        return "order/order-form-non-member";
     }
 
     /*
