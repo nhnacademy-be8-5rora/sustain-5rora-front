@@ -136,10 +136,12 @@
                                     <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">장바구니에 추가</button>
                                 </form>
 
-                                <form method="post" action="/checkout" class="action-form">
-                                    <input type="hidden" name="bookId" th:value="${book.id}">
+                                <form method="get" action="/order/direct/checkout" class="action-form">
+                                    <input type="hidden" name="book-id" th:value="${book.id}">
+                                    <input type="hidden" name="quantity" value="1" id="checkoutQuantity">
                                     <button type="submit" th:disabled="${!book.isSale}" th:classappend="${!book.isSale ? 'disabled-button' : ''}">바로구매하기</button>
                                 </form>
+
                             </div>
 
                     </div>
