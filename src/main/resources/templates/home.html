@@ -184,9 +184,7 @@
                         <!-- 이미지 영역 -->
                         <div class="col-md-6">
                             <figure class="products-thumb">
-                                <div th:if="${mostSellerBook != null && mostSellerBook.imgPath != null}">
-                                    <img th:src="${mostSellerBook.imgPath}" alt="book" class="single-image">
-                                </div>
+                                <img th:src="${mostSellerBook != null && mostSellerBook.imgPath != null ? mostSellerBook.imgPath : '/static/images/default.png'}" alt="book" class="single-image">
                             </figure>
                         </div>
 
@@ -241,7 +239,7 @@
                                     <div class="product-item">
                                         <figure class="product-style">
                                             <!-- 책 이미지 -->
-                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.jpg'}}" alt="Books" class="product-item">
+                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.png'}}" alt="Books" class="product-item">
                                             <form method="post" action="/cart" class="action-form">
                                                 <input type="hidden" name="bookId" th:value="${book.id}">
                                                 <input type="hidden" name="quantity" value="1">
@@ -267,7 +265,7 @@
                                 <div class="col-md-3" th:each="book : ${viewBooks}">
                                     <div class="product-item">
                                         <figure class="product-style">
-                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.jpg'}}" alt="Books" class="product-item">
+                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.png'}}" alt="Books" class="product-item">
                                             <form method="post" action="/cart" class="action-form">
                                                 <input type="hidden" name="bookId" th:value="${book.id}">
                                                 <input type="hidden" name="quantity" value="1">
