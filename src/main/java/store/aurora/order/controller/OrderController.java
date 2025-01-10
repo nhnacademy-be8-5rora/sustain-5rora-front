@@ -245,18 +245,18 @@ public class OrderController {
         log.info("토스 결제 내역: {}", stringResponseEntity.getBody());
 
         //2. db에 저장 //todo 저장 로직
-//        ResponseEntity<Void> voidResponseEntity;
-//        try {
-//            voidResponseEntity = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
-//        }catch (FeignException e){
-//            throw new OrderTemporaryStorageClientResolverFailException(e);
-//        }
-//
-//        //db 저장 실패
-//        HttpStatusCode statusCode = voidResponseEntity.getStatusCode();
-//        if(statusCode.is4xxClientError() || statusCode.is5xxServerError()){
-//            return "redirect:/";
-//        }
+        ResponseEntity<Void> voidResponseEntity;
+        try {
+            voidResponseEntity = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
+        }catch (FeignException e){
+            throw new OrderTemporaryStorageClientResolverFailException(e);
+        }
+
+        //db 저장 실패
+        HttpStatusCode statusCode = voidResponseEntity.getStatusCode();
+        if(statusCode.is4xxClientError() || statusCode.is5xxServerError()){
+            return "redirect:/";
+        }
 
         //3. 비회원의 카트 비우기
         removeNonMemberCart(response);

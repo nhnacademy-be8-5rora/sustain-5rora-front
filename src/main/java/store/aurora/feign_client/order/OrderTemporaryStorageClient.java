@@ -17,6 +17,6 @@ public interface OrderTemporaryStorageClient {
     @GetMapping("/{order-id}/get-order-info")
     ResponseEntity<OrderResponseDto> getOrderInfo(@PathVariable(name="order-id") String orderId);
 
-//    @PostMapping("/order-complete")
-//    ResponseEntity<Void> orderComplete(@RequestBody OrderCompleteRequestDto orderCompleteRequestDto);
+    @PostMapping("/order-complete")
+    ResponseEntity<Void> orderComplete(@RequestBody OrderCompleteRequestDto orderCompleteRequestDto);
 }
