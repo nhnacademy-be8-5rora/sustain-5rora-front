@@ -262,7 +262,7 @@ public class OrderController {
         //3. 비회원의 카트 비우기
         removeNonMemberCart(response);
 
-        return "redirect:/"; //todo 주문 완료 페이지 만들기
+        return "redirect:/order/complete";
     }
 
     @GetMapping("/order/payment/fail")
@@ -271,6 +271,11 @@ public class OrderController {
         log.info("payment fail");
 
         return "redirect:/";
+    }
+
+    @GetMapping("/order/complete")
+    public String orderCompleteForm(){
+        return "order/order-complete";
     }
 
     private List<CheckoutBookDTO> cartItemToCheckoutBook(List<CartItemDTO> cartItems) throws FeignException{
