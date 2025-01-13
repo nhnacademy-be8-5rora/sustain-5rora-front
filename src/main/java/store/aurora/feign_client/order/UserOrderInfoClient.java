@@ -12,5 +12,5 @@ import store.aurora.order.dto.OrderInfoDto;
 public interface UserOrderInfoClient {
 
     @GetMapping("/api/users/{user-id}/orders")
-    ResponseEntity<Page<OrderInfoDto>> getOrderInfos(@PathVariable("user-id") String userId, Pageable pageable);
+    ResponseEntity<Page<OrderInfoDto>> getOrderInfos(@PathVariable("user-id") String encrytedId, Pageable pageable);
 }
