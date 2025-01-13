@@ -30,6 +30,7 @@
               <table>
                 <thead>
                 <tr>
+                  <th>별칭</th>
                   <th>수취인</th>
                   <th>도로명 주소</th>
                   <th>상세 주소</th>
@@ -38,6 +39,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="address : ${addresses}">
+                  <td th:text="${address.nickname}">우리집</td>
                   <td th:text="${address.receiver}">홍길동</td>
                   <td th:text="${address.roadAddress}">서울특별시 강남구 테헤란로</td>
                   <td th:text="${address.addrDetail}">101호</td>

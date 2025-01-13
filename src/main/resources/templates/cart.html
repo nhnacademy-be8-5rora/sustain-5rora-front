@@ -5,6 +5,38 @@
 
 <head>
     <title>장바구니</title>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('submit-order-button').addEventListener('click', function(event) {
+                event.preventDefault(); // 기본 제출 동작 방지
+
+                // 선택된 체크박스 가져오기
+                const selectedItems = document.querySelectorAll('input[type="checkbox"]:checked');
+
+                if (selectedItems.length === 0) {
+                    alert('선택된 상품이 없습니다.');
+                    return;
+                }
+
+                // bookId와 quantity 수집
+                const params = [];
+                selectedItems.forEach(item => {
+                    const bookId = item.value;
+                    const quantityInput = item.closest('tr').querySelector('input[type="number"]');
+                    const quantity = quantityInput ? quantityInput.value : 1;
+
+                    params.push(`book-id=${encodeURIComponent(bookId)}&quantity=${encodeURIComponent(quantity)}`);
+                });
+
+                // GET 요청 URL 생성
+                const queryString = params.join('&');
+                // 페이지 이동
+                window.location.href = `/order/cart/checkout?${queryString}`;
+            });
+        });
+
+    </script>
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
@@ -34,7 +66,7 @@
                                 <h3 class="item-title">총 금액: <span th:text="${cart.totalPrice}"></span> 원</h3>
                             </div>
 
-                            <form action="/order" method="POST">
+<!--                            <form action="/order" method="GET">-->
 
                                 <table border="1">
                                     <thead>
@@ -52,8 +84,9 @@
                                     <tr th:each="item : ${cart.cartItems}">
                                         <td>
                                             <!-- 주문할 상품 선택 -->
+<!--                                            todo 혜원 item.bookId 대신 item.cartItemId?-->
                                             <input type="checkbox" th:name="'selectedItems'" th:value="${item.bookId}">
-                                            <input type="hidden" th:name="'quantities[' + ${item.bookId} + ']'" th:value="${item.quantity}" min="1" required />
+                                            <input type="hidden" name="quantities" th:value="${item.quantity}" min="1" required />
                                         </td>
 
                                         <td><img th:src="${item.filePath}" alt="상품 이미지" width="100" height="100"></td>
@@ -81,15 +114,15 @@
                                                 <button type="submit">삭제</button>
                                             </form>
                                             <!--                    <form th:action="@{/order/checkout/{bookId}(bookId=${item.bookId})}" method="post">-->
-                                            <button type="submit">주문하기</button>
+<!--                                            <button type="submit">주문하기</button>-->
                                             <!--                    </form>-->
                                         </td>
                                     </tr>
                                     </tbody>
                                 </table>
 
-                                <button type="submit">선택 상품 주문하기</button>
-                            </form>
+                                <button id="submit-order-button">선택 상품 주문하기</button>
+<!--                            </form>-->
                         </div>
                     </div><!--grid-->
 

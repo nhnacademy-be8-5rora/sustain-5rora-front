@@ -1,0 +1,10 @@
+GET http://localhost:8080/admin/coupon/create
+
+###
+POST http://localhost:8080/admin/coupon/distribution
+Content-Type: application/json
+
+{
+  "userIds": ["apple", "print"],
+  "couponPolicyId": 1
+}

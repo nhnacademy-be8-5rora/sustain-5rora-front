@@ -16,17 +16,17 @@
         <h1 class="text-center mb-4">도서 검색</h1>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <!-- 직접 등록 버튼 -->
-            <a th:href="@{/books/direct/register}" class="btn btn-success">직접 등록</a>
+            <a th:href="@{/books/register}" class="btn btn-success">직접 등록</a>
         </div>
         <div class="text-center mt-4">
             <p>도서 DB 제공 : 알라딘 인터넷서점 (<a href="https://www.aladin.co.kr" target="_blank">www.aladin.co.kr</a>)</p>
         </div>
         <!-- 검색 폼 -->
-        <form th:action="@{/books/api/search-books}" method="get" class="row g-3">
-            <input type="hidden" name="start" value="1" />
+        <form th:action="@{/books/aladin/search}" method="get" class="row g-3">
+<!--            <input type="hidden" name="start" value="1" />-->
             <div class="col-md-4">
                 <label for="query" class="form-label">검색어</label>
-                <input type="text" id="query" name="query" class="form-control" placeholder="검색어를 입력하세요" required>
+                <input type="text" id="query" name="query" class="form-control" placeholder="검색어를 입력하세요">
             </div>
             <div class="col-md-4">
                 <label for="queryType" class="form-label">검색 유형</label>
@@ -74,7 +74,7 @@
                             <strong>판매가:</strong> <span th:text="${book.priceSales} + ' 원'"></span>
                         </p>
                         <!-- 등록하기 버튼 -->
-                        <a th:href="@{/books/api/register(isbn13=${book.isbn13})}" class="btn btn-primary">등록하기</a>
+                        <a th:href="@{/books/aladin/register(isbn13=${book.isbn13})}" class="btn btn-primary">등록하기</a>
                     </div>
                 </li>
             </ul>
@@ -83,10 +83,10 @@
             <nav class="mt-4" th:if="${books != null and not #lists.isEmpty(books)}">
                 <ul class="pagination justify-content-center">
                     <!-- 페이지 번호 -->
-                    <li class="page-item" th:each="i : ${#numbers.sequence(1, currentPage + 5)}"
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, 4)}"
                         th:classappend="${i == currentPage} ? 'active' : ''">
                         <a class="page-link"
-                           th:href="@{/books/api/search-books(query=${query}, queryType=${queryType}, searchTarget=${searchTarget}, start=${i})}"
+                           th:href="@{/books/aladin/search(query=${query}, queryType=${queryType}, searchTarget=${searchTarget}, start=${i})}"
                            th:text="${i}"></a>
                     </li>
                 </ul>

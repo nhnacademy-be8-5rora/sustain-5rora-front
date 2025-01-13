@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import store.aurora.book.dto.category.CategoryDTO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import store.aurora.book.dto.category.CategoryRequestDTO;
@@ -38,7 +37,7 @@ public interface CategoryClient {
 
     //search용 카테고리 기본값만 가져오기
     @GetMapping("/{categoryId}")
-    ResponseEntity<CategoryDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
+    ResponseEntity<CategoryResponseDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
 
     // 모든 카테고리 계층적으로 가져오기
     @GetMapping
