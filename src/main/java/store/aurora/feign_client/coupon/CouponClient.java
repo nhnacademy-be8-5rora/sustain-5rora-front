@@ -23,7 +23,7 @@ public interface CouponClient {
 
     // 사용자 쿠폰 생성
     @PostMapping("/admin/distribution")
-    Boolean userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
+    ResponseEntity<String> userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
 
     // 사용자 쿠폰 수정
     @PutMapping("/admin/update")

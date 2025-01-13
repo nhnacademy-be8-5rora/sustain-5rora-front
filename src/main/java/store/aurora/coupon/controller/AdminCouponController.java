@@ -34,11 +34,10 @@ public class AdminCouponController {
     public String couponPolicyCreate(@ModelAttribute @Validated
                                      RequestCouponPolicyDTO requestCouponPolicyDTO) {
 
-        USER_LOG.info("{}", requestCouponPolicyDTO);
+        USER_LOG.info("requestCouponPolicyDTO: {}", requestCouponPolicyDTO);
 
-        couponClient.couponPolicyCreate(requestCouponPolicyDTO);
-
-        return COUPON_ADMIN_URL;
+            couponClient.couponPolicyCreate(requestCouponPolicyDTO);
+            return COUPON_ADMIN_URL;  // 성공 시 리다이렉트
     }
 
     //사용자 쿠폰 생성(특정 한명에게 줄 수 있으며, 특정 조건을 충족한 유저들에게 쿠폰을 뿌릴 수 있도록 함)
@@ -46,16 +45,16 @@ public class AdminCouponController {
     public String userCouponCreate(@ModelAttribute @Validated
                                                    RequestUserCouponDTO requestUserCouponDTO) {
 
-        couponClient.userCouponCreate(requestUserCouponDTO);
-
-        return COUPON_ADMIN_URL;
+            couponClient.userCouponCreate(requestUserCouponDTO);
+            return COUPON_ADMIN_URL;  // 성공 시 리다이렉트
     }
 
     // 사용자쿠폰 수정 (관리자)
-    @PutMapping(value = "/coupon/update/")
+    @PutMapping(value = "/coupon/update")
     public String userCouponUpdate(@ModelAttribute @Validated
                                                    UpdateUserCouponDto updateUserCouponDto) {
-        couponClient.couponUpdate(updateUserCouponDto);  // 실제 쿠폰 수정 처리
-        return COUPON_ADMIN_URL;
+
+            couponClient.couponUpdate(updateUserCouponDto);  // 실제 쿠폰 수정 처리
+            return COUPON_ADMIN_URL;  // 성공 시 리다이렉트
     }
 }
