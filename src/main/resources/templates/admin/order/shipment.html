@@ -6,10 +6,58 @@
 
 <head>
   <meta charset="utf-8">
-  <title>관리자 배송 관리 페이지</title>
+  <title>Shipment Management</title>
 </head>
 
-<body>
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+<div layout:fragment="content">
+  <section class="container mt-5">
+    <h1 class="text-center">배송 관리</h1>
+    <div class="mt-4">
+      <p>현재 배송 상태와 관련된 정보를 관리할 수 있습니다.</p>
 
+      <table class="table table-bordered mt-4">
+        <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Shipment State</th>
+          <th>Order Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Order List 반복 -->
+        <th:block th:each="order : ${orderList}">
+          <tr>
+            <td th:text="${order.orderId}"></td>
+            <td th:text="${order.shipmentState}"></td>
+            <td>
+              <table class="table table-sm">
+                <thead>
+                <tr>
+                  <th>Order Detail ID</th>
+                  <th>Shipment State</th>
+                  <th>Shipment Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Order Detail List 반복 -->
+                <th:block th:each="detail : ${order.orderDetailList}">
+                  <tr>
+                    <td th:text="${detail.orderDetailId}"></td>
+                    <td th:text="${detail.shipmentState}"></td>
+                    <td th:text="${detail.shipmentDate}"></td>
+                  </tr>
+                </th:block>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </th:block>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
 </body>
+
 </html>
