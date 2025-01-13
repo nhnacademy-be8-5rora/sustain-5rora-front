@@ -104,25 +104,40 @@
                 <!-- 페이징 -->
                 <nav th:if="${totalPages > 0}" class="mt-4">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <!-- 첫 페이지 버튼 -->
+                        <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ?
-                        @{/categories/{parentId}/children(page=${currentPage - 1}, size=2, parentId=${parentId})} :
-                        @{/categories(page=${currentPage - 1}, size=2)}">이전</a>
+                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=0, size=${size}, parentId=${parentId})} :
+                @{/categories(page=0, size=${size})}">처음</a>
                         </li>
-                        <li class="page-item" th:each="page, stat : ${#numbers.sequence(0, totalPages - 1)}"
-                            th:classappend="${page == currentPage} ? 'active'">
+
+                        <!-- 이전 버튼 -->
+                        <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ?
-                        @{/categories/{parentId}/children(page=${page}, size=2, parentId=${parentId})} :
-                        @{/categories(page=${page}, size=2)}"
-                               th:text="${page + 1}"></a>
+                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${startPage - rangeSize}, size=${size}, parentId=${parentId})} :
+                @{/categories(page=${startPage - rangeSize}, size=${size})}">이전</a>
                         </li>
-                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+
+                        <!-- 페이지 번호 -->
+                        <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                            th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ?
-                        @{/categories/{parentId}/children(page=${currentPage + 1}, size=2, parentId=${parentId})} :
-                        @{/categories(page=${currentPage + 1}, size=2)}">다음</a>
+                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${i}, size=${size}, parentId=${parentId})} :
+                @{/categories(page=${i}, size=${size})}" th:text="${i + 1}"></a>
+                        </li>
+
+                        <!-- 다음 버튼 -->
+                        <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                            <a class="page-link"
+                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${endPage + 1}, size=${size}, parentId=${parentId})} :
+                @{/categories(page=${endPage + 1}, size=${size})}">다음</a>
+                        </li>
+
+                        <!-- 마지막 페이지 버튼 -->
+                        <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                            <a class="page-link"
+                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${totalPages - 1}, size=${size}, parentId=${parentId})} :
+                @{/categories(page=${totalPages - 1}, size=${size})}">마지막</a>
                         </li>
                     </ul>
                 </nav>

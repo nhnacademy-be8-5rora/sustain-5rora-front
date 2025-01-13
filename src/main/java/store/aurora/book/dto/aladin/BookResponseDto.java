@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -24,7 +23,7 @@ public class BookResponseDto {
     private int priceSales;
     private int priceStandard;
     private String cover;
-    private int stock;
-    private Boolean isForSale = false;
-    private Boolean isPackaged = false;
+    private int stock = 100;
+    private boolean isSale = false;
+    private boolean isPackaging = false;
 }
