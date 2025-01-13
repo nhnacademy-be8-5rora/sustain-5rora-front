@@ -25,8 +25,9 @@ public class OrderRequestDto {
     private String receiverAddress;
     private String receiverMessage;
 
+    private int usedPoint;
+
     //상품 정보
     private List<OrderDetailDTO> orderDetailDTOList;
 
-    //todo 사용한 포인트
 }

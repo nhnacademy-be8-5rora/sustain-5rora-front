@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>배송 관리</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+    .btn-primary, .btn-warning, .btn-danger {
+      border-radius: 20px;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .table thead th {
+      background-color: #343a40;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <section class="container mt-5">
+    <h1 class="text-center mb-4 text-primary">배송 관리</h1>
+
+    <!-- 배송 상태 관리 카드 -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">배송 상태 관리</div>
+      <div class="card-body">
+        <p>현재 배송 상태를 확인하고 관리할 수 있습니다.</p>
+      </div>
+    </div>
+
+    <!-- 배송 목록 테이블 -->
+    <div class="card">
+      <div class="card-header bg-dark text-white">배송 목록</div>
+      <div class="card-body">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>주문 번호</th>
+            <th>배송 상태</th>
+            <th>세부 정보</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="order : ${orderList}">
+            <td th:text="${order.orderId}"></td>
+            <td th:text="${order.shipmentState}"></td>
+            <td>
+              <table class="table table-sm">
+                <thead>
+                <tr>
+                  <th>상세 번호</th>
+                  <th>배송 상태</th>
+                  <th>배송 날짜</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail : ${order.orderDetailList}">
+                  <td th:text="${detail.orderDetailId}"></td>
+                  <td th:text="${detail.shipmentState}"></td>
+                  <td th:text="${detail.shipmentDate}"></td>
+                </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+        <!-- 페이징 -->
+        <nav th:if="${totalPages > 0}" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+              <a class="page-link" th:href="@{/admin/order/shipment(page=${currentPage - 1})}">이전</a>
+            </li>
+            <li class="page-item" th:each="page, stat : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${page == currentPage} ? 'active'">
+              <a class="page-link" th:href="@{/admin/order/shipment(page=${page})}" th:text="${page + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+              <a class="page-link" th:href="@{/admin/order/shipment(page=${currentPage + 1})}">다음</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

@@ -54,6 +54,12 @@
             <br>
         </fieldset>
 
+        <!-- 총 주문 금액 -->
+        <fieldset>
+            <legend>결제 정보</legend>
+            <p><strong>총 주문 금액:</strong> <span th:text="${totalPrice} + '원'"></span></p>
+        </fieldset>
+
         <!-- 결제 상품 정보 -->
         <fieldset>
             <legend>결제 상품 정보</legend>
