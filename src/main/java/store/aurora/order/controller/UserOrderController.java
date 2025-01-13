@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import store.aurora.common.annotation.Auth;
+import store.aurora.common.encryptor.SimpleEncryptor;
 import store.aurora.feign_client.order.UserOrderInfoClient;
 import store.aurora.order.dto.OrderInfoDto;
 import store.aurora.order.exception.UserOrderInfoClientResolveFailException;
@@ -25,13 +26,16 @@ public class UserOrderController {
     private static final Logger log = LoggerFactory.getLogger("user-logger");
 
     private final UserOrderInfoClient userOrderInfoClient;
+    private final SimpleEncryptor simpleEncryptor;
 
     @GetMapping
     public String myOrderPages(@Auth String userId, Pageable pageable, Model model){
 
         ResponseEntity<Page<OrderInfoDto>> orderInfosResponse;
+        String encrypted = simpleEncryptor.encrypt(userId);
+        log.info("encrypted user id = {}", encrypted);
         try {
-            orderInfosResponse = userOrderInfoClient.getOrderInfos(userId, pageable);
+            orderInfosResponse = userOrderInfoClient.getOrderInfos(encrypted, pageable);
         }catch (FeignException e){
             throw new UserOrderInfoClientResolveFailException(e);
         }
