@@ -13,7 +13,7 @@ import store.aurora.feign_client.coupon.CouponClient;
 //관리자용 쿠폰 생성 및 배포용
 //관리자를 통해서 새 쿠폰을 데이터베이스에 저장하기 때문에 유효성, 무결성 중요(@Validated 사용)
 @Controller
-@RequestMapping("admin")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class AdminCouponController {
