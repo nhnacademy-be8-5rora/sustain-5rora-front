@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import store.aurora.book.CategoryService;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.common.JwtUtil;
-import store.aurora.feign_client.BookSearchClient;
+import store.aurora.feign_client.search.BookSearchClient;
 import org.springframework.data.domain.Page;
+import store.aurora.feign_client.search.ElasticSearchClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
+import store.aurora.search.service.SearchService;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +24,8 @@ public class SearchController {
 
     private final BookSearchClient bookSearchClient;
     private final CategoryService categoryService;
+    private final ElasticSearchClient elasticSearchClient;
+    private final SearchService searchService;
 
     // 디버그용 요청 예시: http://5rora-test:8080/books/search?type=title&keyword=한강&pageNum=1&orderBy=salePrice&orderDirection=desc
     @GetMapping("/books/search")
@@ -64,8 +68,8 @@ public class SearchController {
             return "error"; // 오류 페이지 반환
         }
 
-        Page<BookSearchResponseDTO> bookSearchResponseDTOPage = bookSearchClient.searchBooksByKeyword(
-                jwt, type, keyword, pageNum, orderBy, orderDirection
+        Page<BookSearchResponseDTO> bookSearchResponseDTOPage = searchService.searchBooks(
+                jwt, type, keyword, page,orderBy,orderDirection
         );
 
         // 검색 결과가 없으면 에러 페이지 대신 메시지 전달
