@@ -26,7 +26,7 @@ public interface BookClient {
 
     @GetMapping
     ResponseEntity<Page<BookResponseDto>> getAllBooks(@RequestParam(defaultValue = "0") int page,
-                                                      @RequestParam(defaultValue = "2") int size);
+                                                      @RequestParam(defaultValue = "5") int size);
 
     @PutMapping(value = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void editBook(@PathVariable Long bookId,

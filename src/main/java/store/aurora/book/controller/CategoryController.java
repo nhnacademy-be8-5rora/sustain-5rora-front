@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import store.aurora.book.dto.category.CategoryRequestDTO;
 import store.aurora.book.dto.category.CategoryResponseDTO;
+import store.aurora.book.util.PaginationUtil;
 import store.aurora.feign_client.book.CategoryClient;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/categories")
@@ -47,38 +49,25 @@ public class CategoryController {
 
     @GetMapping
     public String showRootCategories(@RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "2") int size,
+                                     @RequestParam(defaultValue = "5") int size,
                                      Model model) {
         ResponseEntity<Page<CategoryResponseDTO>> response = categoryClient.getRootCategories(page,size);
-        Page<CategoryResponseDTO> categoryPage = response.getBody();
-        if (categoryPage != null) {
-            model.addAttribute("categories", categoryPage.getContent());
-            model.addAttribute("currentPage", categoryPage.getNumber());
-            model.addAttribute("totalPages", categoryPage.getTotalPages());
-        } else {
-            model.addAttribute("categories", Collections.emptyList());
-            model.addAttribute("currentPage", 0);
-            model.addAttribute("totalPages", 0);
-        }
+        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(response.getBody()).orElse(Page.empty());
+
+        PaginationUtil.addPaginationAttributes(model, categoryPage, "categories", 5);
         return "admin/category/categories";
     }
 
     @GetMapping("/{parentId}/children")
     public String showChildCategories(@PathVariable Long parentId,
                                       @RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "2") int size,
+                                      @RequestParam(defaultValue = "5") int size,
                                       Model model) {
         ResponseEntity<Page<CategoryResponseDTO>> response = categoryClient.getChildrenCategories(parentId,page,size);
-        Page<CategoryResponseDTO> categoryPage = response.getBody();
-        if (categoryPage != null) {
-            model.addAttribute("categories", categoryPage.getContent());
-            model.addAttribute("currentPage", categoryPage.getNumber());
-            model.addAttribute("totalPages", categoryPage.getTotalPages());
-        } else {
-            model.addAttribute("categories", Collections.emptyList());
-            model.addAttribute("currentPage", 0);
-            model.addAttribute("totalPages", 0);
-        }
+        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(response.getBody()).orElse(Page.empty());
+
+        PaginationUtil.addPaginationAttributes(model, categoryPage, "categories", 5);
+        model.addAttribute("parentId", parentId);
         return "admin/category/categories";
     }
 
@@ -101,6 +90,8 @@ public class CategoryController {
         categoryClient.deleteCategory(categoryId);
         return "redirect:/categories";
     }
+
+
 
 
 }
