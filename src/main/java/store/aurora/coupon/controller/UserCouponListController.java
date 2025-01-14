@@ -42,6 +42,20 @@ public class UserCouponListController {
         return "coupon/coupon-list";
     }
 
+    //쿠폰 사용 내역 출력
+    @GetMapping(value = "/used/coupon/list")
+    public String usedCouponList(HttpServletRequest request,
+                             Model model) {
+
+        String jwt = JwtUtil.getJwtFromCookie(request);
+
+        List<UserCouponDTO> userCouponList = couponClient.getCouponList(jwt);
+
+        model.addAttribute("userCouponList", userCouponList);
+
+        return "coupon/coupon-used-list";
+    }
+
     //결제창에서 상품마다 사용가능 쿠폰 리스트 확인(매 상품마다 사용 가능한 쿠폰이 뜨게 해야 됨.
     @PostMapping(value = "/calculate")
     public ResponseEntity<Map<Long, List<String>>>proCouponList(HttpServletRequest request,

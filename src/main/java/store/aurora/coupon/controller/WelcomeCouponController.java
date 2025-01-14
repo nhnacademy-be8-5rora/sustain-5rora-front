@@ -27,6 +27,6 @@ public class WelcomeCouponController {
         String message = couponClient.existWelcomeCoupon(jwt);
         model.addAttribute(ALERT_MESSAGE, message); //쿠폰 유무 파악후에 메시지전달
 
-        return "mypage/mypage";   //마이 페이지로 이동
+        return "redirect:/mypage";   //마이 페이지로 이동
     }
 }
