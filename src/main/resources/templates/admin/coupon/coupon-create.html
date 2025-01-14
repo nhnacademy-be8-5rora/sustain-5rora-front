@@ -105,53 +105,37 @@
 
     <hr class="my-5">
 
-    <!-- 사용자 쿠폰 수정 섹션 -->
+        <!-- 사용자 쿠폰 수정 섹션 -->
     <section id="user-coupon-update" class="section">
         <h2 class="section-title text-center">사용자 쿠폰 수정</h2>
         <form th:action="@{/admin/coupon/update}" method="POST">
             <!-- 유저 IDs (여러 개 선택 가능) -->
             <div class="form-group">
-                <label for="updateUserIds">유저쿠폰 ID:</label>
-                <input
-                        type="text"
-                        id="updateUserIds"
-                        name="updateUserIds"
-                        placeholder="유저쿠폰 ID를 콤마로 구분하세요 (예: 1,2,3)"
-                        required>
+                <label for="updateUserIds">유저쿠폰 ID</label>
+                <input type="text" class="form-control" id="updateUserIds" name="updateUserIds" required>
             </div>
+
 
             <!-- 새 쿠폰 정책 -->
             <div class="form-group">
-                <label for="updatePolicyId">새 쿠폰정책 ID:</label>
-                <input
-                        type="number"
-                        class="form-control"
-                        id="updatePolicyId"
-                        name="updatePolicyId"
-                        placeholder="새 정책 ID를 입력하세요">
+                <label for="updatePolicyId">새 쿠폰 정책 ID</label>
+                <input type="number" class="form-control" id="updatePolicyId" name="updatePolicyId" required>
             </div>
 
             <!-- 새 상태 -->
             <div class="form-group">
-                <label for="updateState">새 상태:</label>
-                <select
-                        id="updateState"
-                        name="updateState"
-                        required>
-                    <option value="LIVE">활성</option>
-                    <option value="TIMEOUT">만료</option>
+                <label for="updateState">쿠폰 상태</label>
+                <select class="form-control" id="updateState" name="updateState">
+                    <option value="LIVE">사용가능</option>
                     <option value="USED">사용됨</option>
+                    <option value="TIMEOUT">기간초과</option>
                 </select>
             </div>
 
             <!-- 새 종료일 -->
             <div class="form-group">
-                <label for="updateEndDate">새 종료일:</label>
-                <input
-                        type="date"
-                        class="form-control"
-                        id="updateEndDate"
-                        name="updateEndDate">
+                <label for="updateEndDate">종료일</label>
+                <input type="date" class="form-control" id="updateEndDate" name="updateEndDate">
             </div>
 
             <button type="submit" class="btn btn-primary btn-block">쿠폰 수정</button>

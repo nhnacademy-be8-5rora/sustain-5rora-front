@@ -43,7 +43,7 @@ public class AdminCouponController {
     }
 
     // 사용자 쿠폰 수정
-    @PutMapping(value = "/coupon/update")
+    @PostMapping(value = "/coupon/update")
     public String userCouponUpdate(@ModelAttribute @Validated UpdateUserCouponDto updateUserCouponDto) {
         return executeWithLogging(() -> couponClient.couponUpdate(updateUserCouponDto));
     }
