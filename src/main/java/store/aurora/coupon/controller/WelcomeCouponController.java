@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import store.aurora.common.JwtUtil;
 import store.aurora.feign_client.coupon.CouponClient;
@@ -20,7 +20,7 @@ public class WelcomeCouponController {
     private final CouponClient couponClient;
 
     //회원가입 또는 쿠폰 재발급 버튼시에 호출
-    @PostMapping("/welcomeCoupon")
+    @GetMapping("/welcomeCoupon")
     public String registerUser(HttpServletRequest request, Model model) {
 
         String jwt = JwtUtil.getJwtFromCookie(request);
