@@ -47,7 +47,6 @@ public interface CouponClient {
 
     //회원가입 시에 welcome 쿠폰 증정 및 재발급
     @PostMapping("/welcome")
-    String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
-                              @RequestBody Long couponPolicyId);
+    String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
 }
