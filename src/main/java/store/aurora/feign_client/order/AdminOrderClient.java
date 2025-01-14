@@ -15,6 +15,6 @@ public interface AdminOrderClient {
     Page<AdminOrderDTO> getAllOrderList(@RequestParam("page") int page, @RequestParam("size") int size);
 
 
-//    @PostMapping("/shipment-update/{orderId}")
-//    void updateShipmentStatus(Long orderId, String shipmentState);
+    @PostMapping
+    void updateShipmentStatus(@RequestParam("order-id") Long orderId, @RequestParam("shipment-state") String shipmentState);
 }

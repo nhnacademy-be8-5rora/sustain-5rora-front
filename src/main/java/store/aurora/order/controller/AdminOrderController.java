@@ -1,6 +1,7 @@
 package store.aurora.order.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,10 +34,12 @@ public class AdminOrderController {
         return "admin/order/shipment";
     }
 
-//    @PostMapping("/shipment")
-//    public String updateShipmentStatus(Long orderId, String shipmentState){
-//        adminOrderClient.updateShipmentStatus(orderId, shipmentState);
-//
-//        return "redirect:/admin/order/shipment";
-//    }
+    @PostMapping("/shipment")
+    public String updateShipmentStatus(@RequestParam("order-id") Long orderId,
+                                       @RequestParam("shipment-state") String shipmentState){
+
+        adminOrderClient.updateShipmentStatus(orderId, shipmentState);
+
+        return "redirect:/admin/order/shipment";
+    }
 }
