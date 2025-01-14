@@ -6,7 +6,8 @@ import java.time.LocalDate;
 
 @Data
 public class UsedCouponDTO {
-    private String couponName;
+    private String couponName;  //쿠폰 이름
     private LocalDate usedDate; //쿠폰 사용한 날짜
-    private long saleAmount;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

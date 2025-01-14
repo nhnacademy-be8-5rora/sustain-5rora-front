@@ -10,8 +10,28 @@
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 
-<div layout:fragment="content">
+    <div layout:fragment="content">
+        <h2>Used Coupons</h2>
 
-</div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Coupon Name</th>
+                <th>Used Date</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Thymeleaf Loop to display each UsedCouponDTO -->
+            <tr th:each="usedCoupon : ${usedCouponList}">
+                <td th:text="${usedCoupon.couponName}">Coupon Name</td>
+                <td th:text="${usedCoupon.usedDate}">Used Date</td>
+                <td th:text="${usedCoupon.startDate}">Start Date</td>
+                <td th:text="${usedCoupon.endDate}">End Date</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

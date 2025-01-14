@@ -50,9 +50,9 @@ public class UserCouponListController {
 
         String jwt = JwtUtil.getJwtFromCookie(request);
 
-        List<UsedCouponDTO> userCouponList = couponClient.getUsedCouponList(jwt);
+        List<UsedCouponDTO> usedCouponList = couponClient.getUsedCouponList(jwt);
 
-        model.addAttribute("userCouponList", userCouponList);
+        model.addAttribute("usedCouponList", usedCouponList);
 
         return "coupon/coupon-used-list";
     }
