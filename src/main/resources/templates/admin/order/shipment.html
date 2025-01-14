@@ -52,6 +52,7 @@
             <th>주문 번호</th>
             <th>배송 상태</th>
             <th>세부 정보</th>
+            <th>상태 변경</th>
           </tr>
           </thead>
           <tbody>
@@ -64,7 +65,7 @@
                 <tr>
                   <th>상세 번호</th>
                   <th>배송 상태</th>
-                  <th>배송 날짜</th>
+                  <th>출고 일자</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -75,6 +76,22 @@
                 </tr>
                 </tbody>
               </table>
+            </td>
+            <td>
+              <form th:action="@{/admin/order/shipment}" method="post">
+                <input type="hidden" name="order-id" th:value="${order.orderId}"/>
+                <div th:if="${order.shipmentState == 'PENDING'}">
+                  <input type="hidden" name="shipment-state" value="SHIPPING"/>
+                  <button type="submit" class="btn btn-primary mt-2">배송 시작</button>
+                </div>
+                <div th:if="${order.shipmentState == 'SHIPPING'}">
+                  <input type="hidden" name="shipment-state" value="PENDING"/>
+                  <button type="submit" class="btn btn-warning mt-2">배송 취소</button>
+                </div>
+                <div th:if="${order.shipmentState == 'SHIPPED'}">
+                  <button type="button" class="btn btn-secondary mt-2" disabled>배송 완료</button>
+                </div>
+              </form>
             </td>
           </tr>
           </tbody>
