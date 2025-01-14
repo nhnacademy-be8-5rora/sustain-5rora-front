@@ -58,21 +58,32 @@
         <!-- 페이지네이션 -->
         <nav class="mt-4" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
-                <!-- 이전 버튼 -->
+                <!-- 첫 페이지 버튼 -->
                 <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/tags(page=${currentPage - 1}, size=2)}" class="page-link">이전</a>
+                    <a th:href="@{/tags(page=0, size=${size})}" class="page-link">처음</a>
+                </li>
+
+                <!-- 이전 버튼 -->
+                <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/tags(page=${startPage - rangeSize}, size=${size})}" class="page-link">이전</a>
                 </li>
 
                 <!-- 페이지 번호 -->
-                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
                     th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
-                    <a th:href="@{/tags(page=${i}, size=2)}" th:text="${i + 1}" class="page-link"></a>
+                    <a th:href="@{/tags(page=${i}, size=${size})}" th:text="${i + 1}" class="page-link"></a>
                 </li>
 
                 <!-- 다음 버튼 -->
-                <li th:class="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/tags(page=${currentPage + 1}, size=2)}" class="page-link">다음</a>
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/tags(page=${endPage + 1}, size=${size})}" class="page-link">다음</a>
                 </li>
+
+                <!-- 마지막 페이지 버튼 -->
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/tags(page=${totalPages - 1}, size=${size})}" class="page-link">마지막</a>
+                </li>
+
             </ul>
         </nav>
 

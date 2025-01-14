@@ -14,7 +14,7 @@
     <section class="container mt-5">
         <h1 class="text-center mb-4">도서 목록</h1>
         <div class="mb-3 text-end">
-            <a href="/books/aladin/search/form" class="btn btn-secondary">도서 검색</a>
+            <a href="/books/aladin/search/form" class="btn btn-secondary">도서 등록</a>
         </div>
         <table class="table table-bordered">
             <thead>
@@ -45,8 +45,8 @@
                 <td th:text="${book.pubDate}"></td>
                 <td th:text="${book.priceStandard}"></td>
                 <td th:text="${book.priceSales}"></td>
-                <td th:text="${book.isForSale ? 'Yes' : 'No'}"></td>
-                <td th:text="${book.isPackaged ? 'Yes' : 'No'}"></td>
+                <td th:text="${book.isSale ? 'Yes' : 'No'}"></td>
+                <td th:text="${book.isPackaging ? 'Yes' : 'No'}"></td>
                 <td th:text="${book.stock}"></td>
                 <td>
                     <a th:href="@{/books/{bookId}/edit(bookId=${book.id})}" class="btn btn-primary btn-sm">수정</a>
@@ -58,20 +58,30 @@
         <!-- 페이지네이션 -->
         <nav class="mt-4" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
-                <!-- 이전 버튼 -->
+                <!-- 첫 페이지 버튼 -->
                 <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/books(page=${currentPage - 1}, size=2)}" class="page-link">이전</a>
+                    <a th:href="@{/books(page=0, size=${size})}" class="page-link">처음</a>
+                </li>
+
+                <!-- 이전 버튼 -->
+                <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/books(page=${startPage - rangeSize}, size=${size})}" class="page-link">이전</a>
                 </li>
 
                 <!-- 페이지 번호 -->
-                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
                     th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
-                    <a th:href="@{/books(page=${i}, size=2)}" th:text="${i + 1}" class="page-link"></a>
+                    <a th:href="@{/books(page=${i}, size=${size})}" th:text="${i + 1}" class="page-link"></a>
                 </li>
 
                 <!-- 다음 버튼 -->
-                <li th:class="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/books(page=${currentPage + 1}, size=2)}" class="page-link">다음</a>
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/books(page=${endPage + 1}, size=${size})}" class="page-link">다음</a>
+                </li>
+
+                <!-- 마지막 페이지 버튼 -->
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/books(page=${totalPages - 1}, size=${size})}" class="page-link">마지막</a>
                 </li>
             </ul>
         </nav>
