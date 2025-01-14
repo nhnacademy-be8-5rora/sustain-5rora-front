@@ -14,11 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import store.aurora.book.dto.category.CategoryResponseDTO;
-import store.aurora.feign_client.BookSearchClient;
 import store.aurora.feign_client.UserClient;  // UserClient 임포트 추가
 import store.aurora.book.CategoryService;
+import store.aurora.feign_client.search.BookSearchClient;
+import store.aurora.feign_client.search.ElasticSearchClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
 import org.springframework.data.domain.Page;
+import store.aurora.search.service.SearchService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,13 +36,19 @@ class SearchControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private BookSearchClient bookSearchClient;
-
-    @MockBean
     private CategoryService categoryService;
 
     @MockBean
+    private SearchService searchService;
+
+    @MockBean
     private UserClient userClient;
+
+    @MockBean
+    private BookSearchClient bookSearchClient;
+
+    @MockBean
+    private ElasticSearchClient elasticSearchClient;
 
     @Autowired
     private SearchController searchController;
@@ -55,7 +63,7 @@ class SearchControllerTest {
     @Test
     void testSearchWithoutKeyword() throws Exception {
         String type = "title";
-        String pageNum = "1";
+        int pageNum = 1;
         String orderBy = "salePrice";
         String orderDirection = "asc";
 
@@ -66,12 +74,12 @@ class SearchControllerTest {
         Page<BookSearchResponseDTO> page = new PageImpl<>(books);
 
         // 빈 키워드로 검색
-        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(""), eq(pageNum), eq(orderBy), eq(orderDirection)))
+        when(searchService.searchBooks(anyString(), eq(type), eq(""), eq(pageNum-1), eq(orderBy), eq(orderDirection)))
                 .thenReturn(page);
 
         mockMvc.perform(get("/books/search")
                         .param("type", type)
-                        .param("pageNum", pageNum)
+                        .param("pageNum", String.valueOf(pageNum))
                         .param("orderBy", orderBy)
                         .param("orderDirection", orderDirection))
                 .andExpect(status().isOk())
@@ -79,11 +87,11 @@ class SearchControllerTest {
                 .andExpect(model().attributeExists("books"))
                 .andExpect(model().attribute("books", books));
     }
-    @DisplayName("keyword가 빈 문자열일 때 처리")
+    @DisplayName("keyword가 빈 문자열일 때 책 전체에서처리")
     @Test
     void testSearchWithEmptyKeyword() throws Exception {
         String type = "title";
-        String pageNum = "1";
+        int pageNum = 1;
         String orderBy = "salePrice";
         String orderDirection = "asc";
 
@@ -94,13 +102,13 @@ class SearchControllerTest {
         Page<BookSearchResponseDTO> page = new PageImpl<>(books);
 
         // 빈 문자열로 검색
-        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(""), eq(pageNum), eq(orderBy), eq(orderDirection)))
+        when(searchService.searchBooks(anyString(), eq(type), eq(""), eq(pageNum-1), eq(orderBy), eq(orderDirection)))
                 .thenReturn(page);
 
         mockMvc.perform(get("/books/search")
                         .param("type", type)
                         .param("keyword", "")  // keyword 파라미터가 빈 문자열
-                        .param("pageNum", pageNum)
+                        .param("pageNum", String.valueOf(pageNum))
                         .param("orderBy", orderBy)
                         .param("orderDirection", orderDirection))
                 .andExpect(status().isOk())
@@ -130,19 +138,19 @@ class SearchControllerTest {
     void testSearchWithNoResults() throws Exception {
         String keyword = "존재하지 않는 책";
         String type = "title";
-        String pageNum = "1";
+        int pageNum = 1;
         String orderBy = "salePrice";
         String orderDirection = "asc";
 
         Page<BookSearchResponseDTO> emptyPage = new PageImpl<>(Collections.emptyList());
 
-        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(keyword), eq(pageNum), eq(orderBy), eq(orderDirection)))
+        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(pageNum-1), eq(orderBy), eq(orderDirection)))
                 .thenReturn(emptyPage);
 
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
-                        .param("pageNum", pageNum)
+                        .param("pageNum", String.valueOf(pageNum))
                         .param("orderBy", orderBy)
                         .param("orderDirection", orderDirection))
                 .andExpect(status().isOk())
@@ -156,7 +164,7 @@ class SearchControllerTest {
     void testSearchWithCategoryType() throws Exception {
         String keyword = "1"; // 카테고리 ID
         String type = "category";
-        String pageNum = "1";
+        int pageNum = 1;
 
         CategoryResponseDTO categoryDTO = new CategoryResponseDTO();
         categoryDTO.setId(1L);
@@ -172,7 +180,7 @@ class SearchControllerTest {
         List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
         Page<BookSearchResponseDTO> page = new PageImpl<>(books);
 
-        when(bookSearchClient.searchBooksByKeyword(anyString(), eq(type), eq(keyword), eq(pageNum), eq("title"), eq("asc")))
+        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(pageNum-1), eq("title"), eq("asc")))
                 .thenReturn(page);
         when(categoryService.findById(Long.parseLong(keyword)))
                 .thenReturn(categoryDTO);
@@ -180,7 +188,7 @@ class SearchControllerTest {
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
-                        .param("pageNum", pageNum))
+                        .param("pageNum", String.valueOf(pageNum)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("search/bookSearchResults"))
                 .andExpect(model().attributeExists("books"))

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import store.aurora.common.annotation.Auth;
-import store.aurora.feign_client.BookSearchClient;
+import store.aurora.feign_client.search.BookSearchClient;
 import store.aurora.feign_client.book.BookClient;
 import org.springframework.data.domain.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
@@ -36,10 +36,10 @@ public class TestController {
     public String indexTest(Model model){
         //좋아요가 많은 책
         Page<BookSearchResponseDTO> likeBooks =
-                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", PAGE_SIZE, "like", ASCENDING_ORDER);
+                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", Integer.parseInt(PAGE_SIZE), "like", ASCENDING_ORDER);
         //조회수가 많은 책
         Page<BookSearchResponseDTO> viewBooks =
-                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", PAGE_SIZE, "view", ASCENDING_ORDER);
+                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", Integer.parseInt(PAGE_SIZE), "view", ASCENDING_ORDER);
 
         //저번달 기준 가장 많이 팔린 책
         ResponseEntity<BookSearchResponseDTO> mostSellerBookResponse = bookClient.getMostBook();
