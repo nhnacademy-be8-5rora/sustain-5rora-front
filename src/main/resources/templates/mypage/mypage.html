@@ -28,14 +28,6 @@
     }
   </style>
   <script>
-    // 메시지를 팝업으로 표시하는 함수
-    window.onload = function() {
-      const couponMessage = '<c:out value="${couponMessage}" />';
-      if (couponMessage) {
-        alert(couponMessage); // 메시지를 팝업으로 표시
-      }
-    };
-
     document.addEventListener('DOMContentLoaded', function () {
       // 콘텐츠 변경 스크립트
       const contentArea = document.getElementById('content-area');
@@ -249,6 +241,17 @@
 
 
 </div>
+
+  <script>
+    // 메시지를 팝업으로 표시하는 함수
+    window.onload = function() {
+      const couponMessage = '<c:out value="${couponMessage}" />';
+      if (couponMessage) {
+        alert(couponMessage); // 메시지를 팝업으로 표시
+      }
+    };
+  </script>
+
 </body>
 
 </html>
