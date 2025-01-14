@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 목록</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h1>주문 목록</h1>
+
+    <!-- 주문 목록 테이블 -->
+    <table border="1">
+        <thead>
+        <tr>
+            <th>주문 ID</th>
+            <th>총액</th>
+            <th>상태</th>
+            <th>주문 시간</th>
+            <th>주문 내용</th>
+            <th>상세 보기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${pagedOrderInfo.content}">
+            <td th:text="${order.orderId}"></td>
+            <td th:text="${order.totalAmount}"></td>
+            <td th:text="${order.orderState}"></td>
+            <td th:text="${#temporals.format(order.orderTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${order.orderContent}"></td>
+            <td>
+                <a th:href="@{/mypage/orders/{orderId}(orderId=${order.orderId})}">
+                    <button>상세 보기</button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 페이지네이션 -->
+    <div>
+        <button th:if="${pagedOrderInfo.hasPrevious()}"
+                th:href="@{/mypage/orders(page=${pagedOrderInfo.number - 1})}">이전</button>
+        <span th:text="${pagedOrderInfo.number + 1} + '/' + ${pagedOrderInfo.totalPages}"></span>
+        <button th:if="${pagedOrderInfo.hasNext()}"
+                th:href="@{/mypage/orders(page=${pagedOrderInfo.number + 1})}">다음</button>
+    </div>
+</div>
+
+</body>
+</html>
