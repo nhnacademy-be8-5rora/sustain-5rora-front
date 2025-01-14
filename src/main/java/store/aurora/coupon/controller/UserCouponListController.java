@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.common.JwtUtil;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
+import store.aurora.coupon.dto.response.UsedCouponDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
 import store.aurora.feign_client.coupon.CouponClient;
 
@@ -49,7 +50,7 @@ public class UserCouponListController {
 
         String jwt = JwtUtil.getJwtFromCookie(request);
 
-        List<UserCouponDTO> userCouponList = couponClient.getCouponList(jwt);
+        List<UsedCouponDTO> userCouponList = couponClient.getUsedCouponList(jwt);
 
         model.addAttribute("userCouponList", userCouponList);
 
