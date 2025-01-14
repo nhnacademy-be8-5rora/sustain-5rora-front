@@ -27,8 +27,7 @@ public class UserCouponListController {
 
 
     @GetMapping(value = "/coupon/list")
-    public String couponList(HttpServletRequest request,
-                             Model model) {
+    public String couponList(HttpServletRequest request, Model model) {
 
         String jwt = JwtUtil.getJwtFromCookie(request);
 
@@ -45,8 +44,7 @@ public class UserCouponListController {
 
     //쿠폰 사용 내역 출력
     @GetMapping(value = "/used/coupon/list")
-    public String usedCouponList(HttpServletRequest request,
-                             Model model) {
+    public String usedCouponList(HttpServletRequest request, Model model) {
 
         String jwt = JwtUtil.getJwtFromCookie(request);
 

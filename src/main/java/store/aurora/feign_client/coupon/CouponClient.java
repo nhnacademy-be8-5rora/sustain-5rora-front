@@ -51,5 +51,5 @@ public interface CouponClient {
     String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
     @GetMapping("/used/list")
-    List<UsedCouponDTO> getUsedCouponList(String jwt);
+    List<UsedCouponDTO> getUsedCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 }

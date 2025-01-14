@@ -25,10 +25,10 @@
             <tbody>
             <!-- Thymeleaf Loop to display each UsedCouponDTO -->
             <tr th:each="usedCoupon : ${usedCouponList}">
-                <td th:text="${usedCoupon.couponName}">Coupon Name</td>
-                <td th:text="${usedCoupon.usedDate}">Used Date</td>
-                <td th:text="${usedCoupon.startDate}">Start Date</td>
-                <td th:text="${usedCoupon.endDate}">End Date</td>
+                <td th:text="${usedCoupon.couponName}">쿠폰명</td>
+                <td th:text="${usedCoupon.usedDate}">사용일</td>
+                <td th:text="${usedCoupon.startDate}">발행일</td>
+                <td th:text="${usedCoupon.endDate}">만료일</td>
             </tr>
             </tbody>
         </table>
