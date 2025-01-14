@@ -28,6 +28,14 @@
     }
   </style>
   <script>
+    // 메시지를 팝업으로 표시하는 함수
+    window.onload = function() {
+      const couponMessage = '<c:out value="${couponMessage}" />';
+      if (couponMessage) {
+        alert(couponMessage); // 메시지를 팝업으로 표시
+      }
+    };
+
     document.addEventListener('DOMContentLoaded', function () {
       // 콘텐츠 변경 스크립트
       const contentArea = document.getElementById('content-area');
@@ -159,7 +167,7 @@
                   <a class="nav-link py-0" href="/coupon/list" id="menu-coupons"><span>쿠폰</span></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link py-0" href="/welcomeCoupon" id="menu-coupons-revive"><span>쿠폰 재발급</span></a>
+                  <a class="nav-link py-0" href="/welcome/coupon" id="menu-coupons-revive"><span>쿠폰 재발급</span></a>
                 </li>
               </ul>
               <span class="px-3">마이 정보</span>
