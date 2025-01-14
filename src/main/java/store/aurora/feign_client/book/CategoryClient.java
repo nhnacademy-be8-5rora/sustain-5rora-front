@@ -15,15 +15,19 @@ import java.util.List;
 @FeignClient(name = "categoryClient", url = "${api.gateway.base-url}" + "/api/categories")
 public interface CategoryClient {
 
+    // 모든 카테고리 계층적으로 가져오기
+    @GetMapping
+    ResponseEntity<List<CategoryResponseDTO>> getCategories();
+
     @GetMapping("/root")
     ResponseEntity<Page<CategoryResponseDTO>> getRootCategories(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "2") int size);
+                                                                @RequestParam(defaultValue = "5") int size);
 
 
     @GetMapping("/{parentId}/children")
     ResponseEntity<Page<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId,
                                                                     @RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "2") int size);
+                                                                    @RequestParam(defaultValue = "5") int size);
 
     @PostMapping
     ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO requestDTO);
@@ -39,8 +43,5 @@ public interface CategoryClient {
     @GetMapping("/{categoryId}")
     ResponseEntity<CategoryResponseDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
 
-    // 모든 카테고리 계층적으로 가져오기
-    @GetMapping
-    ResponseEntity<List<CategoryResponseDTO>> getCategories();
 }
 

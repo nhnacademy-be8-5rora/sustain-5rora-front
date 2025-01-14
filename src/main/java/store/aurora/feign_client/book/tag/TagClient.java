@@ -19,7 +19,7 @@ public interface TagClient {
     // 모든 태그 조회
     @GetMapping
     ResponseEntity<Page<TagResponseDto>> getTags(@RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "2") int size);
+                                                    @RequestParam(defaultValue = "5") int size);
     // 태그 ID로 조회
 //    @GetMapping("/{id}")
 //    ResponseEntity<TagResponseDto> getTagById(@PathVariable("id") Long id);
