@@ -26,7 +26,7 @@ public interface CouponClient {
     ResponseEntity<String> userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
 
     // 사용자 쿠폰 수정
-    @PutMapping("/admin/update")
+    @PostMapping("/admin/update")
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponDto updateUserCouponDto);
 
     //환불시에 refund controller 작동(if문으로 해당 refund 상품하는 결제 내역에 쿠폰이 있다면 작동하게끔)
