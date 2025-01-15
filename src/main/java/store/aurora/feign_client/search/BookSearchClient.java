@@ -1,4 +1,4 @@
-package store.aurora.feign_client;
+package store.aurora.feign_client.search;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public interface BookSearchClient {
     Page<BookSearchResponseDTO> searchBooksByKeyword(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,
                                                      @RequestParam("type") String type,
             @RequestParam("keyword") String keyword,
-            @RequestParam("pageNum") String pageNum,
+            @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
             @RequestParam(required = false) String orderBy,
             @RequestParam(required = false) String orderDirection
     );

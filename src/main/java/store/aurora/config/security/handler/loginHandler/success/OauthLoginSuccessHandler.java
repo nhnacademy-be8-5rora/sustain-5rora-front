@@ -17,6 +17,7 @@ import store.aurora.auth.dto.request.JwtRequestDto;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.feign_client.AuthClient;
 import store.aurora.feign_client.UserClient;
+import store.aurora.feign_client.coupon.CouponClient;
 import store.aurora.user.dto.request.SignUpRequest;
 import store.aurora.user.exception.UserSignUpFailException;
 
@@ -33,6 +34,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     private final UserClient userClient;
     private final AuthClient authClient;
+    private final CouponClient couponClient;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -81,8 +83,9 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
                 response.sendRedirect("/login");
                 return;
             }
-        }
 
+            couponClient.existWelcomeCoupon(id);
+        }
 
         //3. jwt토큰 만들기
         Optional<Cookie> optionalCookie = jwtOven(id);
