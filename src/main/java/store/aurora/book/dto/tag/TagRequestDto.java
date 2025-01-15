@@ -13,6 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TagRequestDto {
     @NotBlank(message = "태그 이름은 필수입니다.")
-    @Size(max = 15)
+    @Size(max = 15, message = "태그 이름은 최대 15자까지 입력 가능합니다.")
     private String name; // 태그 이름
 }

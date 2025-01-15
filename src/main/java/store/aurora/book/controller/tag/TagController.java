@@ -1,6 +1,8 @@
 package store.aurora.book.controller.tag;
 
 
+import feign.FeignException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,6 @@ import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.book.util.PaginationUtil;
 import store.aurora.feign_client.book.tag.TagClient;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Controller
@@ -38,14 +39,14 @@ public class TagController {
 
     // 태그 추가 처리
     @PostMapping("/create")
-    public String addTag(@ModelAttribute TagRequestDto tagRequestDto) {
+    public String addTag(@Valid @ModelAttribute TagRequestDto tagRequestDto) {
         tagClient.createTag(tagRequestDto);
         return REDIRECT_TAGS;
     }
 
     // 태그 수정 처리
     @PostMapping("/update/{id}")
-    public String updateTag(@PathVariable("id") Long id, @ModelAttribute TagRequestDto tagRequestDto) {
+    public String updateTag(@PathVariable("id") Long id, @Valid @ModelAttribute TagRequestDto tagRequestDto) {
         tagClient.updateTag(id, tagRequestDto);
         return REDIRECT_TAGS;
     }
