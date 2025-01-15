@@ -50,6 +50,7 @@ public interface CouponClient {
     @PostMapping("/welcome")
     String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
+    //회원가입 시 쿠폰 발급
     @PostMapping("/signup/welcome")
     String signUpWelcomeCoupon(@RequestParam String userId);
 
