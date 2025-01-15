@@ -18,6 +18,6 @@ public class AuthUsernameResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return webRequest.getUserPrincipal().getName();
+        return webRequest.getUserPrincipal() != null ? webRequest.getUserPrincipal().getName() : null;
     }
 }
