@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import store.aurora.feign_client.UserClient;
+import store.aurora.feign_client.coupon.CouponClient;
 import store.aurora.user.dto.request.SignUpRequest;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class SignupController {
 
     private final UserClient userClient;
-
+    private final CouponClient couponClient;
 
     @GetMapping
     public String signUp() {
@@ -28,6 +29,11 @@ public class SignupController {
     public String signUp(@ModelAttribute SignUpRequest signUpRequest,
                          HttpServletResponse response) {
         ResponseEntity<Map<String, String>> clientResponse = userClient.signUp(signUpRequest, false);
+
+        String id = signUpRequest.getId();
+
+        couponClient.signUpWelcomeCoupon(id);
+
         return processClientRes(response, clientResponse);
     }
 
