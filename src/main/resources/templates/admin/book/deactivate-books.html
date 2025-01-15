@@ -6,11 +6,17 @@
 
 <head>
     <meta charset="utf-8">
-    <title>도서 목록</title>
+    <title>판매중지된 도서 목록</title>
     <style>
         /* 공통 스타일 */
         body {
             font-family: Arial, sans-serif;
+        }
+
+        .container {
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         /* 테이블 스타일 */
@@ -30,7 +36,7 @@
         }
 
         /* 버튼 스타일 */
-        .btn, a.btn{
+        .btn , a.btn{
             border-radius: 20px;
             padding: 8px 20px;
             font-size: 14px;
@@ -43,8 +49,8 @@
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 <div layout:fragment="content">
     <section class="container mt-5">
-        <h1 class="text-center text-primary mb-4">도서 관리</h1>
-        <a href="/books/deactivate" class="btn btn-secondary">비활성화 도서 보기</a>
+        <h1 class="text-center text-primary mb-4">비활성화된 도서 관리</h1>
+        <a href="/books" class="btn btn-secondary">판매중인 도서 보기</a>
         <div class="mb-3 text-end">
             <a href="/books/aladin/search/form" class="btn btn-primary">도서 등록</a>
         </div>
@@ -59,10 +65,8 @@
                 <th>출판일</th>
                 <th>정가</th>
                 <th>판매가</th>
-                <th>판매 여부</th>
                 <th>포장 여부</th>
                 <th>재고</th>
-                <th>수정</th>
                 <th>활성여부</th>
             </tr>
             </thead>
@@ -78,15 +82,11 @@
                 <td th:text="${book.pubDate}"></td>
                 <td th:text="${book.priceStandard}"></td>
                 <td th:text="${book.priceSales}"></td>
-                <td th:text="${book.isSale ? 'Yes' : 'No'}"></td>
                 <td th:text="${book.isPackaging ? 'Yes' : 'No'}"></td>
                 <td th:text="${book.stock}"></td>
                 <td>
-                    <a th:href="@{/books/{bookId}/edit(bookId=${book.id})}" class="btn btn-primary btn-sm">수정</a>
-                </td>
-                <td>
-                    <form th:action="@{/books/{bookId}/deactivate(bookId=${book.id})}" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">비활성화</button>
+                    <form th:action="@{/books/{bookId}/activate(bookId=${book.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success btn-sm">활성화</button>
                     </form>
                 </td>
             </tr>

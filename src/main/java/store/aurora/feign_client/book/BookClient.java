@@ -45,12 +45,15 @@ public interface BookClient {
     @GetMapping("/aladin/{bookId}")
     ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("bookId") Long bookId);
 
+    @GetMapping("/deactivate")
+    ResponseEntity<Page<BookResponseDto>> getDeactivateBooks(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "5") int size);
 
+    @PostMapping("/{bookId}/deactivate")
+    ResponseEntity<Void> deactivateBook(@PathVariable Long bookId);
 
-
-    // 책 삭제
-    @DeleteMapping("/{bookId}")
-    ResponseEntity<Void> deleteBook(@PathVariable("bookId") Long bookId);
+    @PostMapping("/{bookId}/activate")
+    ResponseEntity<Void> activateBook(@PathVariable Long bookId);
 
     @GetMapping("/likes")
     ResponseEntity<Page<BookSearchResponseDTO>> getLikeBooks(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,

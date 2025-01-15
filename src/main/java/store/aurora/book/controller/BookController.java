@@ -126,17 +126,6 @@ public class BookController {
         return REDIRECT_BOOKS;
     }
 
-    @GetMapping
-    public String listBooks(@RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "5") int size,
-                            Model model) {
-        ResponseEntity<Page<BookResponseDto>> response = bookClient.getAllBooks(page, size);
-        Page<BookResponseDto> bookPage = Optional.ofNullable(response.getBody()).orElse(Page.empty());
-
-        PaginationUtil.addPaginationAttributes(model, bookPage, BOOKS_ATTRIBUTE, 5);
-        return "admin/book/book-list";
-    }
-
     // 도서 수정 폼 렌더링
     @GetMapping("/{bookId}/edit")
     public String showEditForm(@PathVariable Long bookId, Model model) {
@@ -163,7 +152,6 @@ public class BookController {
         model.addAttribute("bookId", bookId); // 책 ID를 다시 모델에 추가
 
         if (bindingResult.hasErrors()) {
-            System.out.println("Validation errors: " + bindingResult.getAllErrors());
             return BOOK_EDIT_VIEW;
         }
 
@@ -175,8 +163,39 @@ public class BookController {
         }
         return REDIRECT_BOOKS;
     }
+    @PostMapping("/{bookId}/activate")
+    public String activateBook(@PathVariable Long bookId) {
+        bookClient.activateBook(bookId);
+        return "redirect:/books/deactivate";
+    }
 
+    @PostMapping("/{bookId}/deactivate")
+    public String deactivateBook(@PathVariable Long bookId) {
+        bookClient.deactivateBook(bookId);
+        return REDIRECT_BOOKS;
+    }
 
+    @GetMapping
+    public String listBooks(@RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "5") int size,
+                            Model model) {
+        ResponseEntity<Page<BookResponseDto>> response = bookClient.getAllBooks(page, size);
+        Page<BookResponseDto> bookPage = Optional.ofNullable(response.getBody()).orElse(Page.empty());
+
+        PaginationUtil.addPaginationAttributes(model, bookPage, BOOKS_ATTRIBUTE, 5);
+        return "admin/book/book-list";
+    }
+
+    @GetMapping("/deactivate")
+    public String listDeactivateBooks(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "5") int size,
+                                      Model model) {
+        ResponseEntity<Page<BookResponseDto>> response = bookClient.getDeactivateBooks(page, size);
+        Page<BookResponseDto> bookPage = Optional.ofNullable(response.getBody()).orElse(Page.empty());
+
+        PaginationUtil.addPaginationAttributes(model, bookPage, BOOKS_ATTRIBUTE, 5);
+        return "admin/book/deactivate-books"; // 비활성화된 도서 관리 페이지
+    }
 
     @GetMapping("/{bookId}")
     public String singleInquiryBookInfo(@PathVariable Long bookId, Model model) {
