@@ -16,7 +16,6 @@ import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.book.util.PaginationUtil;
 import store.aurora.feign_client.book.CategoryClient;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

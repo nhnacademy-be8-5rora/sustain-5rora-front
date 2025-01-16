@@ -244,6 +244,9 @@
                         <!-- 좋아요 많은 순 탭 -->
                         <div id="like" data-tab-content class="active">
                             <div class="row">
+                                <div th:if="${#lists.isEmpty(likeBooks)}">
+                                    <p>좋아요 많은 책이 없습니다.</p>
+                                </div>
                                 <!-- 반복문을 이용해 책 데이터 표시 -->
                                 <div class="col-md-3" th:each="book : ${likeBooks}">
                                     <div class="product-item">
@@ -278,6 +281,9 @@
                         <!-- 조회수 많은 순 탭 -->
                         <div id="view" data-tab-content>
                             <div class="row">
+                                <div th:if="${#lists.isEmpty(likeBooks)}">
+                                    <p>조회수가 많은 책이 없습니다.</p>
+                                </div>
                                 <div class="col-md-3" th:each="book : ${viewBooks}">
                                     <div class="product-item">
                                         <figure class="product-style">
