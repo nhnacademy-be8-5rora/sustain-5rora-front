@@ -107,4 +107,31 @@ public class UserOrderController {
 
         return "redirect:/mypage/orders/" + canceledOrderId;
     }
+
+    @PostMapping("/mypage/order/refund")
+    public String refundOrder(@RequestParam("order-id") Long orderId,
+                              @Auth String userId){
+
+        String encryptedOrderId = simpleEncryptor.encrypt(String.valueOf(orderId));
+        String encryptedUserId = simpleEncryptor.encrypt(userId);
+
+        ResponseEntity<Boolean> booleanResponseEntity = genericUserOrderClient.isOwner(encryptedOrderId, encryptedUserId, null);
+        HttpStatusCode statusCode = booleanResponseEntity.getStatusCode();
+
+        if(statusCode.is4xxClientError() || statusCode.is5xxServerError()){
+            log.info("잘못된 접근입니다. statusCode={}, userId={}, orderId={}", statusCode, userId, orderId);
+            return "redirect:/mypage/orders/" + orderId;
+        }
+
+        Boolean isOwner = booleanResponseEntity.getBody();
+        if(!isOwner){
+            log.info("주문 취소 권한이 없습니다. userId={}, orderId={}", userId, orderId);
+            return "redirect:/mypage/orders/" + orderId;
+        }
+
+        //orderId로 order를 환불하는 api
+        Long refundOrderId = genericUserOrderClient.requestRefund(encryptedOrderId).getBody();
+
+        return "redirect:/mypage/orders/" + refundOrderId;
+    }
 }
