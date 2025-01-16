@@ -1,8 +1,10 @@
 package store.aurora.review.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,15 +32,15 @@ public class ReviewController {
     }
 
     // 리뷰 등록 처리
-    @PostMapping("/{bookId}/create")
+    @PostMapping(value = "/{bookId}/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String createReview(Authentication authentication,
                                @PathVariable Long bookId,
-                               @RequestParam("rating") Integer rating,
-                               @RequestParam("content") String content,
-                               @RequestParam(value = "files", required = false) List<MultipartFile> files,
+                               @Valid @ModelAttribute ReviewRequest reviewRequest,
+//                               @RequestParam("rating") Integer rating,
+//                               @RequestParam("content") String content,
+                               @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                HttpServletResponse response) {
         String userId = authentication.getPrincipal().toString();
-        ReviewRequest reviewRequest = new ReviewRequest(rating, content);
 
         ResponseEntity<String> clientResponse = reviewClient.createReview(reviewRequest, files, bookId, userId);
 
@@ -88,17 +90,15 @@ public class ReviewController {
 
 
     // 리뷰 수정 처리
-    @PostMapping("/{reviewId}/edit")
+    @PostMapping(value = "/{reviewId}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String updateReview(Authentication authentication,
                                @PathVariable Long reviewId,
-                               @RequestParam("rating") Integer rating,
-                               @RequestParam("content") String content,
-                               @RequestParam(value = "files", required = false) List<MultipartFile> files,
-//                               @RequestParam Long bookId,
-//                               @RequestParam String userId,
+                               @Valid @ModelAttribute ReviewRequest reviewRequest,
+//                               @RequestParam("rating") Integer rating,
+//                               @RequestParam("content") String content,
+                               @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                HttpServletResponse response) {
         String userId = authentication.getPrincipal().toString();
-        ReviewRequest reviewRequest = new ReviewRequest(rating, content);
 
         ResponseEntity<String> clientResponse = reviewClient.updateReview(reviewId, reviewRequest, files, userId);
 

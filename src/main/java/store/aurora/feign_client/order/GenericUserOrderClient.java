@@ -15,4 +15,7 @@ public interface GenericUserOrderClient {
 
     @PostMapping("/api/order/cancel")
     ResponseEntity<Long> orderCancel(@RequestParam("order-id") String encryptedOrderId);
+
+    @PostMapping("/api/order/refund")
+    ResponseEntity<Long> requestRefund(@RequestParam("order-id") String encryptedOrderId);
 }
