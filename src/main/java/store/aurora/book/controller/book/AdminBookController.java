@@ -1,4 +1,4 @@
-package store.aurora.book.controller;
+package store.aurora.book.controller.book;
 
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,23 +18,25 @@ import store.aurora.book.dto.aladin.BookDetailDto;
 import store.aurora.book.dto.aladin.BookRequestDto;
 import store.aurora.book.dto.aladin.BookResponseDto;
 import store.aurora.book.dto.category.CategoryResponseDTO;
+import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.book.util.PaginationUtil;
 import store.aurora.common.JwtUtil;
 import store.aurora.feign_client.book.AladinBookClient;
 import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.book.CategoryClient;
+import store.aurora.feign_client.book.tag.TagClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/books")
+@RequestMapping("/admin/books")
 @RequiredArgsConstructor
-public class BookController {
+public class AdminBookController {
     private static final String BOOKS_ATTRIBUTE = "books";
     private static final String CATEGORIES_ATTRIBUTE = "categories";
-    private static final String REDIRECT_BOOKS = "redirect:/books";
+    private static final String REDIRECT_BOOKS = "redirect:/admin/books";
     private static final String ALADIN_REGISTER_VIEW = "admin/book/aladin/register";
     private static final String REGISTER_VIEW = "admin/book/register";
     private static final String BOOK_EDIT_VIEW = "admin/book/book-edit";
@@ -43,6 +45,7 @@ public class BookController {
     private final BookClient bookClient;
     private final AladinBookClient aladinBookClient;
     private final CategoryClient categoryClient;
+    private final TagClient tagClient;
 
     @GetMapping("/aladin/search/form")
     public String searchForm() {
@@ -97,10 +100,13 @@ public class BookController {
 
     // 직접 등록 폼 렌더링
     @GetMapping("/register")
-    public String showDirectRegisterForm(Model model) {
-        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategories();
+    public String showDirectRegisterForm(@RequestParam(required = false) String keyword,
+                                         Model model) {
+        ResponseEntity<Page<CategoryResponseDTO>> responseCategory = categoryClient.getRootCategories(0, 50);
+        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(responseCategory.getBody()).orElse(Page.empty());
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
-        model.addAttribute(CATEGORIES_ATTRIBUTE, responseCategory.getBody());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryPage.getContent());
+
         return REGISTER_VIEW;
     }
 
@@ -112,7 +118,9 @@ public class BookController {
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
             @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
             Model model) {
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getCategories().getBody());
+        ResponseEntity<Page<CategoryResponseDTO>> responseCategory = categoryClient.getRootCategories(0, 50);
+        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(responseCategory.getBody()).orElse(Page.empty());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryPage.getContent());
         if (bindingResult.hasErrors()) {
             return REGISTER_VIEW; // 유효성 검증 실패 시 다시 폼 렌더링
         }
