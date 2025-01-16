@@ -2,6 +2,7 @@ package store.aurora.feign_client.review;
 
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,11 +15,13 @@ import java.util.List;
 public interface ReviewClient {
 
     // 리뷰 등록
-    @PostMapping
-    ResponseEntity<String> createReview(@RequestBody @Valid ReviewRequest request,
-                                        @RequestParam(value = "files",required = false) List<MultipartFile> files,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<String> createReview(@RequestPart ReviewRequest request,
+                                        @RequestPart(value = "files",required = false) List<MultipartFile> files,
                                         @RequestParam Long bookId,
                                         @RequestParam String userId);
+//                                        @RequestParam Integer rating,
+//                                        @RequestParam String content
 
     // 도서 ID로 리뷰 조회
     @GetMapping("/book/{bookId}")
@@ -33,10 +36,10 @@ public interface ReviewClient {
     ReviewResponse getReviewById(@PathVariable Long reviewId);
 
     // 리뷰 수정
-    @PutMapping("/{reviewId}/edit")
+    @PutMapping(value = "/{reviewId}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<String> updateReview(@PathVariable Long reviewId,
-                                        @RequestBody @Valid ReviewRequest request,
-                                        @RequestParam(required = false) List<MultipartFile> files,
+                                        @RequestPart ReviewRequest request,
+                                        @RequestPart(required = false) List<MultipartFile> files,
 //                                        @RequestParam Long bookId,
                                         @RequestParam String userId);
 
