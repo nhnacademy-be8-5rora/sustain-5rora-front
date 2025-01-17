@@ -20,6 +20,7 @@ import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.order.OrderTemporaryStorageClient;
 import store.aurora.feign_client.order.TossClient;
+import store.aurora.feign_client.order.WrapClient;
 import store.aurora.feign_client.point.PointHistoryClient;
 import store.aurora.order.dto.*;
 import store.aurora.order.exception.BookClientResolveFailException;
@@ -36,6 +37,7 @@ public class OrderController {
     private static final String BOOK_LIST = "bookList";
     private static final String TOTAL_PRICE = "totalPrice";
     private static final String AVAILABLE_POINTS = "availablePoints";
+    private static final String WRAP_LIST = "wrapList";
 
     @Value("${toss.client-key}")
     private String tossClientKey;
@@ -46,6 +48,7 @@ public class OrderController {
     private final OrderTemporaryStorageClient orderTemporaryStorageClient;
     private final TossClient tossClient;
     private final PointHistoryClient pointHistoryClient;
+    private final WrapClient wrapClient;
 
     //장바구니 구매
     @GetMapping("/order/cart/checkout")
@@ -82,11 +85,15 @@ public class OrderController {
             throw new BookClientResolveFailException(e);
         }
 
+        //3. 포장지 리스트 가져오기
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-member";
     }
@@ -111,10 +118,14 @@ public class OrderController {
             throw new BookClientResolveFailException(e);
         }
 
+        //3. 포장지 리스트 가져오기
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-non-member";
     }
@@ -144,11 +155,14 @@ public class OrderController {
             throw new BookClientResolveFailException(e);
         }
 
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-member";
     }
@@ -167,8 +181,11 @@ public class OrderController {
 
         log.info("checkout book list={}", bookList);
 
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-non-member";
     }
@@ -299,5 +316,9 @@ public class OrderController {
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+    }
+
+    private List<WrapResponseDTO> getWrapList(){
+        return wrapClient.getWrapList().getBody();
     }
 }
