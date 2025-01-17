@@ -417,9 +417,12 @@
     <section>
         <h3>Tags</h3>
         <ul class="tags-list">
-            <li th:each="tag : ${bookInfo.tagNames}" th:text="${tag}"></li>
+            <li th:each="tag : ${bookInfo.tagNames}">
+                <a th:href="@{/books/search(type='tag', keyword=${tag})}" th:text="${tag}"></a>
+            </li>
         </ul>
     </section>
+
 
     <!-- 좋아요 개수 -->
     <section>

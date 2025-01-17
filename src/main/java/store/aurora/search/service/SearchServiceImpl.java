@@ -18,19 +18,25 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public Page<BookSearchResponseDTO> searchBooks(String jwt, String type, String keyword, int pageNum, String orderBy, String orderDirection) {
         try {
-            // ElasticSearch에서 결과를 받아옵니다.
+            // orderBy가 존재하면 bookSearchClient를 호출
+            if (orderBy != null && !orderBy.isEmpty()) {
+                return bookSearchClient.searchBooksByKeyword(jwt, type, keyword, pageNum, orderBy, orderDirection);
+            }
+
+            // orderBy가 없으면 ElasticSearch를 호출
             Page<BookSearchResponseDTO> elasticResult = elasticSearchClient.searchBooks(jwt, type, keyword, pageNum);
 
-            // 결과가 비거나 null이면 bookSearchClient로 대체하여 호출
+            // ElasticSearch 결과가 비거나 null이면 bookSearchClient 호출
             if (elasticResult == null || elasticResult.isEmpty()) {
                 return bookSearchClient.searchBooksByKeyword(jwt, type, keyword, pageNum, orderBy, orderDirection);
             }
 
             return elasticResult;
         } catch (Exception e) {
-            // 예외 발생 시 bookSearchClient로 대체하여 호출
+            // 예외 발생 시 bookSearchClient 호출
             return bookSearchClient.searchBooksByKeyword(jwt, type, keyword, pageNum, orderBy, orderDirection);
         }
     }
+
 
 }
