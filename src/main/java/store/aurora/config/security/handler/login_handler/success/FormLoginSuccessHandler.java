@@ -1,6 +1,5 @@
-package store.aurora.config.security.handler.loginHandler.success;
+package store.aurora.config.security.handler.login_handler.success;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,8 +12,10 @@ import org.springframework.stereotype.Component;
 import store.aurora.auth.dto.request.JwtRequestDto;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.feign_client.AuthClient;
+import store.aurora.feign_client.UserClient;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,10 +25,10 @@ import java.util.Optional;
 public class FormLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AuthClient authClient;
+    private final UserClient userClient;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         //로그인 성공 시 쿠키 만들기
         Optional<Cookie> optionalCookie = jwtOven(authentication.getName());
         if(optionalCookie.isEmpty()){
@@ -38,6 +39,9 @@ public class FormLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
         else {
             response.addCookie(optionalCookie.get());
         }
+
+        // 마지막 로그인 날짜 갱신
+        userClient.updateLastLogin(authentication.getName(), LocalDateTime.now());
 
         response.sendRedirect("/");
     }

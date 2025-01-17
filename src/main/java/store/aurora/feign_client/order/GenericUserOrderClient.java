@@ -3,8 +3,10 @@ package store.aurora.feign_client.order;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import store.aurora.order.dto.OrderWithOrderDetailResponse;
 
 @FeignClient(name = "genericUserOrderClient", url = "${api.gateway.base-url}")
 public interface GenericUserOrderClient {
@@ -18,4 +20,7 @@ public interface GenericUserOrderClient {
 
     @PostMapping("/api/order/refund")
     ResponseEntity<Long> requestRefund(@RequestParam("order-id") String encryptedOrderId);
+
+    @GetMapping("/api/order/non-member/orders/{code}")
+    ResponseEntity<OrderWithOrderDetailResponse> getNonMemberOrderInfo(@PathVariable("code") String code);
 }

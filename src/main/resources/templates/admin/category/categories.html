@@ -41,7 +41,7 @@
         <div class="card mb-4">
             <div class="card-header">최상위 카테고리 등록</div>
             <div class="card-body">
-                <form th:action="@{/categories/create}" method="post" class="row g-3">
+                <form th:action="@{/admin/categories/create}" method="post" class="row g-3">
                     <div class="col-md-9">
                         <input type="text" name="name" class="form-control" style="margin: 15px 0px 16px" placeholder="최상위 카테고리 이름" required>
                     </div>
@@ -83,7 +83,7 @@
                             <div class="d-flex gap-2 justify-content-center">
                                 <!-- 하위 카테고리 보기 버튼 -->
                                 <a th:if="${category.depth < 2}"
-                                   th:href="@{/categories/{id}/children(id=${category.id})}"
+                                   th:href="@{/admin/categories/{id}/children(id=${category.id})}"
                                    class="btn btn-outline-primary text-center">
                                     하위 카테고리 보기
                                 </a>
@@ -104,7 +104,7 @@
                                 </button>
 
                                 <!-- 삭제 버튼 -->
-                                <form th:action="@{/categories/delete}" method="post" class="m-0">
+                                <form th:action="@{/admin/categories/delete}" method="post" class="m-0">
                                     <input type="hidden" name="categoryId" th:value="${category.id}">
                                     <button type="submit" class="btn btn-danger">삭제</button>
                                 </form>
@@ -120,37 +120,37 @@
                         <!-- 첫 페이지 버튼 -->
                         <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=0, size=${size}, parentId=${parentId})} :
-                @{/categories(page=0, size=${size})}">처음</a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=0, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=0, size=${size})}">처음</a>
                         </li>
 
                         <!-- 이전 버튼 -->
                         <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${startPage - rangeSize}, size=${size}, parentId=${parentId})} :
-                @{/categories(page=${startPage - rangeSize}, size=${size})}">이전</a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${startPage - rangeSize}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${startPage - rangeSize}, size=${size})}">이전</a>
                         </li>
 
                         <!-- 페이지 번호 -->
                         <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
                             th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${i}, size=${size}, parentId=${parentId})} :
-                @{/categories(page=${i}, size=${size})}" th:text="${i + 1}"></a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${i}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${i}, size=${size})}" th:text="${i + 1}"></a>
                         </li>
 
                         <!-- 다음 버튼 -->
                         <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${endPage + 1}, size=${size}, parentId=${parentId})} :
-                @{/categories(page=${endPage + 1}, size=${size})}">다음</a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${endPage + 1}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${endPage + 1}, size=${size})}">다음</a>
                         </li>
 
                         <!-- 마지막 페이지 버튼 -->
                         <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ? @{/categories/{parentId}/children(page=${totalPages - 1}, size=${size}, parentId=${parentId})} :
-                @{/categories(page=${totalPages - 1}, size=${size})}">마지막</a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${totalPages - 1}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${totalPages - 1}, size=${size})}">마지막</a>
                         </li>
                     </ul>
                 </nav>
@@ -166,7 +166,7 @@
                         <h5 class="modal-title" id="addChildCategoryModalLabel">자식 카테고리 추가</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form th:action="@{/categories/create}" method="post">
+                    <form th:action="@{/admin/categories/create}" method="post">
                         <input type="hidden" name="parentId" th:value="${category.id}">
                         <div class="modal-body">
                             <label for="childCategoryName" class="form-label">카테고리 이름</label>
@@ -191,8 +191,9 @@
                         <h5 class="modal-title" id="editCategoryModalLabel">카테고리 수정</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form th:action="@{/categories/update}" method="post">
+                    <form th:action="@{/admin/categories/update}" method="post">
                         <input type="hidden" name="categoryId" th:value="${category.id}">
+                        <input type="hidden" name="parentId" th:value="${parentId}">
                         <div class="modal-body">
                             <label for="name" class="form-label">카테고리 이름</label>
                             <input type="text" id="name" class="form-control" name="name"

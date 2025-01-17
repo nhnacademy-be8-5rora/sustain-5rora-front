@@ -20,6 +20,7 @@ import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.order.OrderTemporaryStorageClient;
 import store.aurora.feign_client.order.TossClient;
+import store.aurora.feign_client.order.WrapClient;
 import store.aurora.feign_client.point.PointHistoryClient;
 import store.aurora.order.dto.*;
 import store.aurora.order.exception.BookClientResolveFailException;
@@ -36,6 +37,7 @@ public class OrderController {
     private static final String BOOK_LIST = "bookList";
     private static final String TOTAL_PRICE = "totalPrice";
     private static final String AVAILABLE_POINTS = "availablePoints";
+    private static final String WRAP_LIST = "wrapList";
 
     @Value("${toss.client-key}")
     private String tossClientKey;
@@ -46,6 +48,7 @@ public class OrderController {
     private final OrderTemporaryStorageClient orderTemporaryStorageClient;
     private final TossClient tossClient;
     private final PointHistoryClient pointHistoryClient;
+    private final WrapClient wrapClient;
 
     //장바구니 구매
     @GetMapping("/order/cart/checkout")
@@ -82,11 +85,15 @@ public class OrderController {
             throw new BookClientResolveFailException(e);
         }
 
+        //3. 포장지 리스트 가져오기
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-member";
     }
@@ -111,10 +118,14 @@ public class OrderController {
             throw new BookClientResolveFailException(e);
         }
 
+        //3. 포장지 리스트 가져오기
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-non-member";
     }
@@ -144,11 +155,14 @@ public class OrderController {
             throw new BookClientResolveFailException(e);
         }
 
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-member";
     }
@@ -167,8 +181,11 @@ public class OrderController {
 
         log.info("checkout book list={}", bookList);
 
+        List<WrapResponseDTO> wrapList = getWrapList();
+
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
+        model.addAttribute(WRAP_LIST, wrapList);
 
         return "order/order-form-non-member";
     }
@@ -246,15 +263,15 @@ public class OrderController {
         log.info("토스 결제 내역: {}", stringResponseEntity.getBody());
 
         //2. db에 저장
-        ResponseEntity<Void> voidResponseEntity;
+        ResponseEntity<Long> orderIdResponse;
         try {
-            voidResponseEntity = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
+            orderIdResponse = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
         }catch (FeignException e){
             throw new OrderTemporaryStorageClientResolverFailException(e);
         }
 
         //db 저장 실패
-        HttpStatusCode statusCode = voidResponseEntity.getStatusCode();
+        HttpStatusCode statusCode = orderIdResponse.getStatusCode();
         if(statusCode.is4xxClientError() || statusCode.is5xxServerError()){
             return "redirect:/";
         }
@@ -262,7 +279,7 @@ public class OrderController {
         //3. 비회원의 카트 비우기
         removeNonMemberCart(response);
 
-        return "redirect:/order/complete";
+        return "redirect:/order/complete?completed=" + orderIdResponse.getBody();
     }
 
     @GetMapping("/order/payment/fail")
@@ -274,7 +291,8 @@ public class OrderController {
     }
 
     @GetMapping("/order/complete")
-    public String orderCompleteForm(){
+    public String orderCompleteForm(@RequestParam("completed") String orderId, Model model){
+        model.addAttribute("orderId", orderId);
         return "order/order-complete";
     }
 
@@ -298,5 +316,9 @@ public class OrderController {
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+    }
+
+    private List<WrapResponseDTO> getWrapList(){
+        return wrapClient.getWrapList().getBody();
     }
 }

@@ -1,6 +1,5 @@
-package store.aurora.config.security.handler.loginHandler.success;
+package store.aurora.config.security.handler.login_handler.success;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +21,7 @@ import store.aurora.user.dto.request.SignUpRequest;
 import store.aurora.user.exception.UserSignUpFailException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,14 +31,14 @@ import java.util.Optional;
 public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private static final Logger log = LoggerFactory.getLogger("user-logger");
+    private static final String REDIRECT_LOGIN = "/login";
 
     private final UserClient userClient;
     private final AuthClient authClient;
     private final CouponClient couponClient;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         //Oauth2로 로그인한 순간에는 각 idNo가 username임. 이후 다음 요청 부터는 payco:{idNo}형태가 됨. 혹시 로그인 한 순간에 뭔가를 가져올 일이 있다면 주의해야함.
         log.info("authentication username={}", authentication.getName());
 
@@ -56,10 +56,9 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         }catch (Exception e){
             log.error("user client 통신 실패. message={}", e.getMessage());
             log.info("", e);
-            response.sendRedirect("/login");
+            response.sendRedirect(REDIRECT_LOGIN);
             return;
         }
-
 
         //2. 회원 가입
         if(!userExists){
@@ -80,7 +79,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             }
             else {
                 log.info("signup fail:{}", responseEntity.getBody().get("message"));
-                response.sendRedirect("/login");
+                response.sendRedirect(REDIRECT_LOGIN);
                 return;
             }
 
@@ -91,13 +90,16 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         Optional<Cookie> optionalCookie = jwtOven(id);
         if(optionalCookie.isEmpty()){
             log.info("token make fail");
-            response.sendRedirect("/login");
+            response.sendRedirect(REDIRECT_LOGIN);
             return;
         }
         else {
             log.info("cookie = {}", optionalCookie.get().getValue());
             response.addCookie(optionalCookie.get());
         }
+
+        // 마지막 로그인 날짜 갱신
+        userClient.updateLastLogin(id, LocalDateTime.now());
 
         //4. 필요없어진 액세스토큰과 리프레시 토큰을 만료시킨다?? todo 토론 필요 + 토큰 유효시간 감소 필요성
 

@@ -1,7 +1,6 @@
 package store.aurora.book.controller.tag;
 
 
-import feign.FeignException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,13 +13,15 @@ import store.aurora.book.dto.tag.TagResponseDto;
 import store.aurora.book.util.PaginationUtil;
 import store.aurora.feign_client.book.tag.TagClient;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/tags")
+@RequestMapping("/admin/tags")
 @RequiredArgsConstructor
-public class TagController {
-    private static final String REDIRECT_TAGS = "redirect:/tags";
+public class AdminTagController {
+    private static final String REDIRECT_TAGS = "redirect:/admin/tags";
 
     private final TagClient tagClient;
 
@@ -56,6 +57,15 @@ public class TagController {
     public String deleteTag(@PathVariable("id") Long id) {
         tagClient.deleteTag(id);
         return REDIRECT_TAGS;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TagResponseDto>> searchTag(@RequestParam String keyword) {
+        if (keyword.isBlank()) {
+            return ResponseEntity.ok(Collections.emptyList()); // 공백일 경우 빈 리스트 반환
+        }
+        List<TagResponseDto> tags = tagClient.searchTags(keyword).getBody(); // Feign Client 호출
+        return ResponseEntity.ok(tags); // 클라이언트에 JSON 데이터 반환
     }
 
 }
