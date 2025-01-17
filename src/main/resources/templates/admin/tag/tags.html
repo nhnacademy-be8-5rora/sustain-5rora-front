@@ -37,7 +37,7 @@
                 태그 추가
             </div>
             <div class="card-body">
-                <form th:action="@{/tags/create}" method="post" class="row g-3">
+                <form th:action="@{/admin/tags/create}" method="post" class="row g-3">
                     <div class="col-md-8">
                         <label for="tagName" class="form-label">태그 이름</label>
                         <input type="text" id="tagName" name="name" class="form-control" placeholder="태그 이름을 입력하세요" maxlength="15" required>
@@ -79,7 +79,7 @@
                                 <button class="btn btn-warning btn-sm me-2 custom-btn"
                                         data-bs-toggle="modal" th:data-bs-target="'#editTagModal-' + ${tag.id}">수정</button>
                                 <!-- 삭제 버튼 -->
-                                <form th:action="@{/tags/delete/{id}(id=${tag.id})}" method="post" class="m-0">
+                                <form th:action="@{/admin/tags/delete/{id}(id=${tag.id})}" method="post" class="m-0">
                                     <button type="submit" class="btn btn-danger btn-sm custom-btn">삭제</button>
                                 </form>
                             </div>
@@ -97,28 +97,28 @@
             <ul class="pagination justify-content-center">
                 <!-- 첫 페이지 버튼 -->
                 <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/tags(page=0, size=${size})}" class="page-link">처음</a>
+                    <a th:href="@{/admin/tags(page=0, size=${size})}" class="page-link">처음</a>
                 </li>
 
                 <!-- 이전 버튼 -->
                 <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/tags(page=${startPage - rangeSize}, size=${size})}" class="page-link">이전</a>
+                    <a th:href="@{/admin/tags(page=${startPage - rangeSize}, size=${size})}" class="page-link">이전</a>
                 </li>
 
                 <!-- 페이지 번호 -->
                 <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
                     th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
-                    <a th:href="@{/tags(page=${i}, size=${size})}" th:text="${i + 1}" class="page-link"></a>
+                    <a th:href="@{/admin/tags(page=${i}, size=${size})}" th:text="${i + 1}" class="page-link"></a>
                 </li>
 
                 <!-- 다음 버튼 -->
                 <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/tags(page=${endPage + 1}, size=${size})}" class="page-link">다음</a>
+                    <a th:href="@{/admin/tags(page=${endPage + 1}, size=${size})}" class="page-link">다음</a>
                 </li>
 
                 <!-- 마지막 페이지 버튼 -->
                 <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/tags(page=${totalPages - 1}, size=${size})}" class="page-link">마지막</a>
+                    <a th:href="@{/admin/tags(page=${totalPages - 1}, size=${size})}" class="page-link">마지막</a>
                 </li>
 
             </ul>
@@ -128,7 +128,7 @@
         <div th:each="tag : ${tags}" class="modal fade" th:id="'editTagModal-' + ${tag.id}" tabindex="-1" aria-labelledby="editTagModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form th:action="@{/tags/update/{id}(id=${tag.id})}" method="post">
+                    <form th:action="@{/admin/tags/update/{id}(id=${tag.id})}" method="post">
                         <div class="modal-header">
                             <h5 class="modal-title" id="editTagModalLabel">태그 수정</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

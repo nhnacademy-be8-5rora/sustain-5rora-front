@@ -246,15 +246,15 @@ public class OrderController {
         log.info("토스 결제 내역: {}", stringResponseEntity.getBody());
 
         //2. db에 저장
-        ResponseEntity<Void> voidResponseEntity;
+        ResponseEntity<Long> orderIdResponse;
         try {
-            voidResponseEntity = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
+            orderIdResponse = orderTemporaryStorageClient.orderComplete(new OrderCompleteRequestDto( orderId, paymentKey, amount,Objects.isNull(principal)));
         }catch (FeignException e){
             throw new OrderTemporaryStorageClientResolverFailException(e);
         }
 
         //db 저장 실패
-        HttpStatusCode statusCode = voidResponseEntity.getStatusCode();
+        HttpStatusCode statusCode = orderIdResponse.getStatusCode();
         if(statusCode.is4xxClientError() || statusCode.is5xxServerError()){
             return "redirect:/";
         }
@@ -262,7 +262,7 @@ public class OrderController {
         //3. 비회원의 카트 비우기
         removeNonMemberCart(response);
 
-        return "redirect:/order/complete";
+        return "redirect:/order/complete?completed=" + orderIdResponse.getBody();
     }
 
     @GetMapping("/order/payment/fail")
@@ -274,7 +274,8 @@ public class OrderController {
     }
 
     @GetMapping("/order/complete")
-    public String orderCompleteForm(){
+    public String orderCompleteForm(@RequestParam("completed") String orderId, Model model){
+        model.addAttribute("orderId", orderId);
         return "order/order-complete";
     }
 
