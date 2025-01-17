@@ -30,7 +30,7 @@ public interface BookClient {
 
     @PutMapping(value = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void editBook(@PathVariable Long bookId,
-                  @SpringQueryMap BookRequestDto bookDto,
+                  @SpringQueryMap BookDetailDto bookDto,
                   @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                   @RequestParam(value = "deleteImages", required = false) List<Long> deleteImageIds);

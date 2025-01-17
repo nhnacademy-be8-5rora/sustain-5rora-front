@@ -20,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminCategoryController {
 
+    private static final String REDIRECT_CATEGORIES = "redirect:/admin/categories";
     private final CategoryClient categoryClient;
 
     @GetMapping
@@ -50,9 +51,9 @@ public class AdminCategoryController {
     public String createCategory(CategoryRequestDTO categoryRequestDTO) {
         categoryClient.createCategory(categoryRequestDTO);
         if (categoryRequestDTO.getParentId() != null) {
-            return String.format("redirect:/categories/%d/children", categoryRequestDTO.getParentId());
+            return String.format("redirect:/admin/categories/%d/children", categoryRequestDTO.getParentId());
         }
-        return "redirect:/admin/categories";
+        return REDIRECT_CATEGORIES;
     }
 
     @PostMapping("/update")
@@ -62,15 +63,15 @@ public class AdminCategoryController {
         updateRequest.setName(name);
         categoryClient.updateCategoryName(categoryId, updateRequest);
         if (parentId != null) {
-            return String.format("redirect:/categories/%d/children", parentId);
+            return String.format("redirect:/admin/categories/%d/children", parentId);
         }
-        return "redirect:/categories";
+        return REDIRECT_CATEGORIES;
     }
 
     @PostMapping("/delete")
     public String deleteCategory(@RequestParam Long categoryId) {
         categoryClient.deleteCategory(categoryId);
-        return "redirect:/categories";
+        return REDIRECT_CATEGORIES;
     }
 
 
