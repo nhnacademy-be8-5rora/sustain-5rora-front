@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>휴면 계정 해제</title>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div layout:fragment="content">
+    <section id="featured-books" class="py-5 my-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+
+                    <div class="section-header align-center">
+                        <div class="title">
+                            <span>Dormant Account Reactivation</span>
+                        </div>
+                        <h2 class="section-title">휴면 계정 해제</h2>
+                    </div>
+
+                    <div class="justify-content-center align-center" data-aos="fade-up">
+                        <!-- 인증번호 받기 -->
+                        <form method="POST" action="/send-code" id="send-form">
+<!--                            <div class="mb-3 row">-->
+<!--                                <label for="userId" class="col-sm-3 col-form-label text-end offset-sm-1">아이디</label>-->
+<!--                                <div class="col-sm-5">-->
+<!--                                    <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력하세요" required>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="mb-3 row">
+                                <label for="phoneNumber" class="col-sm-3 col-form-label text-end offset-sm-1">전화번호</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="전화번호를 입력하세요" required>
+                                </div>
+                                <button type="submit" class="col-sm-2 h-100" id="sendCodeButton">인증번호 받기</button>
+                                <p id="sendMessage" class="message mb-0" th:text="${sendMessage}" style="color: blue"></p>
+                            </div>
+
+                        </form>
+
+                        <!-- 인증번호 확인 -->
+                        <form method="POST" action="/verify-code" id="verify-form">
+                            <div class="mb-3 row">
+                                <input type="hidden" id="hiddenPhoneNumber" name="phoneNumber" th:value="${phoneNumber}">
+                                <label for="verificationCode" class="col-sm-3 col-form-label text-end offset-sm-1">인증번호</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder="인증번호를 입력하세요" required>
+                                </div>
+                                <button type="submit" class="col-sm-2 h-100" id="verifyCodeButton">인증하기</button>
+                                <p id="verifyMessage" class="message mb-0" th:text="${verifyMessage}" style="color: blue"></p>
+                            </div>
+                        </form>
+
+
+                        <!-- 휴면 해제 -->
+                        <form method="POST" action="/reactivate" id="reactivate-form">
+                            <div class="mb-3 row">
+                                <label for="userId" class="col-sm-3 col-form-label text-end offset-sm-1">아이디</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력하세요" required>
+                                </div>
+                            </div>
+                            <button type="submit">휴면 해제</button>
+                        </form>
+
+                    </div><!--grid-->
+
+                </div><!--inner-content-->
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+
+</html>
