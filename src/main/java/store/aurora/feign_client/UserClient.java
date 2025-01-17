@@ -9,6 +9,7 @@ import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.user.dto.request.SignUpRequest;
 import store.aurora.user.dto.response.UserInfoResponseDto;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @FeignClient(name = "userClient", url = "${api.gateway.base-url}" + "/api/users")
@@ -49,4 +50,7 @@ public interface UserClient {
     @GetMapping("/info")
     ResponseEntity<UserInfoResponseDto> getUserInfo(@RequestHeader("userId") String userId);
 
+    @PatchMapping("/{userId}/last-login")
+    void updateLastLogin(@PathVariable String userId,
+                         @RequestBody LocalDateTime lastLogin);
 }

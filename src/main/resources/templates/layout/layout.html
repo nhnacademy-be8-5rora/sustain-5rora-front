@@ -61,6 +61,10 @@
                                 class="icon icon-user"></i><span>로그아웃</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>마이페이지</span></a>
+                        <a href="/order/non-member/search" class="user-account for-buy" sec:authorize="isAnonymous()"><i
+                                class="icon icon-user"></i><span>주문조회</span></a>
+                        <a href="/mypage/orders" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
+                                class="icon icon-user"></i><span>주문조회</span></a>
                         <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
 
                         <div class="action-menu">
@@ -333,16 +337,16 @@
                 receiverAddress: formData.get('receiverAddress'),
                 receiverMessage: formData.get('receiverMessage'),
                 usedPoint: parseInt(formData.get('usedPoint'), 10) || 0,
-                orderDetailDTOList: Array.from(document.querySelectorAll('tbody tr')).map(row => ({
-                    bookId: parseInt(row.querySelector('input[name="itemId"]').value, 10),
-                    quantity: parseInt(row.querySelector('input[name="quantity"]').value, 10),
-                    wrapId: row.querySelector('input[name="wrapId"]').value
-                        ? parseInt(row.querySelector('input[name="wrapId"]').value, 10)
-                        : null, // 입력이 없으면 null
-                    couponId: row.querySelector('input[name="couponId"]').value
-                        ? parseInt(row.querySelector('input[name="couponId"]').value, 10)
-                        : null // 입력이 없으면 null
-                }))
+                orderDetailDTOList: Array.from(document.querySelectorAll('tbody tr')).map(row => {
+                    const wrapIdElement = row.querySelector('select[name="wrapId"]');
+                    const couponIdElement = row.querySelector('input[name="couponId"]');
+                    return {
+                        bookId: parseInt(row.querySelector('input[name="itemId"]').value, 10),
+                        quantity: parseInt(row.querySelector('input[name="quantity"]').value, 10),
+                        wrapId: wrapIdElement && wrapIdElement.value ? parseInt(wrapIdElement.value, 10) : null, // 입력이 없으면 null
+                        couponId: couponIdElement && couponIdElement.value ? parseInt(couponIdElement.value, 10) : null // 입력이 없으면 null
+                    };
+                })
             };
 
             // Validate payload
