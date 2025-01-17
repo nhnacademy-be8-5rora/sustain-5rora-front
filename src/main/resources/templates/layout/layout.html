@@ -61,6 +61,10 @@
                                 class="icon icon-user"></i><span>로그아웃</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>마이페이지</span></a>
+                        <a href="/order/non-member/search" class="user-account for-buy" sec:authorize="isAnonymous()"><i
+                                class="icon icon-user"></i><span>주문조회</span></a>
+                        <a href="/mypage/orders" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
+                                class="icon icon-user"></i><span>주문조회</span></a>
                         <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
 
                         <div class="action-menu">
