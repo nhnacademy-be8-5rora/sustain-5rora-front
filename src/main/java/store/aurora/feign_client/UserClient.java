@@ -7,6 +7,7 @@ import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
 import store.aurora.auth.dto.response.UserUsernameAndRoleResponse;
 import store.aurora.config.security.constants.SecurityConstants;
 import store.aurora.user.dto.request.SignUpRequest;
+import store.aurora.user.dto.request.VerificationRequest;
 import store.aurora.user.dto.response.UserInfoResponseDto;
 
 import java.util.Map;
@@ -28,14 +29,13 @@ public interface UserClient {
     ResponseEntity<Map<String, String>> signUp(@RequestBody SignUpRequest request,
                                                @RequestParam boolean isOauth);
 
-    // 회원가입 > 인증번호받기
+    // 인증번호받기
     @PostMapping("/send-verification-code")
-    ResponseEntity<Map<String, String>> sendCode(@RequestBody SignUpRequest request);
+    ResponseEntity<Map<String, String>> sendCode(@RequestParam String phoneNumber);
 
-    // 회원가입 > 인증코드 검증
+    // 인증코드 검증
     @PostMapping("/verify-code")
-    ResponseEntity<Map<String, String>> verifyCode(@RequestBody SignUpRequest request);
-
+    ResponseEntity<Map<String, String>> verifyCode(@RequestBody VerificationRequest request);
 
     // 회원탈퇴
     @DeleteMapping("/{userId}")
