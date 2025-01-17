@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import store.aurora.auth.dto.response.UserPwdAndRoleResponse;
+import store.aurora.config.security.exception.DormantAccountException;
 import store.aurora.feign_client.UserClient;
 
 @Component
@@ -40,6 +41,11 @@ public class ApiUserDetailsService implements UserDetailsService {
             }
 
         }catch (FeignException e){
+            if(e.status() == 403) {
+                log.info(String.format("휴면 계정: username=%s", username));
+                throw new DormantAccountException(String.format("휴면 계정: username=%s", username));
+            }
+
             log.info("통신 실패 message={}", e.getMessage());
             throw new AuthenticationServiceException(String.format("통신 실패 message=%s", e.getMessage()));
         }
