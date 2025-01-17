@@ -77,12 +77,22 @@
                 <tbody>
                 <tr th:each="item : ${bookList}">
                     <!-- 서버로 보낼 데이터는 숨김 처리 -->
-                    <td><input name="itemId" th:value="${item.bookId}" readonly></td>
-                    <td><input name="quantity" th:value="${item.quantity}" readonly></td>
+                    <td><label>
+                        <input name="itemId" th:value="${item.bookId}" readonly>
+                    </label></td>
+                    <td><label>
+                        <input name="quantity" th:value="${item.quantity}" readonly>
+                    </label></td>
                     <td th:text="${item.title}"></td> <!-- 상품명 -->
                     <td th:text="${item.price} + '원'"></td> <!-- 가격 -->
                     <!-- 사용자 입력 필드 -->
-                    <td><input type="number" name="wrapId" placeholder="포장 옵션 ID (선택)"></td>
+                    <td>
+                        <label for="wrapId"></label>
+                        <select id="wrapId" name="wrapId" class="form-select">
+                            <option value="" disabled selected>포장 옵션 선택 ( 개당 적용 )</option>
+                            <option th:each="wrap : ${wrapList}" th:value="${wrap.id}" th:text="${wrap.name} + ' (+' + ${wrap.amount} + '원)'"></option>
+                        </select>
+                    </td>
                     <td><input type="number" name="couponId" placeholder="쿠폰 ID (선택)"></td>
                 </tr>
                 </tbody>
