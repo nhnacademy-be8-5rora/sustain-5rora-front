@@ -113,35 +113,23 @@
                   <ul class="category-container" id="foreignCategoryList" style="display: none;"></ul>
                 </li>
 
-                <li class="menu-item">
-                  <a class="nav-link" href="/books">도서 관리</a>
-                </li>
-                <li class="menu-item">
-                  <a class="nav-link" href="/categories">카테고리 관리</a>
-                </li>
-                <li class="menu-item">
-                  <a class="nav-link" href="/tags">태그 관리</a>
+                <li class="menu-item has-sub">
+                  <a href="/admin" class="nav-link">관리</a>
+                  <ul>
+                    <li><a href="/admin/books">도서</a></li>
+                    <li><a href="/admin/categories">카테고리</a></li>
+                    <li><a href="/admin/tags">태그</a></li>
+                    <li><a href="/admin/publishers">출판사</a></li>
+                    <li><a href="/admin/series">시리즈</a></li>
+                    <li><a href="/admin/coupon/create">쿠폰</a></li>
+                    <li><a href="/admin/order/shipment">배송</a></li>
+                  </ul>
                 </li>
                 <li class="menu-item">
                   <a class="nav-link" href="/admin/point-policies">포인트 정책</a>
                 </li>
-
-
-                <li class="menu-item has-sub">
-                  <a href="#pages" class="nav-link">Pages</a>
-                  <ul>
-                    <li class="active"><a href="index.html">Home</a></li>
-                    <li><a href="index.html">About</a></li>
-                    <li><a href="index.html">Styles</a></li>
-                    <li><a href="index.html">Blog</a></li>
-                    <li><a href="index.html">Post Single</a></li>
-                    <li><a href="index.html">Our Store</a></li>
-                    <li><a href="index.html">Product Single</a></li>
-                    <li><a href="index.html">Contact</a></li>
-                    <li><a href="index.html">Thank You</a></li>
-                  </ul>
-                </li>
               </ul>
+
 
               <div class="hamburger">
                 <span class="bar"></span>
@@ -399,6 +387,18 @@
     document.getElementById('foreignBooksMenu').addEventListener('click', function (event) {
       event.preventDefault(); // 기본 클릭 동작 방지
       window.location.href = '/books/search?type=category&keyword=2'; // 해외 도서로 이동
+    });
+  });
+
+  document.querySelectorAll('.menu-item.has-sub > ul > li').forEach(menuItem => {
+    // 마우스를 가져다댔을 때 active 클래스 추가
+    menuItem.addEventListener('mouseenter', () => {
+      menuItem.classList.add('active');
+    });
+
+    // 마우스가 벗어났을 때 active 클래스 제거
+    menuItem.addEventListener('mouseleave', () => {
+      menuItem.classList.remove('active');
     });
   });
 </script>

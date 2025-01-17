@@ -1,50 +1,26 @@
-package store.aurora.book.controller;
+package store.aurora.book.controller.category;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import store.aurora.book.dto.category.CategoryRequestDTO;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.book.util.PaginationUtil;
 import store.aurora.feign_client.book.CategoryClient;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/categories")
+@RequestMapping("/admin/categories")
 @RequiredArgsConstructor
-public class CategoryController {
+public class AdminCategoryController {
 
     private final CategoryClient categoryClient;
-
-    @GetMapping("/root")
-    public ResponseEntity<List<CategoryResponseDTO>> getCategories() {
-        return ResponseEntity.ok(categoryClient.getCategories().getBody());
-    }
-
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<List<CategoryResponseDTO>> getCategory(@PathVariable("categoryId") Long categoryId) {
-        if (categoryId == null) {
-            categoryId = 0L;
-        }
-        ResponseEntity<CategoryResponseDTO> categories = categoryClient.findById(categoryId);
-        if (categories.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)  // JSON 형식으로 설정
-                    .body(Objects.requireNonNull(categories.getBody()).getChildren());
-        }
-        return ResponseEntity.badRequest().build();
-    }
 
     @GetMapping
     public String showRootCategories(@RequestParam(defaultValue = "0") int page,
@@ -73,14 +49,21 @@ public class CategoryController {
     @PostMapping("/create")
     public String createCategory(CategoryRequestDTO categoryRequestDTO) {
         categoryClient.createCategory(categoryRequestDTO);
-        return "redirect:/categories";
+        if (categoryRequestDTO.getParentId() != null) {
+            return String.format("redirect:/categories/%d/children", categoryRequestDTO.getParentId());
+        }
+        return "redirect:/admin/categories";
     }
 
     @PostMapping("/update")
-    public String updateCategory(@RequestParam Long categoryId, @RequestParam String name) {
+    public String updateCategory(@RequestParam Long categoryId, @RequestParam String name,
+                                 @RequestParam(required = false) Long parentId) {
         CategoryRequestDTO updateRequest = new CategoryRequestDTO();
         updateRequest.setName(name);
         categoryClient.updateCategoryName(categoryId, updateRequest);
+        if (parentId != null) {
+            return String.format("redirect:/categories/%d/children", parentId);
+        }
         return "redirect:/categories";
     }
 
@@ -89,8 +72,6 @@ public class CategoryController {
         categoryClient.deleteCategory(categoryId);
         return "redirect:/categories";
     }
-
-
 
 
 }
