@@ -1,5 +1,6 @@
 package store.aurora.user.controller;
 
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -43,13 +44,15 @@ public class UserController {
     @PostMapping("/send-code")
     public String sendVerificationCode(@RequestParam String phoneNumber,
                                        Model model) {
-        ResponseEntity<Map<String, String>> clientResponse = userClient.sendCode(phoneNumber);
-
-        if (clientResponse.getStatusCode().is2xxSuccessful()) {
+        try {
+            ResponseEntity<Map<String, String>> clientResponse = userClient.sendCode(phoneNumber);
             model.addAttribute("phoneNumber", phoneNumber);
-            model.addAttribute("sendMessage", "인증번호가 전송되었습니다.");
-        } else {
+            model.addAttribute("sendMessage", clientResponse.getBody().get("message"));
+            model.addAttribute("messageColor", "green");
+        } catch (FeignException e) {
             model.addAttribute("sendMessage", "인증번호 전송에 실패했습니다.");
+            model.addAttribute("messageColor", "red");
+            return "reactive";
         }
         return "reactive";
     }
@@ -60,12 +63,14 @@ public class UserController {
                              Model model) {
         VerificationRequest request = new VerificationRequest(phoneNumber, verificationCode);
 
-        ResponseEntity<Map<String, String>> clientResponse = userClient.verifyCode(request);
-
-        if (clientResponse.getStatusCode().is2xxSuccessful()) {
-            model.addAttribute("verifyMessage", "인증이 완료되었습니다.");
-        } else {
-            model.addAttribute("verifyMessage", "잘못된 인증 코드입니다. 다시 시도해주세요.");
+        try {
+            ResponseEntity<Map<String, String>> clientResponse = userClient.verifyCode(request);
+            model.addAttribute("verifyMessage", clientResponse.getBody().get("message"));
+            model.addAttribute("messageColor", "green");
+        } catch(FeignException e) {
+            model.addAttribute("verifyMessage", e.contentUTF8());
+            model.addAttribute("messageColor", "red");
+            return "reactive";
         }
         return "reactive";
     }
@@ -91,11 +96,6 @@ public class UserController {
         if (sessionCookie != null) {
             response.addHeader("Set-Cookie", sessionCookie);
         }
-
-        if (clientResponse.getStatusCode().is2xxSuccessful()) {
-            return "redirect:/login";
-        } else {
-            return "redirect:/error";
-        }
+        return "redirect:/login";
     }
 }

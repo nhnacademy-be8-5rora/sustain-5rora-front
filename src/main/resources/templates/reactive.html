@@ -36,7 +36,7 @@
                                     <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="전화번호를 입력하세요" required>
                                 </div>
                                 <button type="submit" class="col-sm-2 h-100" id="sendCodeButton">인증번호 받기</button>
-                                <p id="sendMessage" class="message mb-0" th:text="${sendMessage}" style="color: blue"></p>
+                                <p id="sendMessage" class="message mb-0" th:text="${sendMessage}" th:style="'color: '+${messageColor}"></p>
                             </div>
 
                         </form>
@@ -50,7 +50,7 @@
                                     <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder="인증번호를 입력하세요" required>
                                 </div>
                                 <button type="submit" class="col-sm-2 h-100" id="verifyCodeButton">인증하기</button>
-                                <p id="verifyMessage" class="message mb-0" th:text="${verifyMessage}" style="color: blue"></p>
+                                <p id="verifyMessage" class="message mb-0" th:text="${verifyMessage}" th:style="'color: '+${messageColor}"></p>
                             </div>
                         </form>
 
