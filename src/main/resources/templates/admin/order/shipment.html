@@ -56,6 +56,7 @@
           </tr>
           </thead>
           <tbody>
+<!--          todo: shipmentDate 보여주기, formatter 지정 && 회원의 경우 userId, 비회원의 경우 "비회원"-->
           <tr th:each="order : ${orderList}">
             <td th:text="${order.orderId}"></td>
             <td th:text="${order.shipmentState}"></td>
@@ -69,6 +70,7 @@
                 </tr>
                 </thead>
                 <tbody>
+<!--                todo: detial의 배송 상태,detailId 삭제 && 책 이름 (+id) 보여주기 && shipmentDate order로 이동 -->
                 <tr th:each="detail : ${order.orderDetailList}">
                   <td th:text="${detail.orderDetailId}"></td>
                   <td th:text="${detail.shipmentState}"></td>
@@ -78,7 +80,7 @@
               </table>
             </td>
             <td>
-              <form th:action="@{/admin/order/shipment}" method="post">
+              <form th:action="@{/admin/order/shipment-udpate}" method="post">
                 <input type="hidden" name="order-id" th:value="${order.orderId}"/>
                 <div th:if="${order.shipmentState == 'PENDING'}">
                   <input type="hidden" name="shipment-state" value="SHIPPING"/>
