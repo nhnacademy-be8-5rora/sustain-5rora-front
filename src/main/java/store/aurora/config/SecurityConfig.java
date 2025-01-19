@@ -17,7 +17,7 @@ import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomOauth2
 import store.aurora.config.security.filter.JwtAuthenticationFilter;
 import store.aurora.config.security.handler.login_handler.success.FormLoginSuccessHandler;
 import store.aurora.config.security.handler.login_handler.success.OauthLoginSuccessHandler;
-import store.aurora.config.security.handler.logoutHandler.success.CommonLogoutSuccessHandler;
+import store.aurora.config.security.handler.logout_handler.success.CommonLogoutSuccessHandler;
 
 @Configuration
 @RequiredArgsConstructor
