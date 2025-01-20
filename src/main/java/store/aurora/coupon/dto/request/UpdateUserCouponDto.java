@@ -9,8 +9,8 @@ import java.util.List;
 
 @Data
 public class UpdateUserCouponDto {
-    @NotNull private List<String> userIds;    // 바꿀 유저 쿠폰 ID 리스트
-    private Long policyId; // 바꿀 정책의 ID
-    private CouponState state;   // 변경할 쿠폰 상태
-    private LocalDate endDate;   // 종료일
+    @NotNull private List<Long> updateUserIds;    // 바꿀 유저쿠폰의 ID 리스트
+    private Long updatePolicyId; // 바꿀 정책의 ID
+    private CouponState updateState;   // 변경할 쿠폰 상태
+    private LocalDate updateEndDate;   // 종료일
 }

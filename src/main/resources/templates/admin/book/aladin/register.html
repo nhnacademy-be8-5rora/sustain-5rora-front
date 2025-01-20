@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>도서 등록</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <link rel="stylesheet" href="/static/css/book-category.css">
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+<div layout:fragment="content">
+    <section class="container mt-5">
+        <h1 class="text-center mb-4">알라딘 도서 등록</h1>
+        <form th:object="${book}" th:action="@{/admin/books/aladin/register}" method="post" enctype="multipart/form-data" class="row g-3">
+            <div class="col-md-12 text-center">
+                <img th:src="${#strings.replace(book.cover, 'coversum', 'cover500')}"
+                     alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
+            </div>
+            <input type="hidden" name="cover" th:value="${book.cover}">
+
+            <div th:if="${backendErrors}" class="text-danger">
+                <p th:text="${backendErrors}"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
+                <input type="text" id="title" name="title" class="form-control" th:field="*{title}" maxlength="150" required>
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="author" class="form-label">저자 <span class="text-danger">*</span></label>
+                <input type="text" id="author" th:field="*{author}" class="form-control" maxlength="500" required>
+                <div th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="isbn13" class="form-label">ISBN <span class="text-danger">*</span></label>
+                <input type="text" id="isbn13" th:field="*{isbn13}" class="form-control" maxlength="13" required
+                       placeholder="13자리 숫자를 입력하세요">
+                <div th:if="${#fields.hasErrors('isbn13')}" th:errors="*{isbn13}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="publisher" class="form-label">출판사</label>
+                <input type="text" id="publisher" th:field="*{publisher}" class="form-control" maxlength="50" required>
+                <div th:if="${#fields.hasErrors('publisher')}" th:errors="*{publisher}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="pubDate" class="form-label">출판일</label>
+                <input type="text" id="pubDate" th:field="*{pubDate}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('pubDate')}" th:errors="*{pubDate}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesInfo.seriesName" th:field="*{seriesInfo.seriesName}" class="form-control">
+                <div th:if="${#fields.hasErrors('seriesInfo.seriesName')}" th:errors="*{seriesInfo.seriesName}" class="text-danger"></div>
+            </div>
+            <div class="col-md-12">
+                <label for="description" class="form-label">책 설명 <span class="text-danger">*</span></label>
+                <div id="toast-editor"></div>
+                <textarea id="description" name="description" th:text="*{description}" hidden></textarea>
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger"></div>
+            </div>
+            <div class="col-md-12">
+                <label for="contents" class="form-label">목차</label>
+                <textarea id="contents" th:field="*{contents}" class="form-control" rows="3" maxlength="5000"></textarea>
+                <div th:if="${#fields.hasErrors('contents')}" th:errors="*{contents}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="priceStandard" class="form-label">정가</label>
+                <input type="number" id="priceStandard" th:field="*{priceStandard}" class="form-control" min="1" required>
+                <div th:if="${#fields.hasErrors('priceStandard')}" th:errors="*{priceStandard}" class="text-danger"></div>
+            </div>
+            <div class="col-md-6">
+                <label for="priceSales" class="form-label">판매가</label>
+                <input type="number" id="priceSales" th:field="*{priceSales}" class="form-control" min="1" required>
+                <div th:if="${#fields.hasErrors('priceSales')}" th:errors="*{priceSales}" class="text-danger"></div>
+            </div>
+            <div class="col-md-4">
+                <label for="stock" class="form-label">재고</label>
+                <input type="number" id="stock" th:field="*{stock}" class="form-control" min="0" value="100" required>
+                <div th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" class="text-danger"></div>
+            </div>
+            <div class="col-md-4">
+                <label for="sale" class="form-label">판매 여부</label>
+                <select id="sale" th:field="*{sale}" class="form-select" required>
+                    <option value="true">판매</option>
+                    <option value="false">미판매</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="packaging" class="form-label">포장 여부</label>
+                <select id="packaging" th:field="*{packaging}" class="form-select" required>
+                    <option value="true">포장</option>
+                    <option value="false">비포장</option>
+                </select>
+            </div>
+            <div class="col-md-12">
+                <label for="additionalImages" class="form-label">추가 이미지 업로드</label>
+                <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
+            </div>
+
+            <div class="accordion" id="categoryAccordion">
+                <div th:each="category : ${categories}" class="accordion-item">
+                    <!-- 최상위 카테고리 -->
+                    <h2 class="accordion-header" th:attr="id='heading-' + ${category.id}">
+                        <input type="checkbox" th:id="'category-' + ${category.id}" th:name="categoryIds" th:value="${category.id}">
+                        <label th:for="'category-' + ${category.id}" class="accordion-button collapsed"
+                               type="button" data-bs-toggle="collapse"
+                               th:data-bs-target="'#collapse-' + ${category.id}" aria-expanded="false"
+                               th:aria-controls="'collapse-' + ${category.id}" th:text="${category.name}">
+                        </label>
+                    </h2>
+                    <div th:attr="id='collapse-' + ${category.id}" class="accordion-collapse collapse"
+                         th:aria-labelledby="'heading-' + ${category.id}">
+                        <div class="accordion-body">
+                            <!-- 2계층 카테고리 -->
+                            <div class="accordion" th:attr="id='childAccordion-' + ${category.id}">
+                                <div th:each="child : ${category.children}" class="accordion-item">
+                                    <h2 class="accordion-header" th:attr="id='heading-child-' + ${child.id}">
+                                        <input type="checkbox" th:id="'child-' + ${child.id}" th:name="categoryIds" th:value="${child.id}">
+                                        <label th:for="'child-' + ${child.id}" class="accordion-button collapsed"
+                                               type="button" data-bs-toggle="collapse"
+                                               th:data-bs-target="'#collapse-child-' + ${child.id}" aria-expanded="false"
+                                               th:aria-controls="'collapse-child-' + ${child.id}" th:text="${child.name}">
+                                        </label>
+                                    </h2>
+                                    <div th:attr="id='collapse-child-' + ${child.id}" class="accordion-collapse collapse"
+                                         th:aria-labelledby="'heading-child-' + ${child.id}">
+                                        <div class="accordion-body">
+                                            <!-- 3계층 카테고리 -->
+                                            <ul>
+                                                <li th:each="subChild : ${child.children}">
+                                                    <input type="checkbox" th:id="'subChild-' + ${subChild.id}" th:name="categoryIds" th:value="${subChild.id}">
+                                                    <label th:for="'subChild-' + ${subChild.id}" th:text="${subChild.name}"></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#fields.hasErrors('categoryIds')}" th:errors="*{categoryIds}" class="text-danger"></div>
+
+            <div class="col-md-12">
+                <label for="tags" class="form-label">태그</label>
+                <textarea id="tags" name="tags" class="form-control" rows="2"
+                          placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
+                <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}" class="text-danger"></div>
+            </div>
+
+
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-success">등록</button>
+            </div>
+        </form>
+    </section>
+</div>
+</body>
+</html>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editor = new toastui.Editor({
+            el: document.querySelector('#toast-editor'),
+            height: '400px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.querySelector('#description').value || '',
+        });
+
+        editor.on('change', function () {
+            document.querySelector('#description').value = editor.getMarkdown();
+        });
+    });
+
+</script>

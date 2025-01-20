@@ -8,6 +8,7 @@ import store.aurora.coupon.dto.request.RequestCouponPolicyDTO;
 import store.aurora.coupon.dto.request.RequestUserCouponDTO;
 import store.aurora.coupon.dto.request.UpdateUserCouponDto;
 import store.aurora.coupon.dto.response.ProductInfoDTO;
+import store.aurora.coupon.dto.response.UsedCouponDTO;
 import store.aurora.coupon.dto.response.UserCouponDTO;
 
 import java.util.List;
@@ -23,10 +24,10 @@ public interface CouponClient {
 
     // 사용자 쿠폰 생성
     @PostMapping("/admin/distribution")
-    Boolean userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
+    ResponseEntity<String> userCouponCreate(@RequestBody RequestUserCouponDTO requestUserCouponDTO);
 
     // 사용자 쿠폰 수정
-    @PutMapping("/admin/update")
+    @PostMapping("/admin/update")
     ResponseEntity<String> couponUpdate(@RequestBody UpdateUserCouponDto updateUserCouponDto);
 
     //환불시에 refund controller 작동(if문으로 해당 refund 상품하는 결제 내역에 쿠폰이 있다면 작동하게끔)
@@ -45,9 +46,14 @@ public interface CouponClient {
     @GetMapping("/list")
     List<UserCouponDTO> getCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 
-    //회원가입 시에 welcome 쿠폰 증정 및 재발급
+    //회원가입 시에 welcome 쿠폰 재발급
     @PostMapping("/welcome")
-    String existWelcomeCoupon(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken,
-                              @RequestBody Long couponPolicyId);
+    String existWelcomeCoupon(@RequestParam String id);
 
+    //회원가입 시 쿠폰 발급
+    @PostMapping("/signup/welcome")
+    String signUpWelcomeCoupon(@RequestParam String userId);
+
+    @GetMapping("/used/list")
+    List<UsedCouponDTO> getUsedCouponList(@RequestHeader(SecurityConstants.AUTHORIZATION_HEADER) String jwtToken);
 }

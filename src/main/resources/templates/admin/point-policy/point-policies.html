@@ -29,6 +29,7 @@
                             <table>
                                 <thead>
                                 <tr>
+                                    <th>정책 카테고리</th>
                                     <th>정책 이름</th>
                                     <th>정책 유형</th>
                                     <th>포인트 값</th>
@@ -39,6 +40,7 @@
                                 <tbody>
                                 <tr th:each="policy : ${pointPolicies}"
                                     th:classappend="${!policy.isActive} ? 'text-decoration-line-through text-muted' : ''">
+                                    <td th:text="${policy.pointPolicyCategory}"></td>
                                     <td th:text="${policy.pointPolicyName}">Sample Policy</td>
                                     <td th:text="${policy.pointPolicyType}">FIXED</td>
 

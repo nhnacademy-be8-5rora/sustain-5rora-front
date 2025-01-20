@@ -27,6 +27,17 @@
             <div class="row">
 
               <form th:action="@{/admin/point-policies/add}" method="post">
+
+                <div class="mb-3">
+                  <label for="pointPolicyCategory" class="form-label align-left">포인트 정책 카테고리</label>
+                  <select id="pointPolicyCategory" name="pointPolicyCategory" class="form-select" required>
+                    <option value="SIGNUP">회원가입</option>
+                    <option value="REVIEW">리뷰</option>
+                    <option value="REVIEW_IMAGE">리뷰 (이미지 포함)</option>
+                    <option value="ORDER">주문</option>
+                  </select>
+                </div>
+
                 <div class="mb-3">
                   <label for="pointPolicyName" class="form-label align-left">포인트 정책 이름</label>
                   <input type="text" id="pointPolicyName" name="pointPolicyName" class="form-control" placeholder="예: 회원가입 보너스" required>

@@ -184,8 +184,7 @@
                         <!-- 이미지 영역 -->
                         <div class="col-md-6">
                             <figure class="products-thumb">
-                                <img th:src="${mostSellerBook != null && mostSellerBook.imgPath != null ? mostSellerBook.imgPath : '/static/images/default.jpg'}" alt="book" class="single-image">
-                                     alt="book" class="single-image">
+                                <img th:src="${mostSellerBook != null && mostSellerBook.imgPath != null ? mostSellerBook.imgPath : '/static/images/default.png'}" alt="book" class="single-image">
                             </figure>
                         </div>
 
@@ -195,17 +194,27 @@
                                 <h2 class="section-title divider">Best Selling Book</h2>
                                 <div class="products-content">
                                     <!-- 저자 이름 -->
-                                    <span th:text="${mostSellerBook != null && mostSellerBook.authors != null && !mostSellerBook.authors.isEmpty() ? mostSellerBook.authors[0].name : 'No authors available'}"></span>
+                                    <span th:if="${mostSellerBook != null && mostSellerBook.authors != null && !mostSellerBook.authors.isEmpty()}">
+                                        <span th:each="author, iterStat : ${mostSellerBook.authors}">
+                                            <span th:text="${author.name}"></span>
+                                            <span th:if="${iterStat.index < mostSellerBook.authors.size() - 1}">, </span>
+                                        </span>
+                                    </span>
+                                    <span th:if="${mostSellerBook == null || mostSellerBook.authors == null || mostSellerBook.authors.isEmpty()}">No authors available</span>
+
                                     <!-- 책 제목 -->
                                     <h3 class="item-title" th:text="${mostSellerBook != null && mostSellerBook.title != null ? mostSellerBook.title : 'Untitled Book'}">Untitled Book</h3>
+
                                     <!-- 가격 -->
                                     <div class="item-price" th:text="${mostSellerBook != null && mostSellerBook.salePrice != null ? '$ ' + mostSellerBook.salePrice : '$ 0.00'}">40.00</div>
+
                                     <div class="btn-wrap">
                                         <a href="#" class="btn-accent-arrow">shop it now <i class="icon icon-ns-arrow-right"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <!-- / row -->
                 </div>
@@ -235,12 +244,15 @@
                         <!-- 좋아요 많은 순 탭 -->
                         <div id="like" data-tab-content class="active">
                             <div class="row">
+                                <div th:if="${#lists.isEmpty(likeBooks)}">
+                                    <p>좋아요 많은 책이 없습니다.</p>
+                                </div>
                                 <!-- 반복문을 이용해 책 데이터 표시 -->
                                 <div class="col-md-3" th:each="book : ${likeBooks}">
                                     <div class="product-item">
                                         <figure class="product-style">
                                             <!-- 책 이미지 -->
-                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.jpg'}}" alt="Books" class="product-item">
+                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.png'}}" alt="Books" class="product-item">
                                             <form method="post" action="/cart" class="action-form">
                                                 <input type="hidden" name="bookId" th:value="${book.id}">
                                                 <input type="hidden" name="quantity" value="1">
@@ -251,10 +263,16 @@
                                         </figure>
                                         <figcaption>
                                             <h3 th:text="${book.title != null ? book.title : 'Untitled'}">Portrait photography</h3>
-                                            <span th:if="${book.authors != null && not #lists.isEmpty(book.authors)}" th:text="${book.authors[0].name}"></span>
+                                            <span th:if="${book.authors != null && not #lists.isEmpty(book.authors)}">
+                                                <span th:each="author, iterStat : ${book.authors}">
+                                                    <span th:text="${author.name}"></span>
+                                                    <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
+                                                </span>
+                                            </span>
                                             <span th:if="${book.authors == null || #lists.isEmpty(book.authors)}">No Author</span>
                                             <div class="item-price" th:text="'$ ' + ${book.salePrice}">40.00</div>
                                         </figcaption>
+
                                     </div>
                                 </div>
                             </div>
@@ -263,10 +281,13 @@
                         <!-- 조회수 많은 순 탭 -->
                         <div id="view" data-tab-content>
                             <div class="row">
+                                <div th:if="${#lists.isEmpty(likeBooks)}">
+                                    <p>조회수가 많은 책이 없습니다.</p>
+                                </div>
                                 <div class="col-md-3" th:each="book : ${viewBooks}">
                                     <div class="product-item">
                                         <figure class="product-style">
-                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.jpg'}}" alt="Books" class="product-item">
+                                            <img th:src="@{${book.imgPath != null ? book.imgPath : '/static/images/default.png'}}" alt="Books" class="product-item">
                                             <form method="post" action="/cart" class="action-form">
                                                 <input type="hidden" name="bookId" th:value="${book.id}">
                                                 <input type="hidden" name="quantity" value="1">
@@ -276,11 +297,17 @@
                                             </form>
                                         </figure>
                                         <figcaption>
-                                            <h3 th:text="${book.title != null ? book.title : 'Untitled'}">Portrait photography</h3>
-                                            <span th:if="${book.authors != null && not #lists.isEmpty(book.authors)}" th:text="${book.authors[0].name}"></span>
+                                            <h3 th:text="${book.title != null ? book.title : 'Untitled'}"></h3>
+                                            <span th:if="${book.authors != null && not #lists.isEmpty(book.authors)}">
+                                                <span th:each="author, iterStat : ${book.authors}">
+                                                    <span th:text="${author.name}"></span>
+                                                    <span th:if="${iterStat.index < book.authors.size() - 1}">, </span>
+                                                </span>
+                                            </span>
                                             <span th:if="${book.authors == null || #lists.isEmpty(book.authors)}">No Author</span>
-                                            <div class="item-price" th:text="'$ ' + ${book.salePrice}">40.00</div>
+                                            <div class="item-price" th:text="'$ ' + ${book.salePrice}"></div>
                                         </figcaption>
+
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>주문서</title>
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function orderDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                    // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var addr = ''; // 주소 변수
+                    var extraAddr = ''; // 참고항목 변수
+
+                    //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                        addr = data.roadAddress;
+                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                        addr = data.jibunAddress;
+                    }
+
+                    // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                    if(data.userSelectedType === 'R'){
+                        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            extraAddr += data.bname;
+                        }
+                        // 건물명이 있고, 공동주택일 경우 추가한다.
+                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                        if(extraAddr !== ''){
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                    }
+
+                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                    document.getElementById('address').value = addr + ' ' + extraAddr;
+                    document.getElementById('detailAddress').focus();
+                }
+            }).open();
+        }
+    </script>
+
+    <script>
+        function setReceiverAddress() {
+            const address = document.getElementById('address').value;
+            const detailAddress = document.getElementById('detailAddress').value;
+            const receiverAddressField = document.getElementById('receiverAddress');
+
+            // address와 detailAddress를 합쳐서 receiverAddress에 설정
+            receiverAddressField.value = `${address} ${detailAddress}`;
+        }
+
+    </script>
+
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h2>주문서</h2>
+
+    <form id="orderForm">
+
+        <fieldset>
+            <legend>비회원 비밀번호</legend>
+            <label for="nonMemberPassword">비밀번호:</label>
+            <input type="password" id="nonMemberPassword" name="nonMemberPassword" required>
+            <br>
+        </fieldset>
+
+        <!-- 주문자 정보 -->
+        <fieldset>
+            <legend>주문자 정보</legend>
+            <label for="ordererName">이름:</label>
+            <input type="text" id="ordererName" name="ordererName" required>
+            <br>
+            <label for="ordererPhone">전화번호:</label>
+            <input type="tel" id="ordererPhone" name="ordererPhone" required>
+            <br>
+            <label for="ordererEmail">이메일:</label>
+            <input type="email" id="ordererEmail" name="ordererEmail" required>
+            <br>
+            <label for="preferredDeliveryDate">선호날짜:</label>
+            <input type="date" id="preferredDeliveryDate" name="preferredDeliveryDate" th:min="${today}">
+            <br>
+        </fieldset>
+
+        <!-- 받는 사람 정보 -->
+        <fieldset>
+            <legend>받는 사람 정보</legend>
+            <label for="receiverName">이름:</label>
+            <input type="text" id="receiverName" name="receiverName" required>
+            <br>
+            <label for="receiverPhone">전화번호:</label>
+            <input type="tel" id="receiverPhone" name="receiverPhone" required>
+            <br>
+            <label for="receiverEmail">이메일:</label>
+            <input type="email" id="receiverEmail" name="receiverEmail">
+            <br>
+            <label for="receiverMessage">요청사항:</label>
+            <input type="text" id="receiverMessage" name="receiverMessage" required>
+            <br>
+        </fieldset>
+
+        <!-- 주소 입력 방법 -->
+        <fieldset>
+            <label for="address">주소:</label>
+            <input type="text" id="address" name="address" placeholder="주소를 직접 입력하세요" onchange="setReceiverAddress()">
+            <button type="button" onclick="orderDaumPostcode()">주소 찾기</button>
+            <label for="detailAddress">상세주소:</label>
+            <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" onchange="setReceiverAddress()">
+            <input type="hidden" id="receiverAddress" name="receiverAddress" readonly>
+        </fieldset>
+
+        <!-- 총 주문 금액 -->
+        <fieldset>
+            <legend>결제 정보</legend>
+            <p><strong>총 주문 금액:</strong> <span th:text="${totalPrice} + '원'"></span></p>
+        </fieldset>
+
+        <!-- 결제 상품 정보 -->
+        <fieldset>
+            <legend>결제 상품 정보</legend>
+            <table>
+                <thead>
+                <tr>
+                    <th>상품 ID</th>
+                    <th>수량</th>
+                    <th>상품명</th>
+                    <th>가격</th>
+                    <th>포장 ID</th>
+                    <th>쿠폰 ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${bookList}">
+                    <!-- 서버로 보낼 데이터는 숨김 처리 -->
+                    <td><label>
+                        <input name="itemId" th:value="${item.bookId}" readonly>
+                    </label></td>
+                    <td><label>
+                        <input name="quantity" th:value="${item.quantity}" readonly>
+                    </label></td>
+                    <td th:text="${item.title}"></td> <!-- 상품명 -->
+                    <td th:text="${item.price} + '원'"></td> <!-- 가격 -->
+                    <!-- 사용자 입력 필드 -->
+                    <td>
+                        <label for="wrapId"></label>
+                        <select id="wrapId" name="wrapId" class="form-select">
+                            <option value="" disabled selected>포장 옵션 선택 ( 개당 적용 )</option>
+                            <option th:each="wrap : ${wrapList}" th:value="${wrap.id}" th:text="${wrap.name} + ' (+' + ${wrap.amount} + '원)'"></option>
+                        </select>
+                    </td>
+                    <td><input type="number" name="couponId" placeholder="쿠폰 ID (선택)"></td>
+                </tr>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <button type="button" onclick="submitOrder()">주문하기</button>
+    </form>
+</div>
+
+
+</body>
+</html>

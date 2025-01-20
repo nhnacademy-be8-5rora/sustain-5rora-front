@@ -15,32 +15,38 @@
 <div layout:fragment="content">
     <section class="container mt-5">
         <h1 class="text-center mb-4">도서 수정</h1>
-        <form th:action="@{/books/{bookId}/edit(bookId=${book.id})}" method="post" enctype="multipart/form-data" class="row g-3">
-            <!-- Hidden field for book ID -->
-            <input type="hidden" name="bookId" th:value="${book.id}"/>
+        <form th:object="${book}" th:action="@{/admin/books/{bookId}/edit(bookId=${bookId})}" method="post" enctype="multipart/form-data" class="row g-3">
 
+            <div th:if="${backendErrors}" class="text-danger">
+                <p th:text="${backendErrors}"></p>
+            </div>
             <!-- 기존 커버 이미지 -->
             <div class="col-md-12 text-center">
                 <h5>기존 커버 이미지</h5>
-                <img th:src="${book.cover != null ? book.cover.url : null}"
-                     alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
+                <img th:src="${book.cover != null ? book.cover.url : null}" alt="책 표지" class="img-thumbnail" style="max-width: 300px;">
                 <label>
                     <input type="checkbox" name="deleteImages" th:value="${book.cover != null ? book.cover.id : ''}"
                            th:disabled="${book.cover == null}"> 삭제
                 </label>
+                <input type="hidden" th:field="*{cover.id}">
+                <input type="hidden" th:field="*{cover.url}">
+
                 <label for="coverImage" class="form-label mt-2">새 커버 이미지 업로드</label>
                 <input type="file" id="coverImage" name="coverImage" class="form-control">
             </div>
 
             <!-- 부가 이미지 -->
             <div class="col-md-12">
-                <h5>부가 이미지</h5>
+                <h5>기존 부가 이미지</h5>
                 <div class="row row-cols-2 row-cols-md-4 g-3">
-                    <div class="col" th:each="imageDetail : ${book.additionalImages}">
+                    <div class="col" th:each="imageDetail, iterStat : ${book.existingAdditionalImages}">
                         <img th:src="${imageDetail.url}" alt="부가 이미지" class="img-thumbnail w-100">
                         <label class="form-check-label d-block text-center mt-2">
                             <input type="checkbox" name="deleteImages" th:value="${imageDetail.id}"> 삭제
                         </label>
+                        <!-- 숨겨진 필드로 기존 이미지 데이터 전송 -->
+                        <input type="hidden" name="existingAdditionalImages[__${iterStat.index}__].id" th:value="${imageDetail.id}">
+                        <input type="hidden" name="existingAdditionalImages[__${iterStat.index}__].url" th:value="${imageDetail.url}">
                     </div>
                 </div>
             </div>
@@ -53,62 +59,74 @@
 
             <!-- 도서 정보 -->
             <div class="col-md-6">
-                <label for="title" class="form-label">제목</label>
-                <input type="text" id="title" name="title" th:value="${book.title}" class="form-control" required>
+                <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
+                <input type="text" id="title" name="title" class="form-control" th:field="*{title}" maxlength="150" required>
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
-                <label for="author" class="form-label">저자</label>
-                <input type="text" id="author" name="author" th:value="${book.author}" class="form-control" required>
+                <label for="author" class="form-label">저자 <span class="text-danger">*</span></label>
+                <input type="text" id="author" th:field="*{author}" class="form-control" maxlength="500" required>
+                <div th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
-                <label for="isbn13" class="form-label">ISBN</label>
-                <input type="text" id="isbn13" name="isbn13" th:value="${book.isbn13}" class="form-control" required>
+                <label for="isbn" class="form-label">ISBN <span class="text-danger">*</span></label>
+                <input type="text" id="isbn" th:field="*{isbn}" class="form-control" maxlength="13" required
+                       placeholder="10자리 또는 13자리 숫자를 입력하세요">
+                <div th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
                 <label for="publisher" class="form-label">출판사</label>
-                <input type="text" id="publisher" name="publisher" th:value="${book.publisher}" class="form-control" required>
+                <input type="text" id="publisher" th:field="*{publisher}" class="form-control" maxlength="50" required>
+                <div th:if="${#fields.hasErrors('publisher')}" th:errors="*{publisher}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
                 <label for="pubDate" class="form-label">출판일</label>
-                <input type="date" id="pubDate" name="pubDate" th:value="${book.pubDate}" class="form-control" required>
+                <input type="date" id="pubDate" th:field="*{pubDate}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('pubDate')}" th:errors="*{pubDate}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
-                <label for="seriesInfo.seriesName" class="form-label">시리즈 이름</label>
-                <input type="text" id="seriesInfo.seriesName" name="seriesInfo.seriesName" class="form-control" th:value="${book.seriesInfo != null && !book.seriesInfo.seriesName.isBlank() ? book.seriesInfo.seriesName : null}">
+                <label for="seriesName" class="form-label">시리즈 이름</label>
+                <input type="text" id="seriesName" th:field="*{seriesName}" class="form-control" maxlength="100">
+                <div th:if="${#fields.hasErrors('seriesName')}" th:errors="*{seriesName}" class="text-danger"></div>
             </div>
             <div class="col-md-12">
-                <label for="description" class="form-label">책 설명</label>
+                <label for="description" class="form-label">책 설명 <span class="text-danger">*</span></label>
                 <div id="toast-editor"></div>
-                <textarea id="description" name="description" hidden th:text="${book.description}"></textarea>
+                <textarea id="description" name="description" th:text="*{description}" hidden></textarea>
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger"></div>
             </div>
             <div class="col-md-12">
                 <label for="contents" class="form-label">목차</label>
-                <textarea id="contents" name="contents" class="form-control" rows="3" th:text="${book.contents}"></textarea>
+                <textarea id="contents" th:field="*{contents}" class="form-control" rows="3" maxlength="5000"></textarea>
+                <div th:if="${#fields.hasErrors('contents')}" th:errors="*{contents}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
                 <label for="priceStandard" class="form-label">정가</label>
-                <input type="number" id="priceStandard" name="priceStandard" th:value="${book.priceStandard}" class="form-control" required>
+                <input type="number" id="priceStandard" th:field="*{priceStandard}" class="form-control" min="1" required>
+                <div th:if="${#fields.hasErrors('priceStandard')}" th:errors="*{priceStandard}" class="text-danger"></div>
             </div>
             <div class="col-md-6">
                 <label for="priceSales" class="form-label">판매가</label>
-                <input type="number" id="priceSales" name="priceSales" th:value="${book.priceSales}" class="form-control" required>
+                <input type="number" id="priceSales" th:field="*{priceSales}" class="form-control" min="1" required>
+                <div th:if="${#fields.hasErrors('priceSales')}" th:errors="*{priceSales}" class="text-danger"></div>
             </div>
             <div class="col-md-4">
                 <label for="stock" class="form-label">재고</label>
-                <input type="number" id="stock" name="stock" th:value="${book.stock}" class="form-control" required>
+                <input type="number" id="stock" th:field="*{stock}" class="form-control" min="0" value="100" required>
+                <div th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" class="text-danger"></div>
             </div>
             <div class="col-md-4">
-                <label for="isForSale" class="form-label">판매 여부</label>
-                <select id="isForSale" name="isForSale" class="form-select">
-                    <option value="true" th:selected="${book.isForSale}">판매</option>
-                    <option value="false" th:selected="${!book.isForSale}">미판매</option>
+                <label for="sale" class="form-label">판매 여부</label>
+                <select id="sale" th:field="*{sale}" class="form-select" required>
+                    <option value="true">판매</option>
+                    <option value="false">미판매</option>
                 </select>
             </div>
             <div class="col-md-4">
-                <label for="isPackaged" class="form-label">포장 여부</label>
-                <select id="isPackaged" name="isPackaged" class="form-select">
-                    <option value="true" th:selected="${book.isPackaged}">포장</option>
-                    <option value="false" th:selected="${!book.isPackaged}">비포장</option>
+                <label for="packaging" class="form-label">포장 여부</label>
+                <select id="packaging" th:field="*{packaging}" class="form-select" required>
+                    <option value="true">포장</option>
+                    <option value="false">비포장</option>
                 </select>
             </div>
 
@@ -155,11 +173,15 @@
                     </div>
                 </div>
             </div>
+            <div th:if="${#fields.hasErrors('categoryIds')}" th:errors="*{categoryIds}" class="text-danger"></div>
+
             <!-- 태그 수정 -->
             <div class="col-md-12">
                 <label for="tags" class="form-label">태그</label>
-                <textarea id="tags" name="tags" class="form-control" rows="2"
-                          th:text="${book.tags}" placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
+                <textarea id="tags" th:field="*{tags}" class="form-control" rows="2"
+                          placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
+                <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}" class="text-danger"></div>
+
             </div>
 
             <!-- 제출 버튼 -->
@@ -173,7 +195,6 @@
 </body>
 
 </html>
-
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -182,13 +203,11 @@
             height: '400px',
             initialEditType: 'wysiwyg',
             previewStyle: 'vertical',
-            initialValue: document.querySelector('#description').value || '', // 수정 폼에서 초기값으로 설정
+            initialValue: document.getElementById('description').value, // 서버에서 넘어온 값으로 초기화
         });
 
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function() {
-            const descriptionTextarea = form.querySelector('#description');
-            descriptionTextarea.value = editor.getHTML(); // 에디터 내용을 textarea에 동기화
+        editor.on('change', function () {
+            document.querySelector('#description').value = editor.getMarkdown();
         });
     });
 </script>

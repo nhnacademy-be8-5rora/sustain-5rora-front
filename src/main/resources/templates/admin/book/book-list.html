@@ -7,14 +7,88 @@
 <head>
     <meta charset="utf-8">
     <title>도서 목록</title>
+    <style>
+        /* 공통 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* 테이블 스타일 */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        /* 버튼 스타일 */
+        .btn, a.btn{
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+    </style>
+    <!-- 이 부분을 페이지 맨 아래로 이동 -->
+    <script>
+        function syncBooks() {
+            // AJAX 요청을 통해 동기화 시작
+            fetch('/admin/books/elasticSearch/sync', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // 동기화된 책 개수 표시
+                    const syncCountElement = document.getElementById('syncCount');
+                    const syncMessageElement = document.getElementById('syncMessage');
+
+                    if (syncCountElement) {
+                        syncCountElement.innerText = data + " 개 동기화됨";
+                        syncCountElement.style.display = 'block'; // 메시지 표시
+                    }
+
+                    if (syncMessageElement) {
+                        syncMessageElement.style.display = 'none'; // 동기화 메시지 숨기기
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('동기화에 실패했습니다.');
+                });
+        }
+
+    </script>
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 <div layout:fragment="content">
     <section class="container mt-5">
-        <h1 class="text-center mb-4">도서 목록</h1>
+        <h1 class="text-center text-primary mb-4">도서 관리</h1>
+        <a href="/books/deactivate" class="btn btn-secondary">비활성화 도서 보기</a>
+
+        <button class="btn btn-secondary ms-2" onclick="syncBooks()">책 동기화 시작</button>
+        <!-- 동기화된 책 개수 메시지를 표시할 영역 -->
+        <div id="syncCount" style="display: none;"></div>
+
+        <!-- 동기화 상태 메시지를 표시할 영역 -->
+        <div id="syncMessage" style="display: none;">동기화 진행 중...</div>
+
+
+        <a href="/admin/books/deactivate" class="btn btn-secondary">비활성화 도서 보기</a>
         <div class="mb-3 text-end">
-            <a href="/books/search-books" class="btn btn-secondary">도서 검색</a>
+            <a href="/admin/books/aladin/search/form" class="btn btn-primary">도서 등록</a>
         </div>
         <table class="table table-bordered">
             <thead>
@@ -31,12 +105,13 @@
                 <th>포장 여부</th>
                 <th>재고</th>
                 <th>수정</th>
+                <th>활성여부</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="book : ${books}">
                 <td>
-                    <img th:src="${book.cover}" alt="Cover" class="img-thumbnail" style="max-width: 100px;">
+                    <img th:src="${book.cover}" alt="Cover" class="img-thumbnail" style="max-width: 100px; border-radius: 10px;">
                 </td>
                 <td th:text="${book.title}"></td>
                 <td th:text="${book.isbn13}"></td>
@@ -45,11 +120,16 @@
                 <td th:text="${book.pubDate}"></td>
                 <td th:text="${book.priceStandard}"></td>
                 <td th:text="${book.priceSales}"></td>
-                <td th:text="${book.isForSale ? 'Yes' : 'No'}"></td>
-                <td th:text="${book.isPackaged ? 'Yes' : 'No'}"></td>
+                <td th:text="${book.isSale ? 'Yes' : 'No'}"></td>
+                <td th:text="${book.isPackaging ? 'Yes' : 'No'}"></td>
                 <td th:text="${book.stock}"></td>
                 <td>
-                    <a th:href="@{/books/{bookId}/edit(bookId=${book.id})}" class="btn btn-primary btn-sm">수정</a>
+                    <a th:href="@{/admin/books/{bookId}/edit(bookId=${book.id})}" class="btn btn-primary btn-sm">수정</a>
+                </td>
+                <td>
+                    <form th:action="@{/admin/books/{bookId}/deactivate(bookId=${book.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">비활성화</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
@@ -58,25 +138,38 @@
         <!-- 페이지네이션 -->
         <nav class="mt-4" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
-                <!-- 이전 버튼 -->
+                <!-- 첫 페이지 버튼 -->
                 <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/books(page=${currentPage - 1}, size=2)}" class="page-link">이전</a>
+                    <a th:href="@{/admin/books(page=0, size=${size})}" class="page-link">처음</a>
+                </li>
+
+                <!-- 이전 버튼 -->
+                <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/admin/books(page=${startPage - rangeSize}, size=${size})}" class="page-link">이전</a>
                 </li>
 
                 <!-- 페이지 번호 -->
-                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
                     th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
-                    <a th:href="@{/books(page=${i}, size=2)}" th:text="${i + 1}" class="page-link"></a>
+                    <a th:href="@{/admin/books(page=${i}, size=${size})}" th:text="${i + 1}" class="page-link"></a>
                 </li>
 
                 <!-- 다음 버튼 -->
-                <li th:class="${currentPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
-                    <a th:href="@{/books(page=${currentPage + 1}, size=2)}" class="page-link">다음</a>
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/admin/books(page=${endPage + 1}, size=${size})}" class="page-link">다음</a>
+                </li>
+
+                <!-- 마지막 페이지 버튼 -->
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                    <a th:href="@{/admin/books(page=${totalPages - 1}, size=${size})}" class="page-link">마지막</a>
                 </li>
             </ul>
         </nav>
     </section>
 </div>
+
+
+
 </body>
 
 </html>

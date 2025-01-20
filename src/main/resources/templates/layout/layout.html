@@ -61,6 +61,10 @@
                                 class="icon icon-user"></i><span>로그아웃</span></a>
                         <a href="/mypage" class="user-account for-buy"><i
                                 class="icon icon-user"></i><span>마이페이지</span></a>
+                        <a href="/order/non-member/search" class="user-account for-buy" sec:authorize="isAnonymous()"><i
+                                class="icon icon-user"></i><span>주문조회</span></a>
+                        <a href="/mypage/orders" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
+                                class="icon icon-user"></i><span>주문조회</span></a>
                         <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
 
                         <div class="action-menu">
@@ -73,7 +77,7 @@
                                 <!-- 검색 폼 -->
                                 <form role="search" method="get" class="search-box" action="/books/search">
                                     <input class="search-field text search-input" placeholder="Search" type="search" name="keyword">
-                                    <input type="hidden" name="type" value="title">
+                                    <input type="hidden" name="type" value="weight">
                                     <input type="hidden" name="pageNum" value="1">
                                 </form>
                             </div>
@@ -93,7 +97,7 @@
 
                 <div class="col-md-2">
                     <div class="main-logo">
-                        <a href="index.html"><img src="/static/images/main-logo.png" alt="logo"></a>
+                        <a href="/"><img src="/static/images/main-logo.png" alt="logo"></a>
                     </div>
 
                 </div>
@@ -314,26 +318,97 @@
 <script src="/static/js/plugins.js"></script>
 <script src="/static/js/script.js"></script>
 
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    function sample4_execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                document.getElementById("roadAddress").value = data.roadAddress;
-            }
-        }).open();
-    }
+    function submitOrder() {
+        const form = document.getElementById('orderForm');
+        const formData = new FormData(form);
 
-    function validateForm() {
-        const roadAddress = document.getElementById("roadAddress").value;
-        if (!roadAddress.trim()) {
-            alert("도로명 주소를 입력해주세요.");
-            return false; // 폼 제출 방지
+        try {
+            // Convert form data to JSON
+            const jsonPayload = {
+                username: formData.get('username') || null, // username이 있으면 값 사용, 없으면 null
+                nonMemberPassword: formData.get('nonMemberPassword') || null, // 비회원 비밀번호
+                ordererName: formData.get('ordererName'),
+                ordererPhone: formData.get('ordererPhone'),
+                ordererEmail: formData.get('ordererEmail'),
+                preferredDeliveryDate: formData.get('preferredDeliveryDate') || null,
+                receiverName: formData.get('receiverName'),
+                receiverPhone: formData.get('receiverPhone'),
+                receiverEmail: formData.get('receiverEmail'),
+                receiverAddress: formData.get('receiverAddress'),
+                receiverMessage: formData.get('receiverMessage'),
+                usedPoint: parseInt(formData.get('usedPoint'), 10) || 0,
+                orderDetailDTOList: Array.from(document.querySelectorAll('tbody tr')).map(row => {
+                    const wrapIdElement = row.querySelector('select[name="wrapId"]');
+                    const couponIdElement = row.querySelector('input[name="couponId"]');
+                    return {
+                        bookId: parseInt(row.querySelector('input[name="itemId"]').value, 10),
+                        quantity: parseInt(row.querySelector('input[name="quantity"]').value, 10),
+                        wrapId: wrapIdElement && wrapIdElement.value ? parseInt(wrapIdElement.value, 10) : null, // 입력이 없으면 null
+                        couponId: couponIdElement && couponIdElement.value ? parseInt(couponIdElement.value, 10) : null // 입력이 없으면 null
+                    };
+                })
+            };
+
+            // Validate payload
+            if (!jsonPayload.username && !jsonPayload.nonMemberPassword) {
+                alert('회원 주문 또는 비회원 비밀번호를 입력해주세요.');
+                return;
+            }
+            if (jsonPayload.orderDetailDTOList.length === 0) {
+                alert('주문할 상품이 없습니다.');
+                return;
+            }
+
+            // Send JSON to the server
+            fetch('/order/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonPayload),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('주문 제출에 실패했습니다.');
+                    }
+                    return response.json(); // Expect JSON response
+                })
+                .then(data => {
+                    if (data.redirectUrl) {
+                        // Redirect to the provided URL
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        alert('리다이렉트 URL이 없습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('오류가 발생했습니다. 다시 시도해주세요.');
+                });
+        } catch (error) {
+            console.error('Error during form submission:', error);
+            alert('폼 제출 중 오류가 발생했습니다.');
         }
-        return true; // 폼 제출 허용
     }
 </script>
 
+<script>
+    function toggleAddressInput() {
+        const addressType = document.querySelector('input[name="addressType"]:checked').value;
+        const selectAddressDiv = document.getElementById('selectAddressDiv');
+        const writeAddressDiv = document.getElementById('writeAddressDiv');
+
+        if (addressType === 'select') {
+            selectAddressDiv.style.display = 'block';
+            writeAddressDiv.style.display = 'none';
+        } else {
+            selectAddressDiv.style.display = 'none';
+            writeAddressDiv.style.display = 'block';
+        }
+    }
+</script>
+  
 <script>
     // 카테고리 마우스 오버 이벤트
     document.getElementById("categories").addEventListener("mouseenter", function () {
@@ -362,20 +437,14 @@
                 if (!response.ok) { // 응답이 정상적이지 않으면 에러 처리
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.text(); // 응답을 텍스트로 읽음
+                return response.json(); // 응답을 JSON으로 읽음
             })
-            .then(text => {
-                console.log('Raw response text:', text); // 받은 응답 텍스트 확인
-                try {
-                    const data = JSON.parse(text); // 응답을 JSON으로 파싱
-                    console.log('Category data received:', data);
-                    if (Array.isArray(data)) {
-                        updateCategoryList(data); // 받은 데이터를 카테고리 리스트에 추가
-                    } else {
-                        console.error('Invalid category data:', data);
-                    }
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
+            .then(data => {
+                console.log('Category data received:', data); // 받은 데이터 확인
+                if (Array.isArray(data)) {
+                    updateCategoryList(data); // 받은 데이터를 카테고리 리스트에 추가
+                } else {
+                    console.error('Invalid category data:', data);
                 }
             })
             .catch(error => {

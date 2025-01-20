@@ -6,25 +6,28 @@
 <head>
     <meta charset="UTF-8">
     <title>카테고리 관리</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
         .card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
-        .btn-primary, .btn-warning, .btn-danger {
-            border-radius: 20px;
+        th, td {
+            text-align: center;
+            padding: 10px;
+            vertical-align: middle;
         }
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
+        /* 버튼 간격을 더 넓게 설정하고 버튼 그룹을 중앙에 배치 */
+        .d-flex.gap-2 {
+            gap: 10px; /* 버튼 간 간격 */
+            justify-content: center; /* 중앙 정렬 */
+            align-items: center; /* 수직 정렬 */
         }
-        .table thead th {
-            background-color: #343a40;
-            color: #ffffff;
+        .btn, a.btn {
+            margin: 15px 0px 16px; /* 동일한 마진 설정 */
+            padding: 6px 12px; /* 동일한 패딩 설정 */
+            height: 40px;
+            border-radius: 4px; /* 버튼 둥근 모서리 */
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -36,11 +39,11 @@
 
         <!-- 최상위 카테고리 등록 -->
         <div class="card mb-4">
-            <div class="card-header bg-primary text-white">최상위 카테고리 등록</div>
+            <div class="card-header">최상위 카테고리 등록</div>
             <div class="card-body">
-                <form th:action="@{/categories/create}" method="post" class="row g-3">
+                <form th:action="@{/admin/categories/create}" method="post" class="row g-3">
                     <div class="col-md-9">
-                        <input type="text" name="name" class="form-control" placeholder="최상위 카테고리 이름" required>
+                        <input type="text" name="name" class="form-control" style="margin: 15px 0px 16px" placeholder="최상위 카테고리 이름" required>
                     </div>
                     <input type="hidden" name="parentId" value=""> <!-- 부모 없음 -->
                     <div class="col-md-3">
@@ -57,12 +60,12 @@
 
         <!-- 카테고리 목록 테이블 -->
         <div class="card">
-            <div class="card-header bg-dark text-white">카테고리 목록</div>
+            <div class="card-header">카테고리 목록</div>
             <div class="card-body">
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>#</th>
+                        <th>ID</th>
                         <th>부모 카테고리</th>
                         <th>이름</th>
                         <th>깊이</th>
@@ -73,27 +76,37 @@
                     <tr th:each="category : ${categories}">
                         <td th:text="${category.id}"></td>
                         <td th:text="${category.parentName != null ? category.parentName : '없음'}"></td>
-                        <td>
-                            <a th:if="${category.depth < 2}" th:href="@{/categories/{id}/children(id=${category.id})}"
-                               th:text="${category.name}" class="text-decoration-none text-primary"></a>
-                            <span th:if="${category.depth >= 2}" th:text="${category.name}" class="text-muted"></span>
-                        </td>
+                        <td th:text="${category.name}"></td>
                         <td th:text="${category.depth}"></td>
                         <td>
                             <!-- 버튼 그룹 -->
-                            <div class="btn-group" role="group">
+                            <div class="d-flex gap-2 justify-content-center">
+                                <!-- 하위 카테고리 보기 버튼 -->
+                                <a th:if="${category.depth < 2}"
+                                   th:href="@{/admin/categories/{id}/children(id=${category.id})}"
+                                   class="btn btn-outline-primary text-center">
+                                    하위 카테고리 보기
+                                </a>
+                                <span th:if="${category.depth >= 2}" class="text-muted"></span>
+
                                 <!-- 자식 추가 버튼 -->
-                                <button th:if="${category.depth < 2}" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                        th:data-bs-target="'#addChildCategoryModal-' + ${category.id}">하위 카테고 추가</button>
+                                <button th:if="${category.depth < 2}" class="btn btn-primary"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#addChildCategoryModal-' + ${category.id}">
+                                    하위 카테고리 추가
+                                </button>
 
                                 <!-- 수정 버튼 -->
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                        th:data-bs-target="'#editCategoryModal-' + ${category.id}">수정</button>
+                                <button class="btn btn-warning"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#editCategoryModal-' + ${category.id}">
+                                    수정
+                                </button>
 
                                 <!-- 삭제 버튼 -->
-                                <form th:action="@{/categories/delete}" method="post" class="d-inline">
+                                <form th:action="@{/admin/categories/delete}" method="post" class="m-0">
                                     <input type="hidden" name="categoryId" th:value="${category.id}">
-                                    <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                                    <button type="submit" class="btn btn-danger">삭제</button>
                                 </form>
                             </div>
                         </td>
@@ -104,25 +117,40 @@
                 <!-- 페이징 -->
                 <nav th:if="${totalPages > 0}" class="mt-4">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <!-- 첫 페이지 버튼 -->
+                        <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ?
-                        @{/categories/{parentId}/children(page=${currentPage - 1}, size=2, parentId=${parentId})} :
-                        @{/categories(page=${currentPage - 1}, size=2)}">이전</a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=0, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=0, size=${size})}">처음</a>
                         </li>
-                        <li class="page-item" th:each="page, stat : ${#numbers.sequence(0, totalPages - 1)}"
-                            th:classappend="${page == currentPage} ? 'active'">
+
+                        <!-- 이전 버튼 -->
+                        <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ?
-                        @{/categories/{parentId}/children(page=${page}, size=2, parentId=${parentId})} :
-                        @{/categories(page=${page}, size=2)}"
-                               th:text="${page + 1}"></a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${startPage - rangeSize}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${startPage - rangeSize}, size=${size})}">이전</a>
                         </li>
-                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+
+                        <!-- 페이지 번호 -->
+                        <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                            th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
                             <a class="page-link"
-                               th:href="${parentId != null} ?
-                        @{/categories/{parentId}/children(page=${currentPage + 1}, size=2, parentId=${parentId})} :
-                        @{/categories(page=${currentPage + 1}, size=2)}">다음</a>
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${i}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${i}, size=${size})}" th:text="${i + 1}"></a>
+                        </li>
+
+                        <!-- 다음 버튼 -->
+                        <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                            <a class="page-link"
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${endPage + 1}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${endPage + 1}, size=${size})}">다음</a>
+                        </li>
+
+                        <!-- 마지막 페이지 버튼 -->
+                        <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                            <a class="page-link"
+                               th:href="${parentId != null} ? @{/admin/categories/{parentId}/children(page=${totalPages - 1}, size=${size}, parentId=${parentId})} :
+                @{/admin/categories(page=${totalPages - 1}, size=${size})}">마지막</a>
                         </li>
                     </ul>
                 </nav>
@@ -134,11 +162,11 @@
              tabindex="-1" aria-labelledby="addChildCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="addChildCategoryModalLabel">자식 카테고리 추가</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form th:action="@{/categories/create}" method="post">
+                    <form th:action="@{/admin/categories/create}" method="post">
                         <input type="hidden" name="parentId" th:value="${category.id}">
                         <div class="modal-body">
                             <label for="childCategoryName" class="form-label">카테고리 이름</label>
@@ -159,12 +187,13 @@
              tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header bg-warning text-white">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="editCategoryModalLabel">카테고리 수정</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form th:action="@{/categories/update}" method="post">
+                    <form th:action="@{/admin/categories/update}" method="post">
                         <input type="hidden" name="categoryId" th:value="${category.id}">
+                        <input type="hidden" name="parentId" th:value="${parentId}">
                         <div class="modal-body">
                             <label for="name" class="form-label">카테고리 이름</label>
                             <input type="text" id="name" class="form-control" name="name"
@@ -172,7 +201,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="submit" class="btn btn-warning">저장</button>
+                            <button type="submit" class="btn btn-primary">저장</button>
                         </div>
                     </form>
                 </div>
