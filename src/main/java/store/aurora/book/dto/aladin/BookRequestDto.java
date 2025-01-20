@@ -46,8 +46,7 @@ public class BookRequestDto {
 
     @Positive(message = "정가 가격은 양수여야 합니다.")
     private int priceStandard;
-    private ImageDetail cover; // 커버 이미지
-    private List<ImageDetail> existingAdditionalImages = new ArrayList<>(); // 부가 이미지
+
     @Min(value = 0, message = "재고는 0 이상이어야 합니다.")
     private int stock = 100;
 
@@ -63,7 +62,5 @@ public class BookRequestDto {
     private List<Long> categoryIds= new ArrayList<>();
 
     @Size(max = 200, message = "태그 입력은 최대 200자까지 가능합니다.")
-    @Pattern(regexp = "^([^,]*,\\s*)*[^,]*$",
-            message = "태그 형식이 잘못되었습니다. 쉼표로 구분된 태그 형식이어야 합니다.")
     private String tags;
 }

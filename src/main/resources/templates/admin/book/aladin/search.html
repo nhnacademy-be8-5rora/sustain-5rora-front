@@ -57,24 +57,21 @@
                     <<img th:src="${#strings.replace(book.cover, 'coversum', 'cover500')}"
                           alt="책 표지" style="width: 150px;" class="me-3">
                     <div>
-                        <h5 th:text="${book.title}" class="mb-2"></h5>
                         <p>
+                            <strong>제목:</strong> <span th:text="${book.title}"></span><br>
                             <strong>저자:</strong> <span th:text="${book.author}"></span><br>
                             <strong>출판사:</strong> <span th:text="${book.publisher}"></span><br>
                             <strong>출판일:</strong> <span th:text="${book.pubDate}"></span><br>
-                            <strong>ISBN-13:</strong> <span th:text="${book.isbn13}"></span>
-                        </p>
-                        <p>
+                            <strong>ISBN:</strong> <span th:text="${book.isbn}"></span><br>
+                            <strong>ISBN-13:</strong> <span th:text="${book.isbn13}"></span><br>
                             <strong>설명:</strong>
                             <span th:if="${book.description != null}" th:text="${book.description}"></span>
-                            <span th:if="${book.description == null}">설명이 없습니다.</span>
-                        </p>
-                        <p>
+                            <span th:if="${book.description == null}">설명이 없습니다.</span><br>
                             <strong>정가:</strong> <span th:text="${book.priceStandard} + ' 원'"></span><br>
                             <strong>판매가:</strong> <span th:text="${book.priceSales} + ' 원'"></span>
                         </p>
                         <!-- 등록하기 버튼 -->
-                        <a th:href="@{/admin/books/aladin/register(isbn13=${book.isbn13})}" class="btn btn-primary">등록하기</a>
+                        <a th:href="@{/admin/books/aladin/register(isbn=${book.validIsbn})}" class="btn btn-primary">등록하기</a>
                     </div>
                 </li>
             </ul>

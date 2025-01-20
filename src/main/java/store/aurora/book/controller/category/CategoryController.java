@@ -14,7 +14,6 @@ import store.aurora.feign_client.book.CategoryClient;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/categories")
@@ -45,8 +44,7 @@ public class CategoryController {
     // 특정 부모 ID를 가진 자식 카테고리 목록 가져오기
     @GetMapping("/{parentId}/children")
     public ResponseEntity<List<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId) {
-        ResponseEntity<Page<CategoryResponseDTO>> response = categoryClient.getChildrenCategories(parentId, 0, 20);
-        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(response.getBody()).orElse(Page.empty());
-        return ResponseEntity.ok(categoryPage.getContent());
+        ResponseEntity<List<CategoryResponseDTO>> response = categoryClient.getAllChildrenCategories(parentId);
+        return ResponseEntity.ok(response.getBody());
     }
 }
