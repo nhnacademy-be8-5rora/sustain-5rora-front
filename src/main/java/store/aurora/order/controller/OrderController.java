@@ -13,10 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import store.aurora.address.dto.UserAddressDTO;
 import store.aurora.book.dto.BookDetailsDto;
 import store.aurora.cart.dto.CartItemDTO;
 
 import store.aurora.config.security.constants.SecurityConstants;
+import store.aurora.feign_client.AddressClient;
 import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.order.OrderTemporaryStorageClient;
 import store.aurora.feign_client.order.TossClient;
@@ -27,6 +29,7 @@ import store.aurora.order.exception.BookClientResolveFailException;
 import store.aurora.order.exception.OrderTemporaryStorageClientResolverFailException;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -38,6 +41,8 @@ public class OrderController {
     private static final String TOTAL_PRICE = "totalPrice";
     private static final String AVAILABLE_POINTS = "availablePoints";
     private static final String WRAP_LIST = "wrapList";
+    private static final String ADDRESS_LIST = "addressList";
+    private static final String TODAY = "today";
 
     @Value("${toss.client-key}")
     private String tossClientKey;
@@ -49,6 +54,7 @@ public class OrderController {
     private final TossClient tossClient;
     private final PointHistoryClient pointHistoryClient;
     private final WrapClient wrapClient;
+    private final AddressClient addressClient;
 
     //장바구니 구매
     @GetMapping("/order/cart/checkout")
@@ -88,12 +94,18 @@ public class OrderController {
         //3. 포장지 리스트 가져오기
         List<WrapResponseDTO> wrapList = getWrapList();
 
+        //4. 회원의 주소 가져오기
+        List<String> addressList = addressClient.getUserAddresses(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie).stream().map(address ->
+                address.getRoadAddress() + " " + address.getAddrDetail()).toList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
         model.addAttribute(WRAP_LIST, wrapList);
+        model.addAttribute(ADDRESS_LIST, addressList);
+        model.addAttribute(TODAY, LocalDate.now());
 
         return "order/order-form-member";
     }
@@ -126,6 +138,7 @@ public class OrderController {
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(WRAP_LIST, wrapList);
+        model.addAttribute(TODAY, LocalDate.now());
 
         return "order/order-form-non-member";
     }
@@ -157,12 +170,17 @@ public class OrderController {
 
         List<WrapResponseDTO> wrapList = getWrapList();
 
+        List<String> addressList = addressClient.getUserAddresses(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie).stream().map(address ->
+                address.getRoadAddress() + " " + address.getAddrDetail()).toList();
+
         log.info("checkout book list={}", bookList);
 
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(AVAILABLE_POINTS, pointHistoryClient.getAvailablePoints(SecurityConstants.BEARER_TOKEN_PREFIX + jwtCookie));
         model.addAttribute(WRAP_LIST, wrapList);
+        model.addAttribute(ADDRESS_LIST, addressList);
+        model.addAttribute(TODAY, LocalDate.now());
 
         return "order/order-form-member";
     }
@@ -186,6 +204,7 @@ public class OrderController {
         model.addAttribute(BOOK_LIST, bookList);
         model.addAttribute(TOTAL_PRICE, calculateTotalPrice(bookList));
         model.addAttribute(WRAP_LIST, wrapList);
+        model.addAttribute(TODAY, LocalDate.now());
 
         return "order/order-form-non-member";
     }
