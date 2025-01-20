@@ -331,6 +331,7 @@
                 ordererName: formData.get('ordererName'),
                 ordererPhone: formData.get('ordererPhone'),
                 ordererEmail: formData.get('ordererEmail'),
+                preferredDeliveryDate: formData.get('preferredDeliveryDate') || null,
                 receiverName: formData.get('receiverName'),
                 receiverPhone: formData.get('receiverPhone'),
                 receiverEmail: formData.get('receiverEmail'),
@@ -388,6 +389,22 @@
         } catch (error) {
             console.error('Error during form submission:', error);
             alert('폼 제출 중 오류가 발생했습니다.');
+        }
+    }
+</script>
+
+<script>
+    function toggleAddressInput() {
+        const addressType = document.querySelector('input[name="addressType"]:checked').value;
+        const selectAddressDiv = document.getElementById('selectAddressDiv');
+        const writeAddressDiv = document.getElementById('writeAddressDiv');
+
+        if (addressType === 'select') {
+            selectAddressDiv.style.display = 'block';
+            writeAddressDiv.style.display = 'none';
+        } else {
+            selectAddressDiv.style.display = 'none';
+            writeAddressDiv.style.display = 'block';
         }
     }
 </script>
