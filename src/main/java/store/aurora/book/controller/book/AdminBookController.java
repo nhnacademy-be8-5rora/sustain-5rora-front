@@ -70,10 +70,10 @@ public class AdminBookController {
 
     // API 도서 등록 폼 렌더링
     @GetMapping("/aladin/register")
-    public String showRegisterForm(@RequestParam String isbn13, Model model) {
+    public String showRegisterForm(@RequestParam String isbn, Model model) {
 
-        ResponseEntity<AladinBookRequestDto> response = aladinBookClient.getBookDetailsByIsbn(isbn13);
-        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategories();
+        ResponseEntity<AladinBookRequestDto> response = aladinBookClient.getBookDetailsByIsbn(isbn);
+        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getAllRootCategories();
         model.addAttribute("book", response.getBody());
         model.addAttribute(CATEGORIES_ATTRIBUTE, responseCategory.getBody());
         return ALADIN_REGISTER_VIEW;
@@ -85,7 +85,7 @@ public class AdminBookController {
                                   BindingResult bindingResult,
                                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                                   Model model) {
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getCategories().getBody());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getAllRootCategories().getBody());
         if (bindingResult.hasErrors()) {
             return ALADIN_REGISTER_VIEW;
         }
@@ -102,10 +102,9 @@ public class AdminBookController {
     @GetMapping("/register")
     public String showDirectRegisterForm(@RequestParam(required = false) String keyword,
                                          Model model) {
-        ResponseEntity<Page<CategoryResponseDTO>> responseCategory = categoryClient.getRootCategories(0, 50);
-        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(responseCategory.getBody()).orElse(Page.empty());
+        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getAllRootCategories();
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryPage.getContent());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, responseCategory.getBody());
 
         return REGISTER_VIEW;
     }
@@ -118,9 +117,7 @@ public class AdminBookController {
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
             @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
             Model model) {
-        ResponseEntity<Page<CategoryResponseDTO>> responseCategory = categoryClient.getRootCategories(0, 50);
-        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(responseCategory.getBody()).orElse(Page.empty());
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryPage.getContent());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getAllRootCategories().getBody());
         if (bindingResult.hasErrors()) {
             return REGISTER_VIEW; // 유효성 검증 실패 시 다시 폼 렌더링
         }
@@ -138,7 +135,7 @@ public class AdminBookController {
     @GetMapping("/{bookId}/edit")
     public String showEditForm(@PathVariable Long bookId, Model model) {
         ResponseEntity<BookDetailDto> bookResponse = bookClient.getBookDetailsForAdmin(bookId);
-        ResponseEntity<List<CategoryResponseDTO>> categoryResponse = categoryClient.getCategories();
+        ResponseEntity<List<CategoryResponseDTO>> categoryResponse = categoryClient.getAllRootCategories();
 
         model.addAttribute("book", bookResponse.getBody());
         model.addAttribute("bookId", bookId); // 책 ID를 별도로 전달
@@ -150,13 +147,13 @@ public class AdminBookController {
     // 도서 수정 처리
     @PostMapping(value = "/{bookId}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String editBook(@PathVariable Long bookId,
-                           @Valid @ModelAttribute("book") BookRequestDto bookDto,
+                           @Valid @ModelAttribute("book") BookDetailDto bookDto,
                            BindingResult bindingResult,
                            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                            @RequestParam(value = "deleteImages", required = false) List<Long> deleteImageIds,
                            Model model) {
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getCategories().getBody());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getAllRootCategories().getBody());
         model.addAttribute("bookId", bookId); // 책 ID를 다시 모델에 추가
 
         if (bindingResult.hasErrors()) {
@@ -205,29 +202,5 @@ public class AdminBookController {
         return "admin/book/deactivate-books"; // 비활성화된 도서 관리 페이지
     }
 
-    @GetMapping("/{bookId}")
-    public String singleInquiryBookInfo(@PathVariable Long bookId, Model model) {
-        BookDetailsDto book = bookClient.getBookDetails(bookId).getBody();
-        model.addAttribute("bookInfo", book);
-
-        return "bookdetail-test";
-    }
-
-    @GetMapping("/likes")
-    public String getLikeBooks(@RequestParam(defaultValue = "1") String pageNum,
-                               Model model, HttpServletRequest request) {
-        String jwt = JwtUtil.getJwtFromCookie(request);
-        if (jwt.equals("Bearer null")) {
-            jwt = "";  // jwt가 null일 경우 빈 문자열 설정
-        }
-        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikeBooks(jwt, Long.parseLong(pageNum));
-        int page = Integer.parseInt(pageNum) - 1; // 페이지 번호 0-based
-
-        Page<BookSearchResponseDTO> books = likeBooks.getBody();
-        model.addAttribute(BOOKS_ATTRIBUTE, books.getContent());
-        model.addAttribute("currentPage", page+1);  // `Long` 타입
-        model.addAttribute("totalPages", books.getTotalPages());  // `Integer` 타입
-        return "book/book-likes";
-    }
 
 }
