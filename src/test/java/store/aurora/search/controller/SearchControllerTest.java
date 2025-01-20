@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -173,14 +174,15 @@ class SearchControllerTest {
         categoryDTO.setParentId(null);
         categoryDTO.setParentName(null);
         categoryDTO.setChildren(new ArrayList<>());
+
         BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
         bookSearchResponseDTO.setId(1L);
         bookSearchResponseDTO.setTitle("소설책");
 
         List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
-        Page<BookSearchResponseDTO> page = new PageImpl<>(books);
+        Page<BookSearchResponseDTO> page = new PageImpl<>(books, PageRequest.of(0, 1), 1);
 
-        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(pageNum-1), eq("title"), eq("asc")))
+        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(0), eq(""), eq("")))
                 .thenReturn(page);
         when(categoryService.findById(Long.parseLong(keyword)))
                 .thenReturn(categoryDTO);
@@ -188,7 +190,9 @@ class SearchControllerTest {
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
-                        .param("pageNum", String.valueOf(pageNum)))
+                        .param("pageNum", String.valueOf(pageNum))
+                        .param("orderBy", "")
+                        .param("orderDirection", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("search/bookSearchResults"))
                 .andExpect(model().attributeExists("books"))
