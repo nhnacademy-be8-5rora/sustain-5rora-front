@@ -45,12 +45,14 @@
 
     <div>
         <!-- 주문 취소 버튼: PENDING 상태일 때만 표시 -->
-        <form th:if="${orderInfo.orderState.name() == 'PENDING'}" th:action="@{|/api/auth/${orderInfo.orderId}/cancel|}" method="post" style="display: inline;">
+        <form th:if="${orderInfo.orderState.name() == 'PENDING'}" th:action="@{|/mypage/order/cancel|}" method="post" style="display: inline;">
+            <input type="hidden" name="order-id" th:value="${orderInfo.orderId}" />
             <button type="submit">주문 취소</button>
         </form>
 
-        <!-- 환불 버튼: DELIVERED 상태일 때만 표시 -->
-        <form th:if="${orderInfo.orderState.name() == 'DELIVERED'}" th:action="@{|/api/auth/${orderInfo.orderId}/refund|}" method="post" style="display: inline;">
+        <!-- 환불 버튼: SHIPPED 상태일 때만 표시 -->
+        <form th:if="${orderInfo.orderState.name() == 'SHIPPED'}" th:action="@{|/mypage/order/refund|}" method="post" style="display: inline;">
+            <input type="hidden" name="order-id" th:value="${orderInfo.orderId}" />
             <button type="submit">환불 요청</button>
         </form>
 

@@ -15,7 +15,7 @@
 <div layout:fragment="content">
     <section class="container mt-5">
         <h1 class="text-center mb-4">도서 수정</h1>
-        <form th:object="${book}" th:action="@{/books/{bookId}/edit(bookId=${bookId})}" method="post" enctype="multipart/form-data" class="row g-3">
+        <form th:object="${book}" th:action="@{/admin/books/{bookId}/edit(bookId=${bookId})}" method="post" enctype="multipart/form-data" class="row g-3">
 
             <div th:if="${backendErrors}" class="text-danger">
                 <p th:text="${backendErrors}"></p>

@@ -15,8 +15,9 @@ import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAuthor
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomAccessTokenResponseClient;
 import store.aurora.config.security.authProvider.oauth2AuthProvider.CustomOauth2UserService;
 import store.aurora.config.security.filter.JwtAuthenticationFilter;
-import store.aurora.config.security.handler.loginHandler.success.FormLoginSuccessHandler;
-import store.aurora.config.security.handler.loginHandler.success.OauthLoginSuccessHandler;
+import store.aurora.config.security.handler.CustomAuthenticationFailureHandler;
+import store.aurora.config.security.handler.login_handler.success.FormLoginSuccessHandler;
+import store.aurora.config.security.handler.login_handler.success.OauthLoginSuccessHandler;
 import store.aurora.config.security.handler.logoutHandler.success.CommonLogoutSuccessHandler;
 
 @Configuration
@@ -31,6 +32,9 @@ public class SecurityConfig {
     private final FormLoginSuccessHandler formLoginSuccessHandler;
     private final CommonLogoutSuccessHandler commonLogoutSuccessHandler;
     private final OauthLoginSuccessHandler oauthLoginSuccessHandler;
+
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
 
     //일반 로그인 관련
     private final UserDetailsService apiUserDetailsService;
@@ -56,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/error",
                                 "/login", "/login/process","/login/oauth2/code/**","/logout", "/signup", // 로그인, 로그아웃 관련
                                 "/cart/**","/books/search","/books/**","/categories/**","/tags/**","/admin/**", "/order/**",
-                                "/static/**").permitAll() // static
+                                "/static/**","/reactive", "send-code", "/verify-code", "/reactivate").permitAll() // static
 //                        .requestMatchers("/admin/**").hasRole("ADMIN") // TODO
                         .requestMatchers("/mypage/**").hasRole("USER")
                         .anyRequest().authenticated()
@@ -75,7 +79,9 @@ public class SecurityConfig {
                 .passwordParameter("password")
                 .loginProcessingUrl("/login/process")
                 .successHandler(formLoginSuccessHandler)
-                .failureUrl("/login")
+                .failureHandler(customAuthenticationFailureHandler) // 실패 핸들러 등록
+
+//                .failureUrl("/login")
         ).oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .authorizationEndpoint(authorization -> authorization
