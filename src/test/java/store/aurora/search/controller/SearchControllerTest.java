@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import store.aurora.book.dto.category.CategoryResponseDTO;
+import store.aurora.config.security.filter.JwtAuthenticationFilter;
 import store.aurora.feign_client.UserClient;  // UserClient 임포트 추가
 import store.aurora.book.CategoryService;
 import store.aurora.feign_client.search.BookSearchClient;
@@ -31,8 +34,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SearchController.class)
-class SearchControllerTest {
+@WebMvcTest(controllers = SearchController.class, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+})class SearchControllerTest {
 
     private MockMvc mockMvc;
 

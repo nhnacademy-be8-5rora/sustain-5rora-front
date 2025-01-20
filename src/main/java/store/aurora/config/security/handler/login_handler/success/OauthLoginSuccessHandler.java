@@ -1,6 +1,5 @@
 package store.aurora.config.security.handler.login_handler.success;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +11,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import store.aurora.auth.dto.request.JwtRequestDto;
-import store.aurora.config.security.constants.SecurityConstants;
-import store.aurora.feign_client.AuthClient;
+import store.aurora.common.JwtUtil;
+import store.aurora.config.security.handler.LoginSuccessHandlerUtil;
 import store.aurora.feign_client.UserClient;
 import store.aurora.feign_client.coupon.CouponClient;
 import store.aurora.user.dto.request.SignUpRequest;
 import store.aurora.user.exception.UserSignUpFailException;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -34,8 +30,8 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     private static final String REDIRECT_LOGIN = "/login";
 
     private final UserClient userClient;
-    private final AuthClient authClient;
     private final CouponClient couponClient;
+    private final LoginSuccessHandlerUtil loginSuccessHandlerUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -86,24 +82,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             couponClient.existWelcomeCoupon(id);
         }
 
-        //3. jwt토큰 만들기
-        Optional<Cookie> optionalCookie = jwtOven(id);
-        if(optionalCookie.isEmpty()){
-            log.info("token make fail");
-            response.sendRedirect(REDIRECT_LOGIN);
-            return;
-        }
-        else {
-            log.info("cookie = {}", optionalCookie.get().getValue());
-            response.addCookie(optionalCookie.get());
-        }
-
-        // 마지막 로그인 날짜 갱신
-        userClient.updateLastLogin(id, LocalDateTime.now());
-
-        //4. 필요없어진 액세스토큰과 리프레시 토큰을 만료시킨다?? todo 토론 필요 + 토큰 유효시간 감소 필요성
-
-        response.sendRedirect("/");
+        loginSuccessHandlerUtil.handleSuccess(response, id);
     }
 
     private Optional<SignUpRequest> makeSignUpRequest(String id, OAuth2User user, String registrationId){
@@ -117,7 +96,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
             String mobile = user.getAttribute("mobile");
             String phone = user.getAttribute("email");
 
-            if(isNullOrBlank(name) || isNullOrBlank(birthdayMMdd) || isNullOrBlank(mobile) || isNullOrBlank(phone)){
+            if(JwtUtil.isNullOrBlank(name) || JwtUtil.isNullOrBlank(birthdayMMdd) || JwtUtil.isNullOrBlank(mobile) || JwtUtil.isNullOrBlank(phone)){
                 return Optional.empty();
             }
 
@@ -134,27 +113,5 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         }
 
         return Optional.empty();
-    }
-
-    private Optional<Cookie> jwtOven(String id){
-        try{
-            ResponseEntity<String> jwtToken = authClient.getJwtToken(new JwtRequestDto(id));
-
-            if(!jwtToken.getStatusCode().is2xxSuccessful() || isNullOrBlank(jwtToken.getBody())){
-                log.info("response={}", jwtToken);
-                return Optional.empty();
-            }
-            Cookie cookie = new Cookie(SecurityConstants.TOKEN_COOKIE_NAME, jwtToken.getBody());
-            cookie.setPath("/");
-            cookie.setMaxAge(60 * 60);
-
-            return Optional.of(cookie);
-        }catch (Exception e){
-            return Optional.empty();
-        }
-    }
-
-    private boolean isNullOrBlank(String value){
-        return Objects.isNull(value) || value.isBlank();
     }
 }
