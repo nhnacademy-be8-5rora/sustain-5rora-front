@@ -10,12 +10,14 @@
 
 <div layout:fragment="content">
     <h1>주문이 완료되었습니다!</h1>
+
+    <p>주문 번호: <span th:text="${orderId} ?: '-1'"></span></p>
     <p>주문 내역을 확인하시려면 아래 버튼을 클릭하세요.</p>
 
     <!-- 로그인 여부에 따라 다르게 표시되는 버튼 -->
     <div id="redirect-buttons">
         <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/mypage/orders}" class="button">내 주문 목록 보기</a>
-        <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/order/search}" class="button">주문 검색하기</a>
+        <a th:if="${#authorization.expression('!isAuthenticated()')}" th:href="@{/order/non-member/search}" class="button">주문 검색하기</a>
     </div>
 </div>
 

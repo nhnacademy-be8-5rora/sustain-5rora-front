@@ -20,15 +20,30 @@
     margin-left: 0.5rem; /* 버튼과 필드 간격 조정 */
 }
 
-.accordion .accordion-header {
+/* 카테고리 선택 박스 크기 조정 */
+.form-select-sm {
+    width: auto;
+    min-width: 150px;
+}
+
+/* 선택된 카테고리 스타일 */
+.selected-category {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
     display: flex;
     align-items: center;
+    gap: 5px;
 }
 
-.accordion .form-check-inline {
-    margin-right: 0.5rem; /* 체크박스와 텍스트 간격 */
+/* 삭제 버튼 (X) */
+.selected-category button {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.accordion .accordion-button {
-    flex-grow: 1;
-}

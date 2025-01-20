@@ -13,6 +13,8 @@ import store.aurora.feign_client.book.BookClient;
 import org.springframework.data.domain.Page;
 import store.aurora.search.dto.BookSearchResponseDTO;
 
+import java.util.Collections;
+
 @Controller
 @RequiredArgsConstructor
 public class TestController {
@@ -28,25 +30,47 @@ public class TestController {
     }
 
     private static final String SEARCH_FIELD = "title";
-    private static final String ASCENDING_ORDER = "asc";
-    private static final String PAGE_SIZE = "1";
-
+    private static final String ASCENDING_ORDER = "desc";
 
     @GetMapping("/")
-    public String indexTest(Model model){
-        //좋아요가 많은 책
-        Page<BookSearchResponseDTO> likeBooks =
-                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", Integer.parseInt(PAGE_SIZE), "like", ASCENDING_ORDER);
-        //조회수가 많은 책
-        Page<BookSearchResponseDTO> viewBooks =
-                bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", Integer.parseInt(PAGE_SIZE), "view", ASCENDING_ORDER);
+    public String indexTest(Model model) {
+        Page<BookSearchResponseDTO> likeBooks;
+        Page<BookSearchResponseDTO> viewBooks;
+        ResponseEntity<BookSearchResponseDTO> mostSellerBookResponse;
 
-        //저번달 기준 가장 많이 팔린 책
-        ResponseEntity<BookSearchResponseDTO> mostSellerBookResponse = bookClient.getMostBook();
+        try {
+            likeBooks = bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", 0, "like", ASCENDING_ORDER);
+        } catch (Exception e) {
+            USER_LOG.error("Failed to fetch likeBooks: {}", e.getMessage(), e);
+            likeBooks = Page.empty();
+        }
 
-        model.addAttribute("mostSellerBook", mostSellerBookResponse.getBody());
-        model.addAttribute("likeBooks", likeBooks.getContent());
-        model.addAttribute("viewBooks", viewBooks.getContent());
+        try {
+            viewBooks = bookSearchClient.searchBooksByKeyword("", SEARCH_FIELD, "", 0, "view", ASCENDING_ORDER);
+        } catch (Exception e) {
+            USER_LOG.error("Failed to fetch viewBooks: {}", e.getMessage(), e);
+            viewBooks = Page.empty();
+        }
+
+        try {
+            mostSellerBookResponse = bookClient.getMostBook();
+        } catch (Exception e) {
+            USER_LOG.error("Failed to fetch mostSellerBook: {}", e.getMessage(), e);
+            mostSellerBookResponse = ResponseEntity.ofNullable(null);
+        }
+
+        model.addAttribute("likeBooks", likeBooks.isEmpty() ? Collections.emptyList() : likeBooks.getContent());
+        model.addAttribute("viewBooks", viewBooks.isEmpty() ? Collections.emptyList() : viewBooks.getContent());
+
+        BookSearchResponseDTO mostSellerBook = mostSellerBookResponse.getBody();
+        if (mostSellerBook == null) {
+            USER_LOG.warn("No mostSellerBook found.");
+            model.addAttribute("mostSellerBook", new BookSearchResponseDTO());
+        } else {
+            model.addAttribute("mostSellerBook", mostSellerBook);
+        }
+
         return "home";
     }
+
 }

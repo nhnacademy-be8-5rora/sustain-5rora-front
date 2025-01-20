@@ -15,12 +15,19 @@
 <div layout:fragment="content">
     <section class="container mt-5">
         <h1 class="text-center mb-4">직접 도서 등록</h1>
-        <form th:object="${book}" th:action="@{/books/register}" method="post" enctype="multipart/form-data" class="row g-3">
+        <form th:object="${book}" th:action="@{/admin/books/register}" method="post" enctype="multipart/form-data" class="row g-3">
 
             <div th:if="${backendErrors}" class="text-danger">
                 <p th:text="${backendErrors}"></p>
             </div>
-
+            <div class="col-md-6">
+                <label for="coverImage" class="form-label">표지 이미지 업로드</label>
+                <input type="file" id="coverImage" name="coverImage" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="additionalImages" class="form-label">추가 이미지 업로드</label>
+                <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
+            </div>
             <div class="col-md-6">
                 <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
                 <input type="text" id="title" name="title" class="form-control" th:field="*{title}" maxlength="150" required>
@@ -63,96 +70,75 @@
                 <textarea id="contents" th:field="*{contents}" class="form-control" rows="3" maxlength="5000"></textarea>
                 <div th:if="${#fields.hasErrors('contents')}" th:errors="*{contents}" class="text-danger"></div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label for="priceStandard" class="form-label">정가</label>
                 <input type="number" id="priceStandard" th:field="*{priceStandard}" class="form-control" min="1" required>
                 <div th:if="${#fields.hasErrors('priceStandard')}" th:errors="*{priceStandard}" class="text-danger"></div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label for="priceSales" class="form-label">판매가</label>
                 <input type="number" id="priceSales" th:field="*{priceSales}" class="form-control" min="1" required>
                 <div th:if="${#fields.hasErrors('priceSales')}" th:errors="*{priceSales}" class="text-danger"></div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <label for="stock" class="form-label">재고</label>
                 <input type="number" id="stock" th:field="*{stock}" class="form-control" min="0" value="100" required>
                 <div th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" class="text-danger"></div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <label for="sale" class="form-label">판매 여부</label>
                 <select id="sale" th:field="*{sale}" class="form-select" required>
                     <option value="true">판매</option>
                     <option value="false">미판매</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <label for="packaging" class="form-label">포장 여부</label>
                 <select id="packaging" th:field="*{packaging}" class="form-select" required>
                     <option value="true">포장</option>
                     <option value="false">비포장</option>
                 </select>
             </div>
-            <div class="col-md-12">
-                <label for="coverImage" class="form-label">표지 이미지 업로드</label>
-                <input type="file" id="coverImage" name="coverImage" class="form-control">
-            </div>
-            <div class="col-md-12">
-                <label for="additionalImages" class="form-label">추가 이미지 업로드</label>
-                <input type="file" id="additionalImages" name="additionalImages" class="form-control" multiple>
-            </div>
             <!-- 카테고리 선택 -->
-            <div class="accordion" id="categoryAccordion">
-                <div th:each="category : ${categories}" class="accordion-item">
-                    <!-- 최상위 카테고리 -->
-                    <h2 class="accordion-header" th:attr="id='heading-' + ${category.id}">
-                        <input type="checkbox" th:id="'category-' + ${category.id}" th:name="categoryIds" th:value="${category.id}">
-                        <label th:for="'category-' + ${category.id}" class="accordion-button collapsed"
-                               type="button" data-bs-toggle="collapse"
-                               th:data-bs-target="'#collapse-' + ${category.id}" aria-expanded="false"
-                               th:aria-controls="'collapse-' + ${category.id}" th:text="${category.name}">
-                        </label>
-                    </h2>
-                    <div th:attr="id='collapse-' + ${category.id}" class="accordion-collapse collapse"
-                         th:aria-labelledby="'heading-' + ${category.id}">
-                        <div class="accordion-body">
-                            <!-- 2계층 카테고리 -->
-                            <div class="accordion" th:attr="id='childAccordion-' + ${category.id}">
-                                <div th:each="child : ${category.children}" class="accordion-item">
-                                    <h2 class="accordion-header" th:attr="id='heading-child-' + ${child.id}">
-                                        <input type="checkbox" th:id="'child-' + ${child.id}" th:name="categoryIds" th:value="${child.id}">
-                                        <label th:for="'child-' + ${child.id}" class="accordion-button collapsed"
-                                               type="button" data-bs-toggle="collapse"
-                                               th:data-bs-target="'#collapse-child-' + ${child.id}" aria-expanded="false"
-                                               th:aria-controls="'collapse-child-' + ${child.id}" th:text="${child.name}">
-                                        </label>
-                                    </h2>
-                                    <div th:attr="id='collapse-child-' + ${child.id}" class="accordion-collapse collapse"
-                                         th:aria-labelledby="'heading-child-' + ${child.id}">
-                                        <div class="accordion-body">
-                                            <!-- 3계층 카테고리 -->
-                                            <ul>
-                                                <li th:each="subChild : ${child.children}">
-                                                    <input type="checkbox" th:id="'subChild-' + ${subChild.id}" th:name="categoryIds" th:value="${subChild.id}">
-                                                    <label th:for="'subChild-' + ${subChild.id}" th:text="${subChild.name}"></label>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-6">
+                <label class="fw-bold">카테고리 선택</label>
+                <div class="d-flex align-items-center gap-2">
+                    <!-- 1차 카테고리 -->
+                    <select id="rootCategory" class="form-select form-select-sm"
+                            onchange="loadCategories(this.value, 'childCategory'); setSelectedCategory(this);">
+                        <option value="">1차 카테고리 선택</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+
+                    <!-- 2차 카테고리 -->
+                    <select id="childCategory" class="form-select form-select-sm"
+                            onchange="loadCategories(this.value, 'subChildCategory'); setSelectedCategory(this);">
+                        <option value="">2차 카테고리 선택</option>
+                    </select>
+
+                    <!-- 3차 카테고리 -->
+                    <select id="subChildCategory" class="form-select form-select-sm" onchange="setSelectedCategory(this)">
+                        <option value="">3차 카테고리 선택</option>
+                    </select>
+
+                    <!-- 추가 버튼 -->
+                    <button type="button" class="btn btn-primary btn-sm" onclick="addCategory()">추가</button>
                 </div>
+
+                <!-- 선택된 카테고리 목록 -->
+                <div id="selectedCategories" class="mt-2 d-flex flex-wrap gap-2"></div>
             </div>
+
+            <input type="hidden" id="categoryIds" name="categoryIds">
+
             <div th:if="${#fields.hasErrors('categoryIds')}" th:errors="*{categoryIds}" class="text-danger"></div>
 
-                <div class="col-md-12">
+            <div class="col-md-6">
                 <label for="tags" class="form-label">태그</label>
-                <textarea id="tags" th:field="*{tags}" class="form-control" rows="2"
+                <textarea id="tags" name="tags" class="form-control" rows="1"
                           placeholder="쉼표로 구분하여 태그를 입력하세요 (예: 태그1, 태그2, 태그3)"></textarea>
-                    <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}" class="text-danger"></div>
-
-                </div>
+                <div th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}" class="text-danger"></div>
+            </div>
 
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-success">등록</button>
@@ -181,5 +167,78 @@
         });
     });
 
+    let selectedCategoryId = null;
+    let selectedCategories = [];
+    const MAX_CATEGORIES = 10; // 최대 선택 가능 개수
 
+    // 카테고리 목록 로드 (1차 → 2차, 2차 → 3차)
+    function loadCategories(parentId, targetId) {
+        let targetSelect = document.getElementById(targetId);
+        // 각 드롭다운에 맞는 기본 선택 항목 설정
+        let placeholder = targetId === "childCategory" ? "2차 카테고리 선택" : "3차 카테고리 선택";
+        targetSelect.innerHTML = `<option value="">${placeholder}</option>`;
+
+        if (!parentId) {
+            selectedCategoryId = targetId === "childCategory" ? null : document.getElementById("childCategory").value || null;
+            return;
+        }
+
+        fetch(`/categories/${parentId}/children`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(category => {
+                    targetSelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+                });
+                selectedCategoryId = parentId; // 선택된 ID 저장
+            });
+    }
+
+    // 최종 선택된 카테고리 저장
+    function setSelectedCategory(selectElement) {
+        selectedCategoryId = selectElement.value || document.getElementById("childCategory").value || document.getElementById("rootCategory").value;
+    }
+
+    // 카테고리 추가
+    function addCategory() {
+        if (!selectedCategoryId) {
+            alert("카테고리를 선택해주세요.");
+            return;
+        }
+
+        if (selectedCategories.length >= MAX_CATEGORIES) {
+            alert(`최대 ${MAX_CATEGORIES}개의 카테고리만 선택할 수 있습니다.`);
+            return;
+        }
+
+        let selectedOption = document.querySelector(`option[value="${selectedCategoryId}"]`);
+        let categoryName = selectedOption ? selectedOption.text : "선택된 카테고리";
+
+        // 중복 추가 방지
+        if (selectedCategories.find(cat => cat.id === selectedCategoryId)) {
+            alert("이미 추가된 카테고리입니다.");
+            return;
+        }
+
+        selectedCategories.push({ id: selectedCategoryId, name: categoryName });
+        updateCategoryList();
+    }
+
+    // 선택된 카테고리 목록 업데이트
+    function updateCategoryList() {
+        let categoryList = document.getElementById("selectedCategories");
+        categoryList.innerHTML = selectedCategories.map(category =>
+            `<span class="badge bg-primary p-2 d-flex align-items-center">
+            ${category.name}
+            <button type="button" class="btn-close ms-2" onclick="removeCategory('${category.id}')"></button>
+        </span>`
+        ).join("");
+
+        document.getElementById("categoryIds").value = selectedCategories.map(cat => cat.id).join(",");
+    }
+
+    // 선택된 카테고리 삭제
+    function removeCategory(categoryId) {
+        selectedCategories = selectedCategories.filter(cat => cat.id !== categoryId);
+        updateCategoryList();
+    }
 </script>
