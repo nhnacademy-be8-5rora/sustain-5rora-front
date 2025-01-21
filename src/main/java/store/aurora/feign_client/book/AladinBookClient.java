@@ -20,8 +20,8 @@ public interface AladinBookClient {
                                                            @RequestParam int start);
 
     // 특정 도서 정보 가져오기
-    @GetMapping("/{isbn13}")
-    public ResponseEntity<AladinBookRequestDto> getBookDetailsByIsbn(@PathVariable String isbn13);
+    @GetMapping("/{isbn}")
+    ResponseEntity<AladinBookRequestDto> getBookDetailsByIsbn(@PathVariable String isbn);
 
     // API 도서 등록
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -38,16 +38,6 @@ public class SearchController {
             HttpServletRequest request,  // HttpServletRequest 추가
             Model model) {
 
-        // orderBy가 null이면 "title"로 설정
-        if (orderBy == null) {
-            orderBy = "title";
-        }
-
-        // orderDirection이 null이면 "asc"로 설정
-        if (orderDirection == null) {
-            orderDirection = "asc";
-        }
-
         // jwtToken이 없으면 빈 문자열로 설정
         String jwt = JwtUtil.getJwtFromCookie(request);
 

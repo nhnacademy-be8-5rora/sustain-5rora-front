@@ -22,13 +22,15 @@ public interface CategoryClient {
     @GetMapping("/root")
     ResponseEntity<Page<CategoryResponseDTO>> getRootCategories(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "5") int size);
-
+    @GetMapping("/root/all")
+    ResponseEntity<List<CategoryResponseDTO>> getAllRootCategories();
 
     @GetMapping("/{parentId}/children")
     ResponseEntity<Page<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId,
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "5") int size);
-
+    @GetMapping("/{parentId}/children/all")
+    ResponseEntity<List<CategoryResponseDTO>> getAllChildrenCategories(@PathVariable Long parentId);
     @PostMapping
     ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO requestDTO);
 
