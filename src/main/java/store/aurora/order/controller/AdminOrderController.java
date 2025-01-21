@@ -21,10 +21,10 @@ public class AdminOrderController {
     private final AdminOrderClient adminOrderClient;
     private final SimpleEncryptor simpleEncryptor;
 
-    @GetMapping("/shipment")
-    public String shipmentManagementPage(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         Model model) {
+    @GetMapping
+    public String orderManagementPage(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size,
+                                      Model model) {
         Page<AdminOrderDTO> orderPage = adminOrderClient.getAllOrderList(page, size);
 
         model.addAttribute("orderList", orderPage.getContent());
@@ -34,7 +34,7 @@ public class AdminOrderController {
         return "admin/order/shipment";
     }
 
-    @PostMapping("/shipment")
+    @PostMapping("/shipment-update")
     public String updateShipmentStatus(@RequestParam("order-id") Long orderId,
                                        @RequestParam("shipment-state") String shipmentState){
 
