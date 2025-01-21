@@ -51,22 +51,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }catch (FeignException e){
             if (e.status() == HttpStatus.UNAUTHORIZED.value()) { // todo FeignClientException (=4xx) 에 잡히면 무조건 갱신 로직 실행하도록? (getUsernameAndRole 요청 시 shop api 에서 404 올 수도 있어서)
                 // 리프레시 토큰을 활용한 JWT 갱신 처리
-                String refreshToken = CookieUtil.getCookie(request, SecurityConstants.REFRESH_TOKEN_COOKIE_NAME);
-                if (refreshToken != null) {
-                    try {
-                        String newJwt = authClient.refreshToken(refreshToken);
-                        CookieUtil.addCookie(response, SecurityConstants.TOKEN_COOKIE_NAME, newJwt); // 새 JWT를 쿠키로 저장
-                        String requestURI = request.getRequestURI();
-                        log.debug("리프레시 토큰으로 jwt 재발급 후 리다렉트 되는 url : {} (access 토큰 갱신돼있어야함)", requestURI);
-                        response.sendRedirect(requestURI);
-                        return;
-                    } catch (Exception ex) {
-                        log.error("리프레시 토큰으로 jwt 재발급 실패 : ", e); // 첫 번째 원인 : refresh 토큰 만료
-                        response.sendRedirect("/logout");
+                if(e.getMessage().contains("JWT expired")) {
+                    String refreshToken = CookieUtil.getCookie(request, SecurityConstants.REFRESH_TOKEN_COOKIE_NAME);
+                    if (refreshToken != null) {
+                        try {
+                            String newJwt = authClient.refreshToken(refreshToken);
+                            CookieUtil.addCookie(response, SecurityConstants.TOKEN_COOKIE_NAME, newJwt); // 새 JWT를 쿠키로 저장
+                            String requestURI = request.getRequestURI();
+                            log.debug("리프레시 토큰으로 jwt 재발급 후 리다렉트 되는 url : {} (access 토큰 갱신돼있어야함)", requestURI);
+                            response.sendRedirect(requestURI);
+                            return;
+                        } catch (Exception ex) {
+                            log.error("리프레시 토큰으로 jwt 재발급 실패 : ", e); // 첫 번째 원인 : refresh 토큰 만료
+                            response.sendRedirect("/logout");
+                            return;
+                        }
+                    } else {
+                        response.sendRedirect(LOGIN_URL);
                         return;
                     }
                 } else {
-                    response.sendRedirect(LOGIN_URL);
+                    response.sendRedirect("/logout");
                     return;
                 }
             } else {

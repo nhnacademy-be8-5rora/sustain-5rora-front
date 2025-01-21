@@ -42,8 +42,14 @@ public class ApiUserDetailsService implements UserDetailsService {
 
         }catch (FeignException e){
             if(e.status() == 403) {
-                log.info(String.format("휴면 계정: username=%s", username));
-                throw new DormantAccountException(String.format("휴면 계정: username=%s", username));
+                if(e.getMessage().contains("탈퇴")) {
+                    log.info(String.format("탈퇴 계정: username=%s", username));
+
+                } else {
+                    log.info(String.format("휴면 계정: username=%s", username));
+                    throw new DormantAccountException(String.format("휴면 계정: username=%s", username));
+
+                }
             }
 
             log.info("통신 실패 message={}", e.getMessage());
