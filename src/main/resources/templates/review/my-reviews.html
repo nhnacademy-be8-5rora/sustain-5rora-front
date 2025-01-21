@@ -172,16 +172,15 @@
 
 <div layout:fragment="content">
 
-  <section id="popular-books" class="bookshelf my-5">
+  <section id="featured-books" class="my-5">
     <div class="container">
-      <div class="row">
-<!--        <div class="col-md-12">-->
+      <div class="row justify-content-center">
 
         <!-- 좌측 사이드바 -->
-<!--        <div class="col-md-2 p-4 side-nav-bar" th:include="mypage/sidebar :: sidebar"></div>-->
+<!--        <div class="col-md-2 p-4 side-nav-bar" th:insert="~{mypage/sidebar.html}"></div>-->
 
         <!-- 메인 콘텐츠 -->
-        <div class="col-md-10 my-4 p-4" id="content-area">
+        <div class="col-md-10 p-4" id="content-area">
           <div class="border-bottom border-dark">
             <span class="fs-4 fw-bold text-dark">나의 리뷰</span>
           </div>
@@ -190,7 +189,7 @@
             블라인드 리뷰 운영정책을 확인해주세요.
           </div>
           <div class="reviews">
-            <h3>누적 리뷰 건수 <span th:text="${reviews.size()}">7</span>건</h3>
+            <h3>누적 리뷰 건수 <span th:text="${reviews.content.size()}">7</span>건</h3>
 
             <table>
               <colgroup>
@@ -208,18 +207,17 @@
               <tr th:each="review : ${reviews}">
                 <td>
                   <div class="review">
-                    <img src="example-product1.jpg" alt="상품 이미지">
+                    <img th:src="${review.cover}" alt="도서 이미지">
                     <div class="review-info">
-                      <p>주문일자  2021.09.07</p>
-                      <h4>도서 이름</h4>
-                      <div>저자</div>
+                      <h4 th:text="${review.title}">도서 이름</h4>
+                      <div th:text="${review.author}">저자</div>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="review">
                     <div class="review-info">
-                      <p th:text="'작성일자  ' + ${review.reviewCreateAt}">작성일자 2021.11.08</p>
+                      <p><strong>작성일자</strong>&nbsp;&nbsp;<span th:text="${#temporals.format(review.reviewCreateAt, 'yyyy.MM.dd')}"></span></p>
                       <span class="stars" th:each="i : ${#numbers.sequence(1, 5)}"
                             th:text="${i <= review.rating ? '★' : '☆'}"></span>
                       <div th:text="${review.content}">리뷰 내용</div>
@@ -309,33 +307,36 @@
               </tbody>
             </table>
 
-<!--            <div class="review">-->
-<!--              <img src="example-product1.jpg" alt="상품 이미지">-->
-<!--              <div class="review-info">-->
-<!--                <h4>도서 이름</h4>-->
-<!--                <p>주문일자: 2021.09.07</p>-->
-<!--                <p>작성일자: 2021.11.08</p>-->
-<!--                <p class="stars">★★★★★</p>-->
-<!--              </div>-->
-<!--              <div class="review-actions">-->
-<!--                <button>리뷰 수정</button>-->
-<!--                <button>리뷰 보기</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="review">-->
-<!--              <img src="example-product2.jpg" alt="상품 이미지">-->
-<!--              <div class="review-info">-->
-<!--                <h4>도서 이름</h4>-->
-<!--                <p>주문일자: 2021.09.07</p>-->
-<!--                <p>작성일자: 2021.11.08</p>-->
-<!--                <p class="stars">★★★★★</p>-->
-<!--              </div>-->
-<!--              <div class="review-actions">-->
-<!--                <button>리뷰 수정</button>-->
-<!--                <button>리뷰 보기</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
+            <!-- 페이징 -->
+            <nav class="mt-4" th:if="${totalPages > 0}">
+              <ul class="pagination justify-content-center">
+                <!-- 첫 페이지 버튼 -->
+                <li th:class="${currentPage == 0} ? 'page-item disabled' : 'page-item'">
+                  <a th:href="@{/admin/books(page=0, size=${size})}" class="page-link">처음</a>
+                </li>
+
+                <!-- 이전 버튼 -->
+                <li th:class="${startPage == 0} ? 'page-item disabled' : 'page-item'">
+                  <a th:href="@{/admin/books(page=${startPage - rangeSize}, size=${size})}" class="page-link">이전</a>
+                </li>
+
+                <!-- 페이지 번호 -->
+                <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                    th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
+                  <a th:href="@{/admin/books(page=${i}, size=${size})}" th:text="${i + 1}" class="page-link"></a>
+                </li>
+
+                <!-- 다음 버튼 -->
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                  <a th:href="@{/admin/books(page=${endPage + 1}, size=${size})}" class="page-link">다음</a>
+                </li>
+
+                <!-- 마지막 페이지 버튼 -->
+                <li th:class="${endPage == totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                  <a th:href="@{/admin/books(page=${totalPages - 1}, size=${size})}" class="page-link">마지막</a>
+                </li>
+              </ul>
+            </nav>
 
         </div> <!-- 메인 콘텐츠 end -->
 
