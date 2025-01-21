@@ -1,7 +1,7 @@
 package store.aurora.feign_client.review;
 
-import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,9 @@ public interface ReviewClient {
 
     // 사용자 ID로 리뷰 조회
     @GetMapping("/user/{userId}")
-    ResponseEntity<List<ReviewResponse>> getReviewsByUserId(@PathVariable String userId);
+    Page<ReviewResponse> getReviewsByUserId(@PathVariable String userId,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "5") int size);
 
     // 리뷰 상세 조회
     @GetMapping("/{reviewId}")

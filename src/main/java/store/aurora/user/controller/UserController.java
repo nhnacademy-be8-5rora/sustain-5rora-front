@@ -1,5 +1,7 @@
 package store.aurora.user.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import store.aurora.feign_client.UserClient;
 import store.aurora.feign_client.coupon.CouponClient;
 import store.aurora.user.dto.request.SignUpRequest;
@@ -68,9 +69,24 @@ public class UserController {
             model.addAttribute("verifyMessage", clientResponse.getBody().get("message"));
             model.addAttribute("messageColor", "green");
         } catch(FeignException e) {
-            model.addAttribute("verifyMessage", e.contentUTF8());
-            model.addAttribute("messageColor", "red");
-            return "reactive";
+            try {
+                // FeignException의 응답 본문을 UTF-8로 가져옵니다.
+                String responseBody = e.contentUTF8();
+
+                // ObjectMapper를 사용하여 JSON 파싱
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+                // message 필드를 추출
+                String message = jsonNode.get("message").asText();
+
+                // 모델에 메시지를 추가
+                model.addAttribute("verifyMessage", message);
+                model.addAttribute("messageColor", "red");
+            } catch (Exception ex) {
+                model.addAttribute("verifyMessage", "에러 발생: " + ex.getMessage());
+                model.addAttribute("messageColor", "red");
+            }
         }
         return "reactive";
     }
