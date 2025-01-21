@@ -1,5 +1,6 @@
 package store.aurora.book.dto.aladin;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class AladinBookRequestDto {
     @Size(max = 500, message = "저자와 역할 정보는 최대 500자까지 입력 가능합니다.")
     private String author;
 
-    @NotBlank(message = "설명은 필수 항목입니다.")
+    @NotBlank(message = "책 설명은 필수 항목입니다.")
     @Size(max = 10000, message = "책 설명은 최대 10000자까지 입력 가능합니다.")
     private String description;
 
@@ -38,8 +39,9 @@ public class AladinBookRequestDto {
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "출판 날짜는 yyyy-MM-dd 형식이어야 합니다.")
     private String pubDate;
 
-    @NotBlank(message = "ISBN은 필수 항목입니다.")
-    @Pattern(regexp = "\\d{13}", message = "ISBN은 13자리 숫자여야 합니다.")
+    @Pattern(regexp = "^(?:[a-zA-Z0-9]{10}|\\d{13})$", message = "ISBN은 10자리(알파벳 포함 가능) 또는 13자리 숫자여야 합니다.")
+    private String isbn;
+
     private String isbn13;
 
     @Positive(message = "판매 가격은 양수여야 합니다.")
@@ -50,8 +52,8 @@ public class AladinBookRequestDto {
 
     private String cover;
 
-    private SeriesInfo seriesInfo;
-    
+    private AladinBookRequestDto.SeriesInfo seriesInfo;
+
     @Min(value = 0, message = "재고는 0 이상이어야 합니다.")
     private int stock = 100;
 
@@ -64,10 +66,13 @@ public class AladinBookRequestDto {
     private List<Long> categoryIds;
 
     @Size(max = 200, message = "태그 입력은 최대 200자까지 가능합니다.")
-    @Pattern(regexp = "^([^,]*,\\s*)*[^,]*$",
-            message = "태그 형식이 잘못되었습니다. 쉼표로 구분된 태그 형식이어야 합니다.")
     private String tags;
-    
+
+    @JsonIgnore
+    public String getValidIsbn() {
+        return (isbn13 != null && !isbn13.isBlank()) ? isbn13 : isbn;
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor

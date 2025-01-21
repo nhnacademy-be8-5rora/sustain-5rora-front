@@ -3,6 +3,7 @@ package store.aurora.book.dto.aladin;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import store.aurora.book.dto.category.CategoryDTO;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookDetailDto {
+
     @NotBlank(message = "제목은 필수 항목입니다.")
     @Size(max = 150, message = "제목은 최대 150자까지 입력 가능합니다.")
     private String title;
@@ -46,12 +48,15 @@ public class BookDetailDto {
 
     @Positive(message = "정가 가격은 양수여야 합니다.")
     private int priceStandard;
-    private ImageDetail cover;
-    private List<ImageDetail> existingAdditionalImages;
+
+    private ImageDetail cover; // 커버 이미지
+    private List<ImageDetail> existingAdditionalImages = new ArrayList<>(); // 부가 이미지
 
     @Min(value = 0, message = "재고는 0 이상이어야 합니다.")
     private int stock = 100;
+
     private boolean isSale = false;
+
     private boolean isPackaging = false;
 
     @Size(max = 100, message = "시리즈 이름은 최대 100자까지 입력 가능합니다.")
@@ -60,9 +65,8 @@ public class BookDetailDto {
     @NotNull(message = "카테고리는 필수 항목입니다.")
     @Size(min = 1, max = 10, message = "카테고리는 최소 1개에서 최대 10개까지 선택 가능합니다.")
     private List<Long> categoryIds= new ArrayList<>();
+    private List<CategoryDTO> categories = new ArrayList<>();
 
     @Size(max = 200, message = "태그 입력은 최대 200자까지 가능합니다.")
-    @Pattern(regexp = "^([^,]*,\\s*)*[^,]*$",
-            message = "태그 형식이 잘못되었습니다. 쉼표로 구분된 태그 형식이어야 합니다.")
     private String tags;
 }

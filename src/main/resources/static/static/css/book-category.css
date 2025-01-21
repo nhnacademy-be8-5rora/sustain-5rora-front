@@ -26,24 +26,5 @@
     min-width: 150px;
 }
 
-/* 선택된 카테고리 스타일 */
-.selected-category {
-    background-color: #007bff;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
 
-/* 삭제 버튼 (X) */
-.selected-category button {
-    background: none;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
 
