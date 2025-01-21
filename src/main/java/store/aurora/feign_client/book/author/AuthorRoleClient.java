@@ -14,15 +14,15 @@ public interface AuthorRoleClient {
     ResponseEntity<Page<AuthorRoleResponseDto>> getAllRoles(@RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "5") int size);
 
-    @GetMapping("/{id}")
-    ResponseEntity<AuthorRoleResponseDto> getRoleById(@PathVariable("id") Long id);
+    @GetMapping("/{author-role-id}")
+    ResponseEntity<AuthorRoleResponseDto> getRoleById(@PathVariable("author-role-id") Long id);
 
     @PostMapping
     ResponseEntity<Void> createRole(@RequestBody AuthorRoleRequestDto requestDto);
 
-    @PutMapping("/{id}")
-    ResponseEntity<Void> updateRole(@PathVariable("id") Long id, @RequestBody AuthorRoleRequestDto requestDto);
+    @PutMapping("/{author-role-id}")
+    ResponseEntity<Void> updateRole(@PathVariable("author-role-id") Long id, @RequestBody AuthorRoleRequestDto requestDto);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteRole(@PathVariable("id") Long id);
+    @DeleteMapping("/{author-role-id}")
+    ResponseEntity<Void> deleteRole(@PathVariable("author-role-id") Long id);
 }

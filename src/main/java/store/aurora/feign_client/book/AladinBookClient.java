@@ -23,10 +23,5 @@ public interface AladinBookClient {
     @GetMapping("/{isbn}")
     ResponseEntity<AladinBookRequestDto> getBookDetailsByIsbn(@PathVariable String isbn);
 
-    // API 도서 등록
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Void> registerApiBook(@RequestPart("book") AladinBookRequestDto bookDto,
-                                         @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
-    );
 
 }
