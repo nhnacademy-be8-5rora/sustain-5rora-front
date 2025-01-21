@@ -75,6 +75,16 @@
 </head>
 <body>
 <div class="login-container">
+    <!-- 에러 메시지 표시 -->
+    <div style="color: red;">
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('error') && params.get('error') === 'true') {
+                document.write(decodeURIComponent(params.get('message')));
+            }
+        </script>
+    </div>
+
     <h1>Login</h1>
     <form action="/login/process" method="POST">
         <input type="text" name="username" placeholder="Username" required>
@@ -91,5 +101,12 @@
         <p>Don't have an account? <a href="/signup" style="color: #4CAF50;">Sign up</a></p>
     </div>
 </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('error') && params.get('error') === 'true') {
+            document.write(decodeURIComponent(params.get('message')));
+        }
+    </script>
 </body>
 </html>
