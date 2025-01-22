@@ -61,7 +61,7 @@ public class AdminCategoryController {
                                  @RequestParam(required = false) Long parentId) {
         CategoryRequestDTO updateRequest = new CategoryRequestDTO();
         updateRequest.setName(name);
-        categoryClient.updateCategoryName(categoryId, updateRequest);
+        categoryClient.updateCategory(categoryId, updateRequest);
         if (parentId != null) {
             return String.format("redirect:/admin/categories/%d/children", parentId);
         }

@@ -14,15 +14,15 @@ public interface AuthorClient {
     ResponseEntity<Page<AuthorResponseDto>> getAllAuthors(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "5") int size);
 
-    @GetMapping("/{id}")
-    ResponseEntity<AuthorResponseDto> getAuthorById(@PathVariable("id") Long id);
+    @GetMapping("/{author-id}")
+    ResponseEntity<AuthorResponseDto> getAuthorById(@PathVariable("author-id") Long id);
 
     @PostMapping
     ResponseEntity<Void> createAuthor(@RequestBody AuthorRequestDto requestDto);
 
-    @PutMapping("/{id}")
-    ResponseEntity<Void> updateAuthor(@PathVariable("id") Long id, @RequestBody AuthorRequestDto requestDto);
+    @PutMapping("/{author-id}")
+    ResponseEntity<Void> updateAuthor(@PathVariable("author-id") Long id, @RequestBody AuthorRequestDto requestDto);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteAuthor(@PathVariable("id") Long id);
+    @DeleteMapping("/{author-id}")
+    ResponseEntity<Void> deleteAuthor(@PathVariable("author-id") Long id);
 }

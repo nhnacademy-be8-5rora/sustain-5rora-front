@@ -32,13 +32,13 @@ public class BookRequestDto {
     @Size(max = 50, message = "출판사 이름은 최대 50자까지 입력 가능합니다.")
     private String publisher;
 
-    @NotNull(message = "출판 날짜는 필수 항목입니다.") // null 값 허용하지 않음
+    @NotNull(message = "출판 날짜는 필수 항목입니다.")
     @PastOrPresent(message = "출판일은 과거 또는 현재 날짜여야 합니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate pubDate;
 
     @NotBlank(message = "ISBN은 필수 항목입니다.")
-    @Pattern(regexp = "\\d{10}|\\d{13}", message = "ISBN은 10자리 또는 13자리 숫자여야 합니다.")
+    @Pattern(regexp = "^(?:[a-zA-Z0-9]{10}|\\d{13})$", message = "ISBN은 10자리(알파벳 포함 가능) 또는 13자리 숫자여야 합니다.")
     private String isbn;
 
     @Positive(message = "판매 가격은 양수여야 합니다.")

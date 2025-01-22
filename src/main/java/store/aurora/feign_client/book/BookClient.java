@@ -18,42 +18,47 @@ import java.util.List;
 public interface BookClient {
 
     // 직접 도서 등록
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Void> registerDirectBook(@SpringQueryMap BookRequestDto bookDto,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Void> createBook(@SpringQueryMap BookRequestDto bookDto,
                                             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                                             @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
     );
-
+    
+    // API 도서 등록
+    @PostMapping(value = "/aladin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Void> createApiBook(@RequestPart("book") AladinBookRequestDto bookDto,
+                                         @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages
+    );
     @GetMapping
     ResponseEntity<Page<BookResponseDto>> getAllBooks(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "5") int size);
 
-    @PutMapping(value = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    void editBook(@PathVariable Long bookId,
+    @PutMapping(value = "/{book-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    void editBook(@PathVariable("book-id") Long bookId,
                   @SpringQueryMap BookDetailDto bookDto,
                   @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                   @RequestParam(value = "deleteImages", required = false) List<Long> deleteImageIds);
 
-    @GetMapping("/{bookId}/edit")
-    ResponseEntity<BookDetailDto> getBookDetailsForAdmin(@PathVariable Long bookId);
+    @GetMapping("/{book-id}/edit")
+    ResponseEntity<BookDetailDto> getBookDetailsForAdmin(@PathVariable("book-id") Long bookId);
 
-    @GetMapping("/{bookId}")
-    ResponseEntity<BookDetailsDto> getBookDetails(@PathVariable Long bookId);
+    @GetMapping("/{book-id}")
+    ResponseEntity<BookDetailsDto> getBookDetails(@PathVariable("book-id") Long bookId);
 
     // 도서 상세 정보 조회
-    @GetMapping("/aladin/{bookId}")
-    ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("bookId") Long bookId);
+    @GetMapping("/aladin/{book-id}")
+    ResponseEntity<BookDetailDto> getBookDetailsById(@PathVariable("book-id") Long bookId);
 
     @GetMapping("/deactivate")
     ResponseEntity<Page<BookResponseDto>> getDeactivateBooks(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "5") int size);
 
-    @PostMapping("/{bookId}/deactivate")
-    ResponseEntity<Void> deactivateBook(@PathVariable Long bookId);
+    @PostMapping("/{book-id}/deactivate")
+    ResponseEntity<Void> deactivateBook(@PathVariable("book-id") Long bookId);
 
-    @PostMapping("/{bookId}/activate")
-    ResponseEntity<Void> activateBook(@PathVariable Long bookId);
+    @PostMapping("/{book-id}/activate")
+    ResponseEntity<Void> activateBook(@PathVariable("book-id") Long bookId);
 
     @GetMapping("/likes")
     ResponseEntity<Page<BookSearchResponseDTO>> getLikeBooks(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,

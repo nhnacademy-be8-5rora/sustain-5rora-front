@@ -59,13 +59,4 @@ public class AdminTagController {
         return REDIRECT_TAGS;
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<TagResponseDto>> searchTag(@RequestParam String keyword) {
-        if (keyword.isBlank()) {
-            return ResponseEntity.ok(Collections.emptyList()); // 공백일 경우 빈 리스트 반환
-        }
-        List<TagResponseDto> tags = tagClient.searchTags(keyword).getBody(); // Feign Client 호출
-        return ResponseEntity.ok(tags); // 클라이언트에 JSON 데이터 반환
-    }
-
 }
