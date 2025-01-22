@@ -34,7 +34,7 @@ public class BookController {
         if (jwt.equals("Bearer null")) {
             jwt = "";  // jwt가 null일 경우 빈 문자열 설정
         }
-        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikeBooks(jwt, Long.parseLong(pageNum));
+        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikedBooksByUser(jwt, Long.parseLong(pageNum));
         int page = Integer.parseInt(pageNum) - 1; // 페이지 번호 0-based
 
         Page<BookSearchResponseDTO> books = likeBooks.getBody();

@@ -60,11 +60,11 @@ public interface BookClient {
     @PostMapping("/{book-id}/activate")
     ResponseEntity<Void> activateBook(@PathVariable("book-id") Long bookId);
 
-    @GetMapping("/likes")
-    ResponseEntity<Page<BookSearchResponseDTO>> getLikeBooks(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,
+    @GetMapping("/my-likeBooks")
+    ResponseEntity<Page<BookSearchResponseDTO>> getLikedBooksByUser(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,
                                                              @RequestParam Long pageNum);
 
-    @GetMapping("/most")
-    ResponseEntity<BookSearchResponseDTO> getMostBook();
+    @GetMapping("/most-sold")
+    ResponseEntity<BookSearchResponseDTO> findMostSoldByLastMonth();
 
 }

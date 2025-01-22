@@ -202,5 +202,30 @@ public class AdminBookController {
         return "admin/book/deactivate-books"; // 비활성화된 도서 관리 페이지
     }
 
+    @GetMapping("/{bookId}")
+    public String singleInquiryBookInfo(@PathVariable Long bookId, Model model) {
+        BookDetailsDto book = bookClient.getBookDetails(bookId).getBody();
+        model.addAttribute("bookInfo", book);
+
+        return "bookdetail-test";
+    }
+
+    //유저가 좋아요 누른 책 리스트 반환
+    @GetMapping("/my-like-books")
+    public String getLikeBooks(@RequestParam(defaultValue = "1") String pageNum,
+                               Model model, HttpServletRequest request) {
+        String jwt = JwtUtil.getJwtFromCookie(request);
+        if (jwt.equals("Bearer null")) {
+            jwt = "";  // jwt가 null일 경우 빈 문자열 설정
+        }
+        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikedBooksByUser(jwt, Long.parseLong(pageNum));
+        int page = Integer.parseInt(pageNum) - 1; // 페이지 번호 0-based
+
+        Page<BookSearchResponseDTO> books = likeBooks.getBody();
+        model.addAttribute(BOOKS_ATTRIBUTE, books.getContent());
+        model.addAttribute("currentPage", page+1);  // `Long` 타입
+        model.addAttribute("totalPages", books.getTotalPages());  // `Integer` 타입
+        return "book/book-likes";
+    }
 
 }
