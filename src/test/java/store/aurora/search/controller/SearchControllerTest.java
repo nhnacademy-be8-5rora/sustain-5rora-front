@@ -1,6 +1,5 @@
 package store.aurora.search.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,15 +8,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.feign_client.book.CategoryClient;
 import store.aurora.feign_client.search.BookSearchClient;
 import store.aurora.feign_client.search.ElasticSearchClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
 import store.aurora.search.service.SearchService;
-import store.aurora.common.JwtUtil;
-import org.springframework.mock.web.MockHttpServletRequest;
+
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
