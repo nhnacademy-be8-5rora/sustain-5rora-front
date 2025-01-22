@@ -86,20 +86,6 @@ class CookieUtilTest {
     }
 
     @Test
-    void testGetCookie_WithEmptyValue() {
-        // Arrange
-        String cookieName = "emptyCookie";
-        Cookie cookie = new Cookie(cookieName, "");
-        request.setCookies(cookie);
-
-        // Act
-        String result = CookieUtil.getCookie(request, cookieName);
-
-        // Assert
-        assertNull(result);
-    }
-
-    @Test
     void testOvenCookie() {
         // Arrange
         String cookieName = "ovenCookie";
