@@ -22,26 +22,29 @@ public interface CategoryClient {
     @GetMapping("/root")
     ResponseEntity<Page<CategoryResponseDTO>> getRootCategories(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "5") int size);
+    @GetMapping("/root/all")
+    ResponseEntity<List<CategoryResponseDTO>> getAllRootCategories();
 
-
-    @GetMapping("/{parentId}/children")
-    ResponseEntity<Page<CategoryResponseDTO>> getChildrenCategories(@PathVariable Long parentId,
+    @GetMapping("/{parent-id}/children")
+    ResponseEntity<Page<CategoryResponseDTO>> getChildrenCategories(@PathVariable("parent-id") Long parentId,
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "5") int size);
+    @GetMapping("/{parent-id}/children/all")
+    ResponseEntity<List<CategoryResponseDTO>> getAllChildrenCategories(@PathVariable("parent-id") Long parentId);
 
     @PostMapping
     ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO requestDTO);
 
-    @PatchMapping("/{categoryId}")
-    ResponseEntity<Void> updateCategoryName(@PathVariable("categoryId") Long categoryId,
+    @PatchMapping("/{category-id}")
+    ResponseEntity<Void> updateCategory(@PathVariable("category-id") Long categoryId,
                                             @RequestBody CategoryRequestDTO requestDTO);
 
-    @DeleteMapping("/{categoryId}")
-    ResponseEntity<Void> deleteCategory(@PathVariable("categoryId") Long categoryId);
+    @DeleteMapping("/{category-id}")
+    ResponseEntity<Void> deleteCategory(@PathVariable("category-id") Long categoryId);
 
     //search용 카테고리 기본값만 가져오기
-    @GetMapping("/{categoryId}")
-    ResponseEntity<CategoryResponseDTO> findById(@PathVariable(value = "categoryId") Long categoryId);
+    @GetMapping("/{category-id}")
+    ResponseEntity<CategoryResponseDTO> findById(@PathVariable(value = "category-id") Long categoryId);
 
 }
 

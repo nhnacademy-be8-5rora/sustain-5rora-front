@@ -65,7 +65,7 @@
                                 class="icon icon-user"></i><span>주문조회</span></a>
                         <a href="/mypage/orders" class="user-account for-buy" sec:authorize="isAuthenticated()"><i
                                 class="icon icon-user"></i><span>주문조회</span></a>
-                        <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart</span></a>
+                        <a href="/cart" class="cart for-buy"><i class="icon icon-clipboard"></i><span>장바구니</span></a>
 
                         <div class="action-menu">
 
@@ -107,35 +107,14 @@
                     <nav id="navbar">
                         <div class="main-menu stellarnav">
                             <ul class="menu-list">
-                                <li class="menu-item active"><a href="/">Home</a></li>
+                                <li class="menu-item active"><a href="/">홈</a></li>
                                         <!-- 카테고리 별로 보기-->
                                 <li class="menu-item has-sub" id="categories">
                                     <a href="#" class="nav-link">카테고리</a>
                                     <ul class="category-container" id="categoryList" style="display: none;"></ul>
                                 </li>
 
-
-
-
-                                <li class="menu-item has-sub">
-                                    <a href="#pages" class="nav-link">Pages</a>
-                                    <ul>
-                                        <li class="active"><a href="index.html">Home</a></li>
-                                        <li><a href="index.html">About</a></li>
-                                        <li><a href="index.html">Styles</a></li>
-                                        <li><a href="index.html">Blog</a></li>
-                                        <li><a href="index.html">Post Single</a></li>
-                                        <li><a href="index.html">Our Store</a></li>
-                                        <li><a href="index.html">Product Single</a></li>
-                                        <li><a href="index.html">Contact</a></li>
-                                        <li><a href="index.html">Thank You</a></li>
-                                    </ul>
-                                </li>
-                                <li class="menu-item"><a href="#featured-books" class="nav-link">Featured</a></li>
-                                <li class="menu-item"><a href="#popular-books" class="nav-link">Popular</a></li>
-                                <li class="menu-item"><a href="#special-offer" class="nav-link">Offer</a></li>
-                                <li class="menu-item"><a href="#latest-blog" class="nav-link">Articles</a></li>
-                                <li class="menu-item"><a href="#download-app" class="nav-link">Download App</a></li>
+                                <li class="menu-item"><a href="#popular-books" class="nav-link">인기 도서</a></li>
                             </ul>
 
                             <div class="hamburger">
@@ -246,19 +225,10 @@
             <div class="col-md-2">
 
                 <div class="footer-menu">
-                    <h5>Api 명세</h5>
+                    <h5>Api document</h5>
                     <ul class="menu-list">
                         <li class="menu-item">
-                            <a href="/api-doc-shop/index.html">shop api 명세</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#">Report a problem</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#">Suggesting edits</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#">Contact us</a>
+                            <a href="/api-doc-shop/index.html">shop api document</a>
                         </li>
                     </ul>
                 </div>
@@ -331,6 +301,7 @@
                 ordererName: formData.get('ordererName'),
                 ordererPhone: formData.get('ordererPhone'),
                 ordererEmail: formData.get('ordererEmail'),
+                preferredDeliveryDate: formData.get('preferredDeliveryDate') || null,
                 receiverName: formData.get('receiverName'),
                 receiverPhone: formData.get('receiverPhone'),
                 receiverEmail: formData.get('receiverEmail'),
@@ -388,6 +359,22 @@
         } catch (error) {
             console.error('Error during form submission:', error);
             alert('폼 제출 중 오류가 발생했습니다.');
+        }
+    }
+</script>
+
+<script>
+    function toggleAddressInput() {
+        const addressType = document.querySelector('input[name="addressType"]:checked').value;
+        const selectAddressDiv = document.getElementById('selectAddressDiv');
+        const writeAddressDiv = document.getElementById('writeAddressDiv');
+
+        if (addressType === 'select') {
+            selectAddressDiv.style.display = 'block';
+            writeAddressDiv.style.display = 'none';
+        } else {
+            selectAddressDiv.style.display = 'none';
+            writeAddressDiv.style.display = 'block';
         }
     }
 </script>

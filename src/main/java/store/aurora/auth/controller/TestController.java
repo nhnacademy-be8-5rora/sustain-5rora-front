@@ -22,13 +22,6 @@ public class TestController {
     private final BookClient bookClient;
     private static final Logger USER_LOG = LoggerFactory.getLogger("user-logger");
 
-    //todo 제거 예정
-    @GetMapping("/login-test")
-    public String userIdTest(@Auth String username, Model model){
-        model.addAttribute("username", username);
-        return "login-test";
-    }
-
     private static final String SEARCH_FIELD = "title";
     private static final String ASCENDING_ORDER = "desc";
 

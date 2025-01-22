@@ -32,13 +32,13 @@ public class BookRequestDto {
     @Size(max = 50, message = "출판사 이름은 최대 50자까지 입력 가능합니다.")
     private String publisher;
 
-    @NotNull(message = "출판 날짜는 필수 항목입니다.") // null 값 허용하지 않음
+    @NotNull(message = "출판 날짜는 필수 항목입니다.")
     @PastOrPresent(message = "출판일은 과거 또는 현재 날짜여야 합니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate pubDate;
 
     @NotBlank(message = "ISBN은 필수 항목입니다.")
-    @Pattern(regexp = "\\d{10}|\\d{13}", message = "ISBN은 10자리 또는 13자리 숫자여야 합니다.")
+    @Pattern(regexp = "^(?:[a-zA-Z0-9]{10}|\\d{13})$", message = "ISBN은 10자리(알파벳 포함 가능) 또는 13자리 숫자여야 합니다.")
     private String isbn;
 
     @Positive(message = "판매 가격은 양수여야 합니다.")
@@ -46,8 +46,7 @@ public class BookRequestDto {
 
     @Positive(message = "정가 가격은 양수여야 합니다.")
     private int priceStandard;
-    private ImageDetail cover; // 커버 이미지
-    private List<ImageDetail> existingAdditionalImages = new ArrayList<>(); // 부가 이미지
+
     @Min(value = 0, message = "재고는 0 이상이어야 합니다.")
     private int stock = 100;
 
@@ -63,7 +62,5 @@ public class BookRequestDto {
     private List<Long> categoryIds= new ArrayList<>();
 
     @Size(max = 200, message = "태그 입력은 최대 200자까지 가능합니다.")
-    @Pattern(regexp = "^([^,]*,\\s*)*[^,]*$",
-            message = "태그 형식이 잘못되었습니다. 쉼표로 구분된 태그 형식이어야 합니다.")
     private String tags;
 }

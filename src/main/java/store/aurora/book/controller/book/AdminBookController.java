@@ -70,10 +70,10 @@ public class AdminBookController {
 
     // API 도서 등록 폼 렌더링
     @GetMapping("/aladin/register")
-    public String showRegisterForm(@RequestParam String isbn13, Model model) {
+    public String showRegisterForm(@RequestParam String isbn, Model model) {
 
-        ResponseEntity<AladinBookRequestDto> response = aladinBookClient.getBookDetailsByIsbn(isbn13);
-        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getCategories();
+        ResponseEntity<AladinBookRequestDto> response = aladinBookClient.getBookDetailsByIsbn(isbn);
+        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getAllRootCategories();
         model.addAttribute("book", response.getBody());
         model.addAttribute(CATEGORIES_ATTRIBUTE, responseCategory.getBody());
         return ALADIN_REGISTER_VIEW;
@@ -81,16 +81,16 @@ public class AdminBookController {
 
     // API 도서 등록 처리
     @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String registerApiBook(@Valid @ModelAttribute("book") AladinBookRequestDto bookDto,
+    public String createApiBook(@Valid @ModelAttribute("book") AladinBookRequestDto bookDto,
                                   BindingResult bindingResult,
                                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                                   Model model) {
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getCategories().getBody());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getAllRootCategories().getBody());
         if (bindingResult.hasErrors()) {
             return ALADIN_REGISTER_VIEW;
         }
         try {
-            aladinBookClient.registerApiBook(bookDto,additionalImages);
+            bookClient.createApiBook(bookDto,additionalImages);
         } catch (FeignException ex) {
             model.addAttribute("backendErrors", ex.contentUTF8());
             return ALADIN_REGISTER_VIEW;
@@ -102,30 +102,27 @@ public class AdminBookController {
     @GetMapping("/register")
     public String showDirectRegisterForm(@RequestParam(required = false) String keyword,
                                          Model model) {
-        ResponseEntity<Page<CategoryResponseDTO>> responseCategory = categoryClient.getRootCategories(0, 50);
-        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(responseCategory.getBody()).orElse(Page.empty());
+        ResponseEntity<List<CategoryResponseDTO>> responseCategory = categoryClient.getAllRootCategories();
         model.addAttribute("book", new BookRequestDto()); // 빈 객체 전달
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryPage.getContent());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, responseCategory.getBody());
 
         return REGISTER_VIEW;
     }
 
     // 직접 도서 등록 처리
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String registerDirectBook(
+    public String createBook(
             @Valid @ModelAttribute("book") BookRequestDto bookDto,
             BindingResult bindingResult,
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
             @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
             Model model) {
-        ResponseEntity<Page<CategoryResponseDTO>> responseCategory = categoryClient.getRootCategories(0, 50);
-        Page<CategoryResponseDTO> categoryPage = Optional.ofNullable(responseCategory.getBody()).orElse(Page.empty());
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryPage.getContent());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getAllRootCategories().getBody());
         if (bindingResult.hasErrors()) {
             return REGISTER_VIEW; // 유효성 검증 실패 시 다시 폼 렌더링
         }
         try {
-            bookClient.registerDirectBook(bookDto, coverImage, additionalImages);
+            bookClient.createBook(bookDto, coverImage, additionalImages);
         } catch (FeignException ex) {
             // FeignException 발생 시 처리
             model.addAttribute("backendErrors", ex.contentUTF8()); // 백엔드에서 반환된 에러 메시지 처리
@@ -138,7 +135,7 @@ public class AdminBookController {
     @GetMapping("/{bookId}/edit")
     public String showEditForm(@PathVariable Long bookId, Model model) {
         ResponseEntity<BookDetailDto> bookResponse = bookClient.getBookDetailsForAdmin(bookId);
-        ResponseEntity<List<CategoryResponseDTO>> categoryResponse = categoryClient.getCategories();
+        ResponseEntity<List<CategoryResponseDTO>> categoryResponse = categoryClient.getAllRootCategories();
 
         model.addAttribute("book", bookResponse.getBody());
         model.addAttribute("bookId", bookId); // 책 ID를 별도로 전달
@@ -150,13 +147,13 @@ public class AdminBookController {
     // 도서 수정 처리
     @PostMapping(value = "/{bookId}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String editBook(@PathVariable Long bookId,
-                           @Valid @ModelAttribute("book") BookRequestDto bookDto,
+                           @Valid @ModelAttribute("book") BookDetailDto bookDto,
                            BindingResult bindingResult,
                            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
                            @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                            @RequestParam(value = "deleteImages", required = false) List<Long> deleteImageIds,
                            Model model) {
-        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getCategories().getBody());
+        model.addAttribute(CATEGORIES_ATTRIBUTE, categoryClient.getAllRootCategories().getBody());
         model.addAttribute("bookId", bookId); // 책 ID를 다시 모델에 추가
 
         if (bindingResult.hasErrors()) {
@@ -174,7 +171,7 @@ public class AdminBookController {
     @PostMapping("/{bookId}/activate")
     public String activateBook(@PathVariable Long bookId) {
         bookClient.activateBook(bookId);
-        return "redirect:/books/deactivate";
+        return "redirect:/admin/books/deactivate";
     }
 
     @PostMapping("/{bookId}/deactivate")

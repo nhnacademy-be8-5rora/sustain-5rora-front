@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+    <title>등급 별 혜택</title>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
+
+<div layout:fragment="content">
+    <section id="featured-books" class="py-5 my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="section-header align-center">
+                        <h2 class="section-title">등급별 혜택</h2>
+                    </div>
+
+                    <div class="product-list" data-aos="fade-up">
+                        <div class="row">
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>등급</th>
+                                    <th>최소 금액</th>
+                                    <th>최대 금액</th>
+                                    <th>포인트 적립률</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="rank, stat : ${userRanks}">
+                                    <td th:text="${rank.rankName}">Rank Name</td>
+                                    <td th:text="${rank.minAmount}">Min Amount</td>
+                                    <td>
+                                        <!-- 마지막 레코드의 최대 금액 표시 -->
+                                        <span th:if="${stat.last}">-</span>
+                                        <span th:unless="${stat.last}" th:text="${rank.maxAmount}">Default</span>
+                                    </td>
+                                    <td th:text="${rank.pointRate}">Point Rate</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+
+</html>
