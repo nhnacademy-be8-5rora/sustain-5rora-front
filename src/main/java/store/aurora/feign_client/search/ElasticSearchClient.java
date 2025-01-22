@@ -20,6 +20,6 @@ public interface ElasticSearchClient {
                                             @RequestParam(required = false,defaultValue = "1") int pageNum
     );
 
-    @PostMapping("/elasticSearch/sync")
+    @PostMapping("/elastic-search/sync")
     ResponseEntity<Long> syncBooksToElasticSearch();
 }
