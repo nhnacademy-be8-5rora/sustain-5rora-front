@@ -53,7 +53,7 @@ public class TestController {
         }
 
         try {
-            mostSellerBookResponse = bookClient.getMostBook();
+            mostSellerBookResponse = bookClient.findMostSoldByLastMonth();
         } catch (Exception e) {
             USER_LOG.error("Failed to fetch mostSellerBook: {}", e.getMessage(), e);
             mostSellerBookResponse = ResponseEntity.ofNullable(null);

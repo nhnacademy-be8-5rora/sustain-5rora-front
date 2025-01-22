@@ -213,14 +213,15 @@ public class AdminBookController {
         return "bookdetail-test";
     }
 
-    @GetMapping("/likes")
+    //유저가 좋아요 누른 책 리스트 반환
+    @GetMapping("/my-like-books")
     public String getLikeBooks(@RequestParam(defaultValue = "1") String pageNum,
                                Model model, HttpServletRequest request) {
         String jwt = JwtUtil.getJwtFromCookie(request);
         if (jwt.equals("Bearer null")) {
             jwt = "";  // jwt가 null일 경우 빈 문자열 설정
         }
-        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikeBooks(jwt, Long.parseLong(pageNum));
+        ResponseEntity<Page<BookSearchResponseDTO>> likeBooks = bookClient.getLikedBooksByUser(jwt, Long.parseLong(pageNum));
         int page = Integer.parseInt(pageNum) - 1; // 페이지 번호 0-based
 
         Page<BookSearchResponseDTO> books = likeBooks.getBody();

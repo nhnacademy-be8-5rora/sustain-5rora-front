@@ -124,38 +124,29 @@
         <h2>카테고리</h2>
         <div class="treeview">
           <ul class="category-list">
-            <li th:each="category : ${categories.children}">
+            <!-- 최상위 카테고리 출력 -->
+            <li th:each="category : ${categories}">
               <div class="category-item">
                 <span class="toggle-btn">+</span>
                 <a th:href="'/books/search?type=category&keyword=' + ${category.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
                    th:text="${category.name}"></a>
               </div>
-              <!-- 하위 카테고리 출력 -->
-              <ul th:attr="id='cat-' + ${category.id}" class="sub-category hidden">
+              <!-- 하위 카테고리 출력 (재귀 호출) -->
+              <ul th:if="${category.children != null and #lists.size(category.children) > 0}" class="sub-category hidden">
                 <li th:each="subCategory : ${category.children}">
                   <div class="category-item">
                     <span class="toggle-btn">+</span>
                     <a th:href="'/books/search?type=category&keyword=' + ${subCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
                        th:text="${subCategory.name}"></a>
                   </div>
-                  <!-- 추가적인 하위 카테고리들에 대해 재귀적으로 출력 -->
-                  <ul th:attr="id='cat-' + ${subCategory.id}" class="sub-category hidden">
+                  <!-- 하위의 하위 카테고리 출력 -->
+                  <ul th:if="${subCategory.children != null and #lists.size(subCategory.children) > 0}" class="sub-category hidden">
                     <li th:each="subSubCategory : ${subCategory.children}">
                       <div class="category-item">
                         <span class="toggle-btn">+</span>
                         <a th:href="'/books/search?type=category&keyword=' + ${subSubCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
                            th:text="${subSubCategory.name}"></a>
                       </div>
-                      <!-- 하위 카테고리가 있다면, 계속해서 재귀적으로 출력 -->
-                      <ul th:attr="id='cat-' + ${subSubCategory.id}" class="sub-category hidden">
-                        <li th:each="subSubSubCategory : ${subSubCategory.children}">
-                          <div class="category-item">
-                            <span class="toggle-btn">+</span>
-                            <a th:href="'/books/search?type=category&keyword=' + ${subSubSubCategory.id} + '&pageNum=1&orderBy=salePrice&orderDirection=desc'"
-                               th:text="${subSubSubCategory.name}"></a>
-                          </div>
-                        </li>
-                      </ul>
                     </li>
                   </ul>
                 </li>
@@ -164,6 +155,7 @@
           </ul>
         </div>
       </div>
+
 
       <div class="book-container" th:if="${books.size()>=1}">
         <h2>책 목록</h2>
