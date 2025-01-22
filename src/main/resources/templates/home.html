@@ -39,10 +39,13 @@
                                     <span th:if="${mostSellerBook == null || mostSellerBook.authors == null || mostSellerBook.authors.isEmpty()}">No authors available</span>
 
                                     <!-- 책 제목 -->
-                                    <h3 class="item-title" th:text="${mostSellerBook != null && mostSellerBook.title != null ? mostSellerBook.title : 'Untitled Book'}">Untitled Book</h3>
+                                    <h3 class="item-title">
+                                        <a th:href="@{/books/{bookId}(bookId=${mostSellerBook != null ? mostSellerBook.id : 0})}"
+                                           th:text="${mostSellerBook != null && mostSellerBook.title != null ? mostSellerBook.title : 'Untitled Book'}"></a>
+                                    </h3>
 
                                     <!-- 가격 -->
-                                    <div class="item-price" th:text="${mostSellerBook != null && mostSellerBook.salePrice != null ? '$ ' + mostSellerBook.salePrice : '$ 0.00'}">40.00</div>
+                                    <div class="item-price" th:text="${mostSellerBook != null && mostSellerBook.salePrice != null ?  mostSellerBook.salePrice+ ' 원' : '0 원'}">0 원</div>
 
                                     <div class="btn-wrap">
                                         <a href="#" class="btn-accent-arrow">shop it now <i class="icon icon-ns-arrow-right"></i></a>
@@ -95,7 +98,9 @@
                                             </form>
                                         </figure>
                                         <figcaption>
-                                            <h3 th:text="${book.title != null ? book.title : 'Untitled'}">Portrait photography</h3>
+                                            <h3>
+                                                <a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title != null ? book.title : 'Untitled'}"></a>
+                                            </h3>
                                             <span th:if="${book.authors != null && not #lists.isEmpty(book.authors)}">
                                                 <span th:each="author, iterStat : ${book.authors}">
                                                     <span th:text="${author.name}"></span>
@@ -103,7 +108,7 @@
                                                 </span>
                                             </span>
                                             <span th:if="${book.authors == null || #lists.isEmpty(book.authors)}">No Author</span>
-                                            <div class="item-price" th:text="'$ ' + ${book.salePrice}">40.00</div>
+                                            <div class="item-price" th:text=" ${book.salePrice} +' 원'">0 원</div>
                                         </figcaption>
 
                                     </div>
@@ -130,7 +135,9 @@
                                             </form>
                                         </figure>
                                         <figcaption>
-                                            <h3 th:text="${book.title != null ? book.title : 'Untitled'}"></h3>
+                                            <h3>
+                                                <a th:href="@{/books/{bookId}(bookId=${book.id})}" th:text="${book.title != null ? book.title : 'Untitled'}"></a>
+                                            </h3>
                                             <span th:if="${book.authors != null && not #lists.isEmpty(book.authors)}">
                                                 <span th:each="author, iterStat : ${book.authors}">
                                                     <span th:text="${author.name}"></span>
@@ -138,7 +145,7 @@
                                                 </span>
                                             </span>
                                             <span th:if="${book.authors == null || #lists.isEmpty(book.authors)}">No Author</span>
-                                            <div class="item-price" th:text="'$ ' + ${book.salePrice}"></div>
+                                            <div class="item-price" th:text="${book.salePrice} + ' 원'">0 원</div>
                                         </figcaption>
 
                                     </div>
