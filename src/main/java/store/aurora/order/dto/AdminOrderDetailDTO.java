@@ -1,8 +1,12 @@
 package store.aurora.order.dto;
 
-public record AdminOrderDetailDTO(
-        Long orderDetailId,
-        String shipmentState,
-        String shipmentDate
-) {
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+public class AdminOrderDetailDTO{
+    private String bookName;
+    private Integer price;
+    private Integer quantity;
 }
