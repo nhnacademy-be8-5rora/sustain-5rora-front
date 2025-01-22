@@ -69,4 +69,5 @@ public class BookDetailDto {
 
     @Size(max = 200, message = "태그 입력은 최대 200자까지 가능합니다.")
     private String tags;
+
 }

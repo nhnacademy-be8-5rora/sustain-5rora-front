@@ -26,4 +26,5 @@ public class BookResponseDto {
     private int stock = 100;
     private boolean isSale = false;
     private boolean isPackaging = false;
+
 }
