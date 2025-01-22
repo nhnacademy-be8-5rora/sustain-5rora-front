@@ -1,0 +1,44 @@
+server:
+  port: 10150
+  shutdown: graceful
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  security:
+    oauth2:
+      client:
+        registration:
+          payco:
+            client-id: na
+            client-secret: na
+            redirect-uri: https://5rora.store/login/oauth2/code/payco
+            authorization-grant-type: authorization_code
+            client-name: payco
+        provider:
+          payco:
+            authorization-uri: https://id.payco.com/oauth2.0/authorize
+            token-uri: https://id.payco.com/oauth2.0/token
+            user-info-uri: https://apis-payco.krp.toastoven.net/payco/friends/find_member_v2.json
+            user-name-attribute: idNo
+  data:
+    redis:
+      host: na
+      port: 0      #각자 쓰고있는 포트에 따라 변경
+      database: 1
+      username:
+      password: na
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB      # 파일 크기 제한
+      max-request-size: 10MB
+
+api:
+  gateway:
+    base-url: localhost:10151
+
+toss:
+  client-key: test_ck_Z61JOxRQVEY4gEJjlQd0VW0X9bAq
+  secret-key: na
