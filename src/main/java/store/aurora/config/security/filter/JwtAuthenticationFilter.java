@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         response.sendRedirect(LOGIN_URL);
                         return;
                     }
-                } else {
+                } else { //case 1: access 변조
                     response.sendRedirect("/logout");
                     return;
                 }
