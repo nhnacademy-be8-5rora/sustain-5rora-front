@@ -51,8 +51,10 @@
           <tr>
             <th>주문 번호</th>
             <th>배송 상태</th>
-            <th>세부 정보</th>
-            <th>상태 변경</th>
+            <th>배송 희망일</th>
+            <th>배송 시작일</th>
+            <th>주문 상세</th>
+            <th>배송 상태 변경</th>
           </tr>
           </thead>
           <tbody>
@@ -60,21 +62,23 @@
           <tr th:each="order : ${orderList}">
             <td th:text="${order.orderId}"></td>
             <td th:text="${order.shipmentState}"></td>
+            <td th:text="${order.preferShipmentDate}"></td>
+            <td th:text="${order.shipmentDate}"></td>
             <td>
               <table class="table table-sm">
                 <thead>
                 <tr>
-                  <th>상세 번호</th>
-                  <th>배송 상태</th>
-                  <th>출고 일자</th>
+                  <th>책 제목</th>
+                  <th>판매가</th>
+                  <th>수량</th>
                 </tr>
                 </thead>
                 <tbody>
 <!--                todo: detial의 배송 상태,detailId 삭제 && 책 이름 (+id) 보여주기 && shipmentDate order로 이동 -->
                 <tr th:each="detail : ${order.orderDetailList}">
-                  <td th:text="${detail.orderDetailId}"></td>
-                  <td th:text="${detail.shipmentState}"></td>
-                  <td th:text="${detail.shipmentDate}"></td>
+                  <td th:text="${detail.bookName}"></td>
+                  <td th:text="${detail.price}"></td>
+                  <td th:text=" ${detail.quantity}"></td>
                 </tr>
                 </tbody>
               </table>
@@ -108,14 +112,14 @@
         <nav th:if="${totalPages > 0}" class="mt-4">
           <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-              <a class="page-link" th:href="@{/admin/order/shipment(page=${currentPage - 1})}">이전</a>
+              <a class="page-link" th:href="@{/admin/order(page=${currentPage - 1})}">이전</a>
             </li>
             <li class="page-item" th:each="page, stat : ${#numbers.sequence(0, totalPages - 1)}"
                 th:classappend="${page == currentPage} ? 'active'">
-              <a class="page-link" th:href="@{/admin/order/shipment(page=${page})}" th:text="${page + 1}"></a>
+              <a class="page-link" th:href="@{/admin/order(page=${page})}" th:text="${page + 1}"></a>
             </li>
             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-              <a class="page-link" th:href="@{/admin/order/shipment(page=${currentPage + 1})}">다음</a>
+              <a class="page-link" th:href="@{/admin/order(page=${currentPage + 1})}">다음</a>
             </li>
           </ul>
         </nav>

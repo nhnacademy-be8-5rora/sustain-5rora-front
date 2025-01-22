@@ -2,13 +2,14 @@ package store.aurora.search.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import store.aurora.book.CategoryService;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.common.JwtUtil;
+import store.aurora.feign_client.book.CategoryClient;
 import store.aurora.feign_client.search.BookSearchClient;
 import org.springframework.data.domain.Page;
 import store.aurora.feign_client.search.ElasticSearchClient;
@@ -23,8 +24,8 @@ import java.util.List;
 public class SearchController {
 
     private final BookSearchClient bookSearchClient;
-    private final CategoryService categoryService;
     private final ElasticSearchClient elasticSearchClient;
+    private final CategoryClient categoryClient;
     private final SearchService searchService;
 
     // 디버그용 요청 예시: http://5rora-test:8080/books/search?type=title&keyword=한강&pageNum=1&orderBy=salePrice&orderDirection=desc
@@ -71,8 +72,16 @@ public class SearchController {
             List<BookSearchResponseDTO> books = bookSearchResponseDTOPage.getContent();
 
             if ("category".equals(type)) {
-                CategoryResponseDTO categories = categoryService.findById(Long.parseLong(keyword)); // 카테고리 하위 목록 조회
-                model.addAttribute("categories", categories);
+                ResponseEntity<List<CategoryResponseDTO>> response = categoryClient.getCategories();
+
+                if (response.getStatusCode().is2xxSuccessful()) {
+                    List<CategoryResponseDTO> categories = response.getBody();
+                    model.addAttribute("categories", categories);
+                    // 데이터를 처리
+                } else {
+                    throw new IllegalArgumentException("Failed to fetch categories. Status: " + response.getStatusCode());
+                }
+
             }
             // 검색 결과와 페이징 정보를 모델에 추가
             model.addAttribute("books", books);

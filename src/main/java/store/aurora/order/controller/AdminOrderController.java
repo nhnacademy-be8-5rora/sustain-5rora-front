@@ -31,7 +31,7 @@ public class AdminOrderController {
         model.addAttribute("currentPage", orderPage.getNumber());
         model.addAttribute("totalPages", orderPage.getTotalPages());
 
-        return "admin/order/shipment";
+        return "admin/order/admin-order";
     }
 
     @PostMapping("/shipment-update")

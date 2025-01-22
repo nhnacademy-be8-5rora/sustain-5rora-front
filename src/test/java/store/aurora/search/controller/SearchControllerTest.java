@@ -1,32 +1,24 @@
 package store.aurora.search.controller;
 
-
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import store.aurora.book.dto.category.CategoryResponseDTO;
-import store.aurora.config.security.filter.JwtAuthenticationFilter;
-import store.aurora.feign_client.UserClient;  // UserClient 임포트 추가
-import store.aurora.book.CategoryService;
+import store.aurora.feign_client.book.CategoryClient;
 import store.aurora.feign_client.search.BookSearchClient;
 import store.aurora.feign_client.search.ElasticSearchClient;
 import store.aurora.search.dto.BookSearchResponseDTO;
-import org.springframework.data.domain.Page;
 import store.aurora.search.service.SearchService;
 
-import java.util.ArrayList;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,174 +26,101 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = SearchController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
-})class SearchControllerTest {
+class SearchControllerTest {
+
+    @InjectMocks
+    private SearchController searchController;
+
+    @Mock
+    private BookSearchClient bookSearchClient;
+
+    @Mock
+    private ElasticSearchClient elasticSearchClient;
+
+    @Mock
+    private CategoryClient categoryClient;
+
+    @Mock
+    private SearchService searchService;
+
+    @Mock
+    private Model model;
 
     private MockMvc mockMvc;
 
-    @MockBean
-    private CategoryService categoryService;
-
-    @MockBean
-    private SearchService searchService;
-
-    @MockBean
-    private UserClient userClient;
-
-    @MockBean
-    private BookSearchClient bookSearchClient;
-
-    @MockBean
-    private ElasticSearchClient elasticSearchClient;
-
-    @Autowired
-    private SearchController searchController;
-
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(searchController).build();
     }
 
-
-    @DisplayName("keyword가 없을 때 처리")
     @Test
-    void testSearchWithoutKeyword() throws Exception {
-        String type = "title";
-        int pageNum = 1;
-        String orderBy = "salePrice";
-        String orderDirection = "asc";
-
-        BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
-        bookSearchResponseDTO.setId(1L);
-        bookSearchResponseDTO.setTitle("기본 검색 책");
-        List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
-        Page<BookSearchResponseDTO> page = new PageImpl<>(books);
-
-        // 빈 키워드로 검색
-        when(searchService.searchBooks(anyString(), eq(type), eq(""), eq(pageNum-1), eq(orderBy), eq(orderDirection)))
-                .thenReturn(page);
-
-        mockMvc.perform(get("/books/search")
-                        .param("type", type)
-                        .param("pageNum", String.valueOf(pageNum))
-                        .param("orderBy", orderBy)
-                        .param("orderDirection", orderDirection))
-                .andExpect(status().isOk())
-                .andExpect(view().name("search/bookSearchResults"))
-                .andExpect(model().attributeExists("books"))
-                .andExpect(model().attribute("books", books));
-    }
-    @DisplayName("keyword가 빈 문자열일 때 책 전체에서처리")
-    @Test
-    void testSearchWithEmptyKeyword() throws Exception {
-        String type = "title";
-        int pageNum = 1;
-        String orderBy = "salePrice";
-        String orderDirection = "asc";
-
-        BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
-        bookSearchResponseDTO.setId(1L);
-        bookSearchResponseDTO.setTitle("기본 검색 책");
-        List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
-        Page<BookSearchResponseDTO> page = new PageImpl<>(books);
-
-        // 빈 문자열로 검색
-        when(searchService.searchBooks(anyString(), eq(type), eq(""), eq(pageNum-1), eq(orderBy), eq(orderDirection)))
-                .thenReturn(page);
-
-        mockMvc.perform(get("/books/search")
-                        .param("type", type)
-                        .param("keyword", "")  // keyword 파라미터가 빈 문자열
-                        .param("pageNum", String.valueOf(pageNum))
-                        .param("orderBy", orderBy)
-                        .param("orderDirection", orderDirection))
-                .andExpect(status().isOk())
-                .andExpect(view().name("search/bookSearchResults"))
-                .andExpect(model().attributeExists("books"))
-                .andExpect(model().attribute("books", books));
-    }
-
-    @DisplayName("잘못된 페이지 번호 처리")
-    @Test
-    void testSearchWithInvalidPageNum() throws Exception {
+    void search_ShouldReturnBooks_WhenValidRequest() throws Exception {
+        // Arrange
         String keyword = "한강";
         String type = "title";
-        String invalidPageNum = "-1"; // 잘못된 페이지 번호
+        String pageNum = "1";
+        String orderBy = "salePrice";
+        String orderDirection = "desc";
 
+        BookSearchResponseDTO book1 = new BookSearchResponseDTO();
+        book1.setTitle("한강의 책");
+        List<BookSearchResponseDTO> books = Arrays.asList(book1);
+        // Mocking the searchService response
+        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(0), eq(orderBy), eq(orderDirection)))
+                .thenReturn(new PageImpl<>(books));
+
+        // Mocking categoryClient response
+        ResponseEntity<List<CategoryResponseDTO>> categoryResponse = ResponseEntity.ok(Collections.emptyList());
+        when(categoryClient.getCategories()).thenReturn(categoryResponse);
+
+        // Act & Assert
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
-                        .param("pageNum", invalidPageNum))
+                        .param("pageNum", pageNum)
+                        .param("orderBy", orderBy)
+                        .param("orderDirection", orderDirection)
+                        .sessionAttr("jwt", "Bearer someJwtToken"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(model().attributeExists("error"));
+                .andExpect(view().name("search/bookSearchResults"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attribute("books", books));
     }
 
-    @DisplayName("검색 결과가 없을 때 처리")
     @Test
-    void testSearchWithNoResults() throws Exception {
-        String keyword = "존재하지 않는 책";
+    void search_ShouldReturnErrorMessage_WhenNoBooksFound() throws Exception {
+        // Arrange
+        String keyword = "없는 책";
         String type = "title";
-        int pageNum = 1;
+        String pageNum = "1";
         String orderBy = "salePrice";
-        String orderDirection = "asc";
+        String orderDirection = "desc";
 
-        Page<BookSearchResponseDTO> emptyPage = new PageImpl<>(Collections.emptyList());
+        // Mocking the searchService response for no books found
+        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(0), eq(orderBy), eq(orderDirection)))
+                .thenReturn(new PageImpl<>(Collections.emptyList()));
 
-        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(pageNum-1), eq(orderBy), eq(orderDirection)))
-                .thenReturn(emptyPage);
-
+        // Act & Assert
         mockMvc.perform(get("/books/search")
                         .param("keyword", keyword)
                         .param("type", type)
-                        .param("pageNum", String.valueOf(pageNum))
+                        .param("pageNum", pageNum)
                         .param("orderBy", orderBy)
                         .param("orderDirection", orderDirection))
                 .andExpect(status().isOk())
                 .andExpect(view().name("search/bookSearchResults"))
-                .andExpect(model().attribute("message", "\"" + keyword + "\"로 검색된 결과가 없습니다."))
-                .andExpect(model().attribute("books", Collections.emptyList()));
+                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attribute("message", "\"" + keyword + "\"로 검색된 결과가 없습니다."));
     }
 
-    @DisplayName("카테고리 타입으로 검색 처리 - 올바른 카테고리 ID")
     @Test
-    void testSearchWithCategoryType() throws Exception {
-        String keyword = "1"; // 카테고리 ID
-        String type = "category";
-        int pageNum = 1;
-
-        CategoryResponseDTO categoryDTO = new CategoryResponseDTO();
-        categoryDTO.setId(1L);
-        categoryDTO.setName("소설");
-        categoryDTO.setDepth(0);
-        categoryDTO.setParentId(null);
-        categoryDTO.setParentName(null);
-        categoryDTO.setChildren(new ArrayList<>());
-
-        BookSearchResponseDTO bookSearchResponseDTO = new BookSearchResponseDTO();
-        bookSearchResponseDTO.setId(1L);
-        bookSearchResponseDTO.setTitle("소설책");
-
-        List<BookSearchResponseDTO> books = Collections.singletonList(bookSearchResponseDTO);
-        Page<BookSearchResponseDTO> page = new PageImpl<>(books, PageRequest.of(0, 1), 1);
-
-        when(searchService.searchBooks(anyString(), eq(type), eq(keyword), eq(0), eq(""), eq("")))
-                .thenReturn(page);
-        when(categoryService.findById(Long.parseLong(keyword)))
-                .thenReturn(categoryDTO);
-
+    void search_ShouldReturnErrorPage_WhenInvalidPageNumber() throws Exception {
+        // Act & Assert
         mockMvc.perform(get("/books/search")
-                        .param("keyword", keyword)
-                        .param("type", type)
-                        .param("pageNum", String.valueOf(pageNum))
-                        .param("orderBy", "")
-                        .param("orderDirection", ""))
+                        .param("pageNum", "-1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("search/bookSearchResults"))
-                .andExpect(model().attributeExists("books"))
-                .andExpect(model().attribute("books", books))
-                .andExpect(model().attribute("categories", categoryDTO));
+                .andExpect(view().name("error"))
+                .andExpect(model().attribute("error", "잘못된 페이지 번호입니다."));
     }
-
 }

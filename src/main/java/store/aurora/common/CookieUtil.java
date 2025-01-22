@@ -42,8 +42,6 @@ public class CookieUtil {
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookieName)
                     && Objects.nonNull(cookie.getValue())
-                    && !cookie.getValue().isEmpty()
-                    && !cookie.getValue().isBlank()
             ) {
                 return cookie.getValue();  // 쿠키 이름이 일치하면 반환
             }
