@@ -15,15 +15,15 @@ public interface PublisherClient {
     ResponseEntity<Page<PublisherResponseDto>> getAllPublishers(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "5") int size);
 
-    @GetMapping("/{id}")
-    ResponseEntity<PublisherResponseDto> getPublisherById(@PathVariable("id") Long id);
+    @GetMapping("/{publisher-id}")
+    ResponseEntity<PublisherResponseDto> getPublisherById(@PathVariable("publisher-id") Long id);
 
     @PostMapping
     ResponseEntity<Void> createPublisher(@RequestBody PublisherRequestDto requestDto);
 
-    @PutMapping("/{id}")
-    ResponseEntity<Void> updatePublisher(@PathVariable("id") Long id, @RequestBody PublisherRequestDto requestDto);
+    @PutMapping("/{publisher-id}")
+    ResponseEntity<Void> updatePublisher(@PathVariable("publisher-id") Long id, @RequestBody PublisherRequestDto requestDto);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<Void> deletePublisher(@PathVariable("id") Long id);
+    @DeleteMapping("/{publisher-id}")
+    ResponseEntity<Void> deletePublisher(@PathVariable("publisher-id") Long id);
 }

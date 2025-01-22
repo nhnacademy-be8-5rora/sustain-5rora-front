@@ -14,15 +14,15 @@ public interface SeriesClient {
     ResponseEntity<Page<SeriesResponseDto>> getAllSeries(@RequestParam(defaultValue = "0") int page,
                                                          @RequestParam(defaultValue = "5") int size);
 
-    @GetMapping("/{id}")
-    ResponseEntity<SeriesResponseDto> getSeriesById(@PathVariable("id") Long id);
+    @GetMapping("/{series-id}")
+    ResponseEntity<SeriesResponseDto> getSeriesById(@PathVariable("series-id") Long id);
 
     @PostMapping
     ResponseEntity<Void> createSeries(@RequestBody SeriesRequestDto requestDto);
 
-    @PutMapping("/{id}")
-    ResponseEntity<Void> updateSeries(@PathVariable("id") Long id, @RequestBody SeriesRequestDto requestDto);
+    @PutMapping("/{series-id}")
+    ResponseEntity<Void> updateSeries(@PathVariable("series-id") Long id, @RequestBody SeriesRequestDto requestDto);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteSeries(@PathVariable("id") Long id);
+    @DeleteMapping("/{series-id}")
+    ResponseEntity<Void> deleteSeries(@PathVariable("series-id") Long id);
 }

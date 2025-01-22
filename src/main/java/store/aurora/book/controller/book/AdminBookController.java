@@ -81,7 +81,7 @@ public class AdminBookController {
 
     // API 도서 등록 처리
     @PostMapping(value = "/aladin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String registerApiBook(@Valid @ModelAttribute("book") AladinBookRequestDto bookDto,
+    public String createApiBook(@Valid @ModelAttribute("book") AladinBookRequestDto bookDto,
                                   BindingResult bindingResult,
                                   @RequestPart(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
                                   Model model) {
@@ -90,7 +90,7 @@ public class AdminBookController {
             return ALADIN_REGISTER_VIEW;
         }
         try {
-            aladinBookClient.registerApiBook(bookDto,additionalImages);
+            bookClient.createApiBook(bookDto,additionalImages);
         } catch (FeignException ex) {
             model.addAttribute("backendErrors", ex.contentUTF8());
             return ALADIN_REGISTER_VIEW;
@@ -111,7 +111,7 @@ public class AdminBookController {
 
     // 직접 도서 등록 처리
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String registerDirectBook(
+    public String createBook(
             @Valid @ModelAttribute("book") BookRequestDto bookDto,
             BindingResult bindingResult,
             @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
@@ -122,7 +122,7 @@ public class AdminBookController {
             return REGISTER_VIEW; // 유효성 검증 실패 시 다시 폼 렌더링
         }
         try {
-            bookClient.registerDirectBook(bookDto, coverImage, additionalImages);
+            bookClient.createBook(bookDto, coverImage, additionalImages);
         } catch (FeignException ex) {
             // FeignException 발생 시 처리
             model.addAttribute("backendErrors", ex.contentUTF8()); // 백엔드에서 반환된 에러 메시지 처리
@@ -171,7 +171,7 @@ public class AdminBookController {
     @PostMapping("/{bookId}/activate")
     public String activateBook(@PathVariable Long bookId) {
         bookClient.activateBook(bookId);
-        return "redirect:/books/deactivate";
+        return "redirect:/admin/books/deactivate";
     }
 
     @PostMapping("/{bookId}/deactivate")
