@@ -3,6 +3,7 @@ package store.aurora.review.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.aurora.book.util.PaginationUtil;
+import store.aurora.feign_client.book.BookClient;
 import store.aurora.feign_client.review.ReviewClient;
 import store.aurora.review.dto.request.ReviewRequest;
 import store.aurora.review.dto.response.ReviewResponse;
@@ -23,6 +26,7 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewClient reviewClient;
+    private final BookClient bookClient;
 
     // 리뷰 등록 페이지
     @GetMapping("/{bookId}/write")
@@ -67,14 +71,17 @@ public class ReviewController {
 
     // 사용자 ID로 리뷰 조회
     @GetMapping("/user/{userId}")
-    public String getReviewsByUserId(@PathVariable String userId, Model model) {
-        ResponseEntity<List<ReviewResponse>> clientResponse = reviewClient.getReviewsByUserId(userId);
-        if (clientResponse.getStatusCode().is2xxSuccessful()) {
-            model.addAttribute("reviews", clientResponse.getBody());
-            return "review/my-reviews"; // 사용자의 리뷰 목록 페이지로 이동
-        } else {
-            return "redirect:/error"; // 실패 시 에러 페이지로 이동
-        }
+    public String getReviewsByUserId(@PathVariable String userId,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "5") int size,
+                                     Model model) {
+        Page<ReviewResponse> reviewPage = reviewClient.getReviewsByUserId(userId, page, size);
+
+        PaginationUtil.addPaginationAttributes(model, reviewPage, "reviews", 5);
+
+        model.addAttribute("reviews", reviewPage);
+
+        return "review/my-reviews"; // 사용자의 리뷰 목록 페이지로 이동
     }
 
     // 리뷰 상세 조회
