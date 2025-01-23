@@ -1,13 +1,15 @@
 package store.aurora.coupon.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import store.aurora.coupon.dto.CouponState;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class UpdateUserCouponDto {
     @NotNull private List<Long> updateUserIds;    // 바꿀 유저쿠폰의 ID 리스트
     private Long updatePolicyId; // 바꿀 정책의 ID

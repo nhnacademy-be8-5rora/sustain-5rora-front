@@ -1,10 +1,12 @@
 package store.aurora.coupon.dto.response;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 public class UsedCouponDTO {
     private String couponName;  //쿠폰 이름
     private LocalDate usedDate; //쿠폰 사용한 날짜
