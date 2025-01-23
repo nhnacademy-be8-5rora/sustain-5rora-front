@@ -12,7 +12,7 @@ spring:
           payco:
             client-id: na
             client-secret: na
-            redirect-uri: https://5rora.store/login/oauth2/code/payco
+            redirect-uri: http://5rora.shop/login/oauth2/code/payco
             authorization-grant-type: authorization_code
             client-name: payco
         provider:

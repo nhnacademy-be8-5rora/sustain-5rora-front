@@ -2,20 +2,19 @@ package store.aurora.book.controller.category;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import store.aurora.book.dto.category.CategoryResponseDTO;
 import store.aurora.feign_client.book.CategoryClient;
 
 import java.util.List;
 import java.util.Objects;
 
-@Controller
+@RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {

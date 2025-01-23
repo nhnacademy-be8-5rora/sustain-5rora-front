@@ -2,4 +2,4 @@ spring:
   application:
     name: 5rora-front
   profiles:
-    active: dev
+    active: prod
