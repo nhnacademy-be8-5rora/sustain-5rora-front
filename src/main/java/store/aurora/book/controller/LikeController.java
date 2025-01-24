@@ -17,8 +17,8 @@ public class LikeController {
 
     private final LikeClient likeClient;
 
-    @PostMapping("/likes/{bookId}")
-    public ResponseEntity<Boolean> doLike(@PathVariable("bookId") String bookId,
+    @PostMapping("/likes/{book-id}")
+    public ResponseEntity<Boolean> doLike(@PathVariable("book-id") String bookId,
                                           HttpServletRequest request) {
         String jwt = JwtUtil.getJwtFromCookie(request);
         boolean isLiked = likeClient.doLike(jwt, bookId);  // 서버에서 좋아요 상태 처리

@@ -13,13 +13,11 @@ import store.aurora.search.dto.BookSearchResponseDTO;
 @FeignClient(name = "elasticSearchClient", url = "${api.gateway.base-url}/api/books/search")
 public interface ElasticSearchClient {
 
-    @GetMapping("/elasticSearch")
+    @GetMapping("/elastic-search")
     Page<BookSearchResponseDTO> searchBooks(@RequestHeader(value = SecurityConstants.AUTHORIZATION_HEADER, required = false) String jwtToken,
                                                      @RequestParam("type") String type,
                                             @RequestParam("keyword") String keyword,
                                             @RequestParam(required = false,defaultValue = "1") int pageNum
     );
 
-    @PostMapping("/elasticSearch/sync")
-    ResponseEntity<Long> syncBooksToElasticSearch();
 }

@@ -38,52 +38,13 @@
         }
 
     </style>
-    <!-- 이 부분을 페이지 맨 아래로 이동 -->
-    <script>
-        function syncBooks() {
-            // AJAX 요청을 통해 동기화 시작
-            fetch('/admin/books/elasticSearch/sync', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // 동기화된 책 개수 표시
-                    const syncCountElement = document.getElementById('syncCount');
-                    const syncMessageElement = document.getElementById('syncMessage');
 
-                    if (syncCountElement) {
-                        syncCountElement.innerText = data + " 개 동기화됨";
-                        syncCountElement.style.display = 'block'; // 메시지 표시
-                    }
-
-                    if (syncMessageElement) {
-                        syncMessageElement.style.display = 'none'; // 동기화 메시지 숨기기
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('동기화에 실패했습니다.');
-                });
-        }
-
-    </script>
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 <div layout:fragment="content">
     <section class="container mt-5">
         <h1 class="text-center text-primary mb-4">도서 관리</h1>
-        <button class="btn btn-secondary ms-2" onclick="syncBooks()">책 동기화 시작</button>
-        <!-- 동기화된 책 개수 메시지를 표시할 영역 -->
-        <div id="syncCount" style="display: none;"></div>
-
-        <!-- 동기화 상태 메시지를 표시할 영역 -->
-        <div id="syncMessage" style="display: none;">동기화 진행 중...</div>
-
-
         <a href="/admin/books/deactivate" class="btn btn-secondary">비활성화 도서 보기</a>
         <div class="mb-3 text-end">
             <a href="/admin/books/aladin/search/form" class="btn btn-primary">도서 등록</a>

@@ -1,10 +1,12 @@
 package store.aurora.coupon.dto.request;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class AddPolicyDTO {
     private List<Long> categoryId;
     private List<Long> bookId;
